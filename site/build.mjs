@@ -251,7 +251,7 @@ function indexPage(items, catalog) {
     <div class="hero-text">
       <p class="eyebrow">Community catalog</p>
       <h1>${esc(SITE.title)}</h1>
-      <p class="lead">${esc(SITE.tagline)} Every entry is a folder you can copy into your own repository or agent, built on the <a href="https://agentskills.io/specification">Agent Skills</a> layout.</p>
+      <p class="lead">${esc(SITE.tagline)} Every entry is a folder you can copy into your own repository or agent, built on the <a href="${REPO}/blob/main/SKILL-SCHEMA.md">Agent Skills</a> layout.</p>
       <div class="hero-actions">
         <a class="btn btn-primary" href="#gallery">Browse the gallery</a>
         <a class="btn" href="${REPO}/blob/main/CONTRIBUTING.md">Contribute a skill</a>
