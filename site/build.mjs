@@ -256,13 +256,20 @@ function indexPage(items, catalog) {
         <a class="btn btn-primary" href="#gallery">Browse the gallery</a>
         <a class="btn" href="${REPO}/blob/main/CONTRIBUTING.md">Contribute a skill</a>
       </div>
+      <p class="hero-meta">Works with ${sortedKeys(byPlatform).map((p) => `<span class="hero-chip">${esc(p)}</span>`).join("")}</p>
     </div>
-    <dl class="stats" aria-label="Catalog at a glance">
-      ${typesPresent.map((t) => `<div><dt>${esc(t.label)}</dt><dd>${byCategory.get(t.label)}</dd></div>`).join("")}
-      <div><dt>Sub-categories</dt><dd>${bySub.size}</dd></div>
-      <div><dt>Platforms</dt><dd>${byPlatform.size}</dd></div>
-      <div><dt>Contributors</dt><dd>${byAuthor.size}</dd></div>
-    </dl>
+    <div class="hero-art" aria-hidden="true">
+      <div class="folder-card">
+        <div class="folder-head"><span class="dots"><i></i><i></i><i></i></span><span class="folder-path">skills/&lt;slug&gt;/</span></div>
+        <pre class="folder-tree"><span class="t-dir">skills/&lt;slug&gt;/</span>
+├── <span class="t-skill">SKILL.md</span>        <span class="t-note"># what the agent reads</span>
+├── <span class="t-file">README.md</span>       <span class="t-note"># for people</span>
+├── <span class="t-file">metadata.json</span>   <span class="t-note"># catalog card</span>
+└── <span class="t-dir">references/</span>     <span class="t-note"># loaded on demand</span>
+    └── <span class="t-file">guide.md</span></pre>
+        <div class="folder-fm"><span class="t-key">name:</span> &lt;slug&gt;<br><span class="t-key">description:</span> Use when the user asks … Do not use for …</div>
+      </div>
+    </div>
   </div>
 </section>
 
