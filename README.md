@@ -33,7 +33,13 @@ Each skill folder is self-contained: copy the whole folder, not just `SKILL.md`,
 
 ## Skill catalog
 
-> No skills published yet. The first one is being prepared; see [CONTRIBUTING.md](./CONTRIBUTING.md) to add yours.
+> 1 skill
+
+### Governance & compliance
+
+| Skill | Platforms | Description |
+| --- | --- | --- |
+| [shared-agent-memory-governance](./skills/shared-agent-memory-governance/) | GitHub Copilot, Microsoft 365 Copilot, Copilot Studio | Governance for the shared memory of Copilot Studio agents with an account (Frontier preview): what Microsoft documents, where Purview retention, eDiscovery and holds reach and where they don't, the open questions, and runbooks for holds, data subject requests, decommissioning and a tenant test plan. |
 
 ## Contribute
 
