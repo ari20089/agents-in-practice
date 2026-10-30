@@ -40,7 +40,7 @@ The two check names are the `name:` values of the jobs in [`.github/workflows/va
 
 ### Labels
 
-Create these so issue templates, Dependabot and triage line up: `bug`, `enhancement`, `dependencies`, `skill: <slug>` per skill as they arrive, `good first issue`, `needs-info`.
+Create these so issue templates and triage line up: `bug`, `enhancement`, `skill: <slug>` per skill as they arrive, `good first issue`, `needs-info`. Dependabot PRs are identified by their author and carry no label.
 
 ## Reviewing a pull request
 
