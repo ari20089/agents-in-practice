@@ -11,7 +11,7 @@ Copilot Studio agents with their own account keep one memory shared by every use
 
 Determine the following before proceeding. If the user has not supplied them, ask for the missing ones.
 
-1. **Which memory** — which of the four features called "memory" the user means (see Step 1). Defaults to shared memory for agents with an account if they mention agent accounts, Frontier, "agent teammate" or "business process memory".
+1. **Which memory** — which of the four features called "memory" the user means (see Step 1). Defaults to shared memory for agents with an account if they mention agent accounts, Frontier, "AI teammate" or "business process memory".
 2. **Scenario** — approval of a new agent, a pilot, a legal hold, a data subject request, a retention schedule review, or decommissioning.
 3. **Artifact wanted** — governance assessment, memory rules for the agent's instructions, legal-hold checklist, DSR runbook, decommission plan, retention schedule entry, or tenant test plan. Defaults to a short structured assessment if not stated.
 4. **Documentation date** — if you have web access, re-check the cited Microsoft Learn pages (see References), compare each page's `ms.date` with the date in the guide's Sources list, and note what changed. If you do not have web access, say you are relying on 30 October 2026.
@@ -87,7 +87,7 @@ Build it from the guide, adapted to the user's situation:
 | --- | --- | --- |
 | Governance assessment / should we approve this agent | 5.1, 5.2, 5.3, 7 | Decision with reasons, required controls, blocking conditions |
 | Memory rules for the agent's instructions | 5.2 | Instruction block naming authoritative records and exclusions, tailored to the user's data |
-| Legal-hold checklist | 5.6 | Ordered steps: custodian hold on agent and users, immediate memory export, user instructions, mailbox search, case-file note |
+| Legal-hold checklist | 5.6 | Ordered steps: the agent's and users' mailboxes added to the case as data sources and held, immediate memory export, user instructions, mailbox search, case-file note |
 | DSR runbook (access or erasure) | 5.7 | Access path, erasure path, evidence capture, caveat that purging interactions does not purge memory |
 | Decommission plan | 5.8 | Six-step order with what to record at step 6, plus the deputy-owner and leaver-checklist items |
 | Retention schedule entry | 5.5 | Entry text stating what is covered, what is not, and the 28-day caveat |
@@ -118,8 +118,8 @@ End with a clear recommendation and the conditions in the guide's section 7 unde
 **Output (abridged):**
 
 > **Memory type:** Shared memory for an agent with an account (Frontier preview).
-> **Documented facts:** anyone who interacts with the agent can delete its memories; no documented hold protection; no documented audit of memory actions (FAQ for agent accounts, 14 Oct 2026).
-> **Coverage:** prompts/responses and the bot's mailbox traffic can be held by placing the bot and its users on hold as custodians (documented). Shared memory: not documented for hold, search or audit.
+> **Documented facts:** anyone who interacts with the agent can view or delete its memories (FAQ for agent accounts, 14 Oct 2026). Not documented: any hold protection for memory, any audit of memory actions.
+> **Coverage:** prompts/responses and the bot's own mailbox traffic can be preserved by adding the bot's and the users' mailboxes to the case as data sources and placing them on hold (documented). Shared memory: not documented for hold, search or audit.
 > **Open questions:** Q1, Q3, Q4, Q5.
 > **Legal-hold checklist:** (1) in the eDiscovery case, add Forecast Bot's mailbox and the human users' mailboxes as data sources and place them on hold; (2) today, export what the bot currently remembers by asking it in chat and file it under the case; (3) instruct users in the hold notice not to ask the bot to forget anything and not to use any "delete memories" option it offers; (4) search the bot's mailbox in the case for `IPM.Contact` and the Copilot Studio item classes and record whether memory items surface; (5) note in the case file that shared memory has no documented hold protection or audit trail.
 > **Recommendation:** proceed with the checklist today; treat the memory export as the only reliable preservation until Microsoft documents otherwise.

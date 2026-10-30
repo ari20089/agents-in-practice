@@ -43,7 +43,7 @@ All quotations are from the Copilot Studio agent-account pages dated 14 and 15 O
 
 **Permission and label bypass.** The agent's People card says: "Any files or chats you share can be summarized and included in the agent's responses to any user, even users without permissions to the files or chats and regardless of sensitivity label." The one documented hard stop: "Agents with an account can't read protected documents. For example, they can't access documents protected with Confidential or Internal Only sensitivity labels, or the equivalent for your organization." Microsoft's word is *protected*; in Purview terms a label protects content when it applies encryption, and a label that only classifies does not. Read the two statements together as: labels that encrypt keep content out of the agent entirely; labels that only classify do not stop content entering memory or surfacing to other users.
 
-**Who can delete it.** "Everyone who interacts with the agent can view or delete its saved shared memories."
+**Who can view or delete it, and where.** "Everyone who interacts with the agent can view or delete its saved shared memories." The FAQ does not say through which surface. The per-user memory documentation describes asking the agent in chat and a memory portal link the agent shows; whether both exist for shared memory is not written down. Treat "ask the agent in chat" as the one path the FAQ supports.
 
 **Retention.** "If no one interacts with the agent for 28 days, the system automatically deletes its shared memories."
 
@@ -52,8 +52,6 @@ All quotations are from the Copilot Studio agent-account pages dated 14 and 15 O
 **Exclusions.** Microsoft lists categories the agent is guided to exclude: ID numbers and similar personal identifiers, credentials and secrets, anything a person asks it not to remember, judgments about performance or conduct, health information, protected characteristics, content already in instructions or knowledge, and single-remark inferences. These are model instructions, not a technical filter. Microsoft 365 Copilot's admin page is explicit for its own memory that "admins can't restrict what type of information is added to Copilot memory," and nothing in the Copilot Studio pages suggests a stronger control exists for shared memory.
 
 **Deletion of the agent.** "When you delete an agent in Copilot Studio, Copilot Studio also deletes the associated Microsoft Entra Agent ID." Two caveats. First, nothing is said about the agent account, its mailbox, or its shared memory. Second, that sentence is on the *Manage Entra Agent IDs* page, whose header note says it "describes features used in agents or agent flows powered by the standard harness"; agents with accounts run on the GitHub Copilot harness. The agent-account page links to that page for Entra Agent IDs, so the behaviour is implied to carry over, but it is not stated for this harness.
-
-**Who can view or delete, and where.** The FAQ says everyone who interacts with the agent can view or delete its shared memories, but does not say through which surface. The per-user memory documentation describes asking the agent in chat and a memory portal link the agent shows; whether both exist for shared memory is not written down. Treat "ask the agent in chat" as the one path the FAQ supports.
 
 **Storage location.** Not stated. The closest documented sibling, per-user memory on the same harness, is stored as files in a per-user folder in Microsoft-managed storage. Whether shared memory uses the same mechanism scoped to the agent, or something else, is not documented.
 
@@ -151,9 +149,9 @@ Purview classification and DLP act on the prompt and response text and on the ag
 
 When a hold notice lands that touches a process the agent runs:
 
-1. In the eDiscovery case, add the agent account's mailbox and the human users' mailboxes as data sources and place them on hold. (Purview's current eDiscovery organises everything around the case and its data sources; "custodian" is still the legal term, but the portal asks you for data sources.) This is documented to preserve the agent's own mail and Teams traffic and the users' prompt/response copies. Search and hold are in base eDiscovery; review sets and the rest of the premium features need an E5 or E5 Compliance licence.
+1. In the eDiscovery case, add the agent account's mailbox and the human users' mailboxes as data sources and place them on hold. (Purview's current eDiscovery organises everything around the case and its data sources; "custodian" is still the legal term, but the portal asks you for data sources.) This is documented to preserve the agent's own mail and Teams traffic and the users' prompt/response copies. Search and hold are in base eDiscovery; review sets and the rest of the premium features need a Microsoft 365 E5 or Office 365 E5 subscription, or a related E5 add-on.
 2. Immediately export what the agent currently remembers by asking it in chat (and through the memory portal link if the agent offers one), and preserve that export under the case. This is the only documented way to see shared memory, and anyone can delete it at any time.
-3. Instruct users in the hold notice **not** to ask the agent to forget anything and not to use "Delete all memories."
+3. Instruct users in the hold notice **not** to ask the agent to forget anything and not to use any delete-memories option the agent offers.
 4. Run an eDiscovery search against the agent's mailbox for `IPM.Contact` and for the Copilot item classes to check whether memory items surface there (Q1, Q4). Record the result either way.
 5. Note in the case file that shared memory has no documented hold protection or audit trail.
 
@@ -173,7 +171,7 @@ Set the retirement date when you publish. When it arrives, in this order:
 2. Export shared memory one last time if any retention obligation applies to it.
 3. Delete all memories: ask the agent to forget everything, and use the memory portal if it offers one. Confirm by asking it what it remembers.
 4. Remove the agent from its audiences, remove tool connections and permissions.
-5. Delete the agent, which is documented to delete the Entra Agent ID.
+5. Delete the agent. Deleting the Entra Agent ID with it is documented for the standard harness and inferred for this one (section 2); confirm it in the Entra admin center.
 6. Check the agent's mailbox state in Exchange: if it persists as an inactive mailbox under hold, note that; if it is gone, note that. Then check whether the agent still appears in the **Agent Registry** (Microsoft 365 admin center → Agents → All agents → Registry) and in the Entra admin center.
 
 Step 6 is where you learn the answer to Q6 for your tenant. Record it.
@@ -188,7 +186,7 @@ Run this in the pilot environment before any production use, with a test agent a
 |---|---|---|---|
 | T1 Locate | Have two test users share distinct, easily searchable facts with the agent. In an eDiscovery case, add each user's mailbox and the agent account's mailbox as data sources and search for the facts, for item class `IPM.Contact`, and for `IPM.SkypeTeams.Message.Copilot.Studio.*`. | Which locations and item classes return the memory fact, if any, versus only the prompt/response copies | Q1, Q4 |
 | T2 Retention | Apply a short "Microsoft Copilot experiences" retention policy (delete after 1 day) and a short mailbox retention policy to the agent. Wait the documented 1 to 16 days. | Whether prompts/responses are purged (expected) and whether the shared memory fact survives (expected, but unproven) | Q2 |
-| T3 Hold | Place an eDiscovery hold on the agent account and one user. Have another user ask the agent to forget the fact, then use "Delete all memories." | Whether the memory survives the deletion attempt under hold; whether any audit event appears in Purview Audit or Entra sign-in logs | Q3, Q5 |
+| T3 Hold | Place an eDiscovery hold on the agent account's mailbox and one user's. Have another user ask the agent to forget the fact, then try any delete-all option the agent offers. | Whether the memory survives the deletion attempts under hold; whether any audit event appears in Purview Audit or Entra sign-in logs | Q3, Q5 |
 | T4 Expiry | Leave a second test agent untouched for 29 days; leave a third with a daily trigger but no human interaction. | Whether memory expires in both cases | Q7 |
 | T5 Export | Attempt to enumerate shared memory as a Compliance Administrator who has never chatted with the agent. | Whether any admin path exists beyond becoming a user of the agent | Q8 |
 | T6 Decommission | Follow section 5.8 on the test agent. | Mailbox state after deletion; Agent Registry and Entra state; whether a recreated agent with the same name starts with empty memory | Q6 |
