@@ -77,7 +77,7 @@ description: Use when the user asks to summarize a meeting transcript, before dr
 | `description` | yes | Catalog one-liner |
 | `platforms` | yes | One or more of `GitHub Copilot`, `Copilot Studio`, `Microsoft 365 Copilot`, `Other` |
 | `tags` | yes | Lowercase tags for search |
-| `category` | yes | Catalog section, for example `Governance & compliance` |
+| `subcategory` | yes | Catalog section inside the category, for example `Governance & compliance`. The category itself is not a field: the gallery derives it from the top-level folder (`skills/` → **Skills**) |
 | `author` | yes | Person or team who wrote the skill |
 | `authorGithub` | no | GitHub login |
 | `authorUrl` | no | Profile link (LinkedIn, blog, GitHub) |
@@ -109,7 +109,7 @@ Two jobs run on every pull request.
 - `SKILL.md` is missing one of the required sections `## Before Starting`, `## Output Structure`, `## Step 1`, `## Rules` (see [SKILL-SCHEMA.md](./SKILL-SCHEMA.md));
 - `SKILL.md` exceeds 500 lines (move material to `references/`);
 - `SKILL.md` or `README.md` links to a file that does not exist;
-- `metadata.json` is invalid JSON, lacks a required field, or names an unknown platform;
+- `metadata.json` is invalid JSON, lacks a required field, names an unknown platform, or sets `category` (use `subcategory`);
 - the folder contains stray top-level files beyond the allowed set;
 - the root `README.md` catalog has no row linking to `skills/<slug>/`.
 

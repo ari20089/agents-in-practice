@@ -3,7 +3,7 @@
   "description": "Retention, eDiscovery, holds and deletion for the shared memory of Copilot Studio agents with an account: what Microsoft documents, where Purview reaches, the open questions, and runbooks for holds, data subject requests, decommissioning and a tenant test plan.",
   "platforms": ["GitHub Copilot", "Microsoft 365 Copilot", "Copilot Studio"],
   "tags": ["copilot-studio", "agent-accounts", "memory", "purview", "retention", "ediscovery", "governance", "compliance", "agent-365", "frontier"],
-  "category": "Governance & compliance",
+  "subcategory": "Governance & compliance",
   "author": "Arindam Choudhury",
   "authorGithub": "ari20089",
   "authorUrl": "https://www.linkedin.com/in/arindam-choudhury/",

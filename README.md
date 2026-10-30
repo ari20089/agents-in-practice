@@ -28,7 +28,7 @@ Each skill folder is self-contained: copy the whole folder, not just `SKILL.md`,
 | Resource | Description |
 | --- | --- |
 | **[Gallery](https://ari20089.github.io/agents-in-practice/)** | Searchable site generated from the skill folders ([how it works](./site/README.md)) |
-| **[Skill catalog](#skill-catalog)** | Every published skill, by category |
+| **[Skill catalog](#skill-catalog)** | Every published skill, by sub-category |
 | **[skills/](./skills/)** | Source folders, one per skill, with a `_template/` to copy |
 | **[SKILL-SCHEMA.md](./SKILL-SCHEMA.md)** | Authoring spec: frontmatter, required sections, limits |
 | **[AGENTS.md](./AGENTS.md)** | Guidance for coding agents working inside this repo |
