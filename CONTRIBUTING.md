@@ -25,7 +25,7 @@ You contribute by adding **one folder under [`skills/`](./skills/)** and opening
 5. A code owner is requested for review automatically. Reviews check the things CI cannot: whether claims about Microsoft behaviour are cited and current, whether agent-facing and human-facing text are in the right files, and whether the skill does what its description says. Style is not reviewed.
 6. Once CI is green and a code owner approves, the maintainer squash-merges. The PR title becomes the commit message, so write it as a one-line summary.
 
-Direct pushes to `main` are disabled for everyone, including the maintainer; every change goes through the same path. See [docs/maintaining.md](./docs/maintaining.md) for the repository settings behind this.
+Direct pushes to `main` are disabled for everyone, including the maintainer; every change goes through a pull request. The maintainer's own PRs still run CI but merge without a second reviewer, since GitHub does not allow self-approval. See [docs/maintaining.md](./docs/maintaining.md) for the repository settings behind this.
 
 ## The submission shape
 

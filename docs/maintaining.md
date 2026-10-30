@@ -20,7 +20,7 @@ The files in the repo describe the process; these settings enforce it. Set them 
 - Require conversation resolution before merging
 - Block force pushes
 - Restrict deletions
-- Do not allow bypassing the above settings (uncheck the admin bypass, so the maintainer goes through the same path)
+- Bypass list: add **Repository admin** with mode **For pull requests only**. GitHub does not let an author approve their own pull request, so with a single maintainer this is the only way the maintainer's own PRs can merge. The mode matters: "for pull requests only" still blocks direct pushes to `main`; "Always" would not. Maintainer merges show as "bypassed" in the PR timeline, which is the audit trail.
 
 The two check names are the `name:` values of the jobs in [`.github/workflows/validate-skills.yml`](../.github/workflows/validate-skills.yml). They only appear in the picker after the workflow has run at least once on `main`.
 
