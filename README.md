@@ -1,6 +1,9 @@
 # Agents in Practice
 
 [![Validate skills](https://img.shields.io/github/actions/workflow/status/ari20089/agents-in-practice/validate-skills.yml?branch=main&label=Validate%20skills)](https://github.com/ari20089/agents-in-practice/actions/workflows/validate-skills.yml)
+[![Deploy site](https://img.shields.io/github/actions/workflow/status/ari20089/agents-in-practice/deploy-site.yml?branch=main&label=Gallery)](https://ari20089.github.io/agents-in-practice/)
+
+**[Browse the gallery → ari20089.github.io/agents-in-practice](https://ari20089.github.io/agents-in-practice/)**
 
 Hands-on **skills** for AI agents working in the Microsoft 365, Copilot Studio and GitHub Copilot ecosystem: reusable instruction packages (a `SKILL.md` plus optional `references/`, `scripts/` and `assets/`) that give an agent a focused, repeatable capability. Skills follow the [Agent Skills specification](https://agentskills.io/specification) and install into any host that reads it.
 
@@ -24,6 +27,7 @@ Each skill folder is self-contained: copy the whole folder, not just `SKILL.md`,
 
 | Resource | Description |
 | --- | --- |
+| **[Gallery](https://ari20089.github.io/agents-in-practice/)** | Searchable site generated from the skill folders ([how it works](./site/README.md)) |
 | **[Skill catalog](#skill-catalog)** | Every published skill, by category |
 | **[skills/](./skills/)** | Source folders, one per skill, with a `_template/` to copy |
 | **[SKILL-SCHEMA.md](./SKILL-SCHEMA.md)** | Authoring spec: frontmatter, required sections, limits |

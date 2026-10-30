@@ -46,3 +46,16 @@ jobs:
             exit 1
           fi
           echo "OK: $count skill folder(s) changed."
+
+  site:
+    name: Build site
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Build the gallery
+        run: npm run site:build

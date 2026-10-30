@@ -40,6 +40,8 @@ skills/<slug>/
     └── assets/       # optional templates, data files, preview image
 ```
 
+The gallery at https://ari20089.github.io/agents-in-practice/ is generated from these files. `metadata.json` feeds the card, `README.md` becomes the overview on the skill's page, and `assets/preview.png` (16:9, at least 640×360) becomes the card image; without one, a monogram is generated. Run `npm run site:dev` to preview your skill's page locally.
+
 Copy [`skills/_template/`](./skills/_template/) to get started. The `<slug>` is the folder name: lowercase, hyphen-separated, no spaces or periods, matching the `name` in `SKILL.md`.
 
 **Two kinds of files live side by side.** Everything agent-facing (`SKILL.md`, `references/`, `scripts/`, `assets/`) is what an agent host loads, so keep it free of human-only prose. The two human-facing files (`metadata.json`, `README.md`) are for people browsing the catalog and are never loaded by the agent. Do not leave other files (CHANGELOG, personal notes) in the folder; put that in the pull request description.
