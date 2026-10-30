@@ -403,14 +403,14 @@ function detailPage(s) {
     <aside class="meta">
       <dl>
         <dt>Author</dt><dd>${authorLine(s)}<div class="meta-links">${s.authorGithub ? `<a href="https://github.com/${esc(s.authorGithub)}">@${esc(s.authorGithub)}</a>` : ""}${s.authorUrl && !/github\.com/i.test(s.authorUrl) ? ` · <a href="${esc(s.authorUrl)}">${/linkedin/i.test(s.authorUrl) ? "LinkedIn" : "Profile"}</a>` : ""}</div></dd>
-        <dt>Category</dt><dd>${esc(s.category)}</dd>
-        ${s.subcategory ? `<dt>Sub-category</dt><dd>${esc(s.subcategory)}</dd>` : ""}
-        <dt>Platforms</dt><dd>${esc(s.platforms.join(", "))}</dd>
+        <dt>Category</dt><dd><span class="kicker"><a class="kicker-cat" href="${rel}index.html?category=${encodeURIComponent(s.category)}#gallery">${esc(s.category)}</a></span></dd>
+        ${s.subcategory ? `<dt>Sub-category</dt><dd><span class="kicker"><a class="kicker-sub" href="${rel}index.html?subcategory=${encodeURIComponent(s.subcategory)}#gallery">${esc(s.subcategory)}</a></span></dd>` : ""}
+        <dt>Platforms</dt><dd><ul class="chips">${chips(s.platforms, "chip-platform")}</ul></dd>
         <dt>Version</dt><dd>${esc(s.version)}</dd>
         <dt>Created</dt><dd><time datetime="${esc(s.createdAt)}">${esc(fmtDate(s.createdAt))}</time></dd>
         <dt>Updated</dt><dd><time datetime="${esc(s.updatedAt)}">${esc(fmtDate(s.updatedAt))}</time></dd>
         ${s.install ? `<dt>Install path</dt><dd><code>${esc(s.install)}</code></dd>` : ""}
-        <dt>Tags</dt><dd><ul class="chips">${chips(s.tags)}</ul></dd>
+        <dt>Tags</dt><dd><ul class="chips">${chips(s.tags, "chip-tag")}</ul></dd>
       </dl>
     </aside>
   </div>
