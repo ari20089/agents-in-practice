@@ -1,0 +1,17 @@
+{
+  "name": "agents-in-practice",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Skills for AI agents working with Microsoft 365, Copilot Studio and GitHub Copilot",
+  "scripts": {
+    "test": "node scripts/validate-skills.mjs",
+    "validate": "node scripts/validate-skills.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ari20089/agents-in-practice.git"
+  }
+}

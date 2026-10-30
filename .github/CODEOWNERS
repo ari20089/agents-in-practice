@@ -1,0 +1,8 @@
+# Code owners are requested for review automatically on every pull request
+# and, with branch protection, must approve before a merge.
+# Later lines override earlier ones.
+
+*                       @ari20089
+
+# A skill's author can be added as a co-owner of their folder, for example:
+# /skills/some-skill/   @ari20089 @their-handle

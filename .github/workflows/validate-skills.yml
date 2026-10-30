@@ -1,0 +1,48 @@
+name: Validate skills
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate skills
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Validate skill folders
+        run: node scripts/validate-skills.mjs
+
+  scope:
+    name: One skill per PR
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Check that changed files touch at most one skill
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          touched=$(git diff --name-only "$BASE" "$HEAD" \
+            | grep -E '^skills/[^/_][^/]*/' \
+            | cut -d/ -f2 \
+            | sort -u || true)
+          count=$(printf '%s\n' "$touched" | sed '/^$/d' | wc -l | tr -d ' ')
+          if [ "$count" -gt 1 ]; then
+            echo "This pull request changes $count skill folders:"
+            printf '  - %s\n' $touched
+            echo "Please open one pull request per skill (see CONTRIBUTING.md)."
+            exit 1
+          fi
+          echo "OK: $count skill folder(s) changed."

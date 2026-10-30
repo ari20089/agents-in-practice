@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Microsoft product, licensing or tenant questions
+    url: https://learn.microsoft.com/
+    about: This repository cannot provide Microsoft product support. Use Microsoft Learn or your Microsoft support channel.
+  - name: Security vulnerability
+    url: https://github.com/ari20089/agents-in-practice/security/advisories/new
+    about: Report privately. Do not open a public issue.
