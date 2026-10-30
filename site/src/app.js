@@ -80,13 +80,14 @@
     }
 
     function card(s) {
-      return `<article class="card">
+      const slug = (v) => String(v).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      return `<article class="card" style="--h:${Number(s.hue) || 220}">
   <a class="card-art" href="${esc(s.url)}" tabindex="-1" aria-hidden="true"><img src="${s.image}" alt="" loading="lazy" width="640" height="360"></a>
   <div class="card-body">
-    <p class="card-kicker"><span class="kicker-cat">${esc(s.category)}</span>${s.subcategory ? `<span class="kicker-sep" aria-hidden="true">/</span><span>${esc(s.subcategory)}</span>` : ""}</p>
+    <p class="card-kicker kicker"><span class="kicker-cat">${esc(s.category)}</span>${s.subcategory ? `<span class="kicker-sub">${esc(s.subcategory)}</span>` : ""}</p>
     <h3><a href="${esc(s.url)}">${esc(s.name)}</a></h3>
     <p class="card-desc">${esc(s.description)}</p>
-    <ul class="chips">${s.platforms.map((p) => `<li class="chip chip-platform">${esc(p)}</li>`).join("")}</ul>
+    <ul class="chips">${s.platforms.map((p) => `<li class="chip chip-platform" data-value="${slug(p)}">${esc(p)}</li>`).join("")}</ul>
     <footer class="card-foot">
       <span class="author">${avatar(s)}<span>${esc(s.author)}</span></span>
       <time datetime="${esc(s.updatedAt)}" title="Last updated">${esc(fmt(s.updatedAt))}</time>

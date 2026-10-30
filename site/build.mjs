@@ -129,6 +129,7 @@ function readItems() {
         type: type.dir,
         category: type.label,
         subcategory: meta.subcategory ?? "",
+        hue: hue(meta.subcategory ?? slug),
         name: meta.name,
         description: meta.description,
         platforms: meta.platforms ?? [],
@@ -213,7 +214,8 @@ ${body}
 
 // ---------- shared fragments ----------
 
-const chips = (xs, cls = "") => xs.map((x) => `<li class="chip ${cls}">${esc(x)}</li>`).join("");
+const slugify = (s) => String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+const chips = (xs, cls = "") => xs.map((x) => `<li class="chip ${cls}" data-value="${slugify(x)}">${esc(x)}</li>`).join("");
 
 function authorLine(item, rel = "") {
   const img = item.avatar ? `<img class="avatar" src="${item.avatar}" alt="" width="24" height="24" loading="lazy">` : `<span class="avatar avatar-text" aria-hidden="true">${esc(item.author[0] ?? "?")}</span>`;
@@ -351,10 +353,10 @@ function detailPage(s) {
 <div class="container">
 <nav class="breadcrumb" aria-label="Breadcrumb"><a href="${rel}index.html">Gallery</a> <span aria-hidden="true">›</span> <a href="${rel}index.html?category=${encodeURIComponent(s.category)}#gallery">${esc(s.category)}</a> <span aria-hidden="true">›</span> <span aria-current="page">${esc(s.name)}</span></nav>
 
-<article class="detail">
+<article class="detail" style="--h:${s.hue}">
   <header class="detail-hero">
     <div class="detail-hero-text">
-      <p class="eyebrow"><a href="${rel}index.html?category=${encodeURIComponent(s.category)}#gallery">${esc(s.category)}</a>${s.subcategory ? ` <span aria-hidden="true">/</span> <a href="${rel}index.html?subcategory=${encodeURIComponent(s.subcategory)}#gallery">${esc(s.subcategory)}</a>` : ""}</p>
+      <p class="eyebrow kicker"><a class="kicker-cat" href="${rel}index.html?category=${encodeURIComponent(s.category)}#gallery">${esc(s.category)}</a>${s.subcategory ? `<a class="kicker-sub" href="${rel}index.html?subcategory=${encodeURIComponent(s.subcategory)}#gallery">${esc(s.subcategory)}</a>` : ""}</p>
       <h1>${esc(s.name)}</h1>
       <p class="lead">${esc(s.description)}</p>
       <ul class="chips">${chips(s.platforms, "chip-platform")}</ul>
