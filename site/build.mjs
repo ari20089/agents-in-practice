@@ -222,11 +222,9 @@ function authorLine(item, rel = "") {
   return `<span class="author">${img}<span>${esc(item.author)}</span></span>`;
 }
 
-function facet(id, label, values, counts) {
-  const rows = values
-    .map((v) => `<li><label><input type="checkbox" name="${id}" value="${esc(v)}"><span class="facet-name">${esc(v)}</span><span class="facet-count">${counts.get(v) ?? 0}</span></label></li>`)
-    .join("");
-  return `<details class="facet" open><summary>${esc(label)}</summary><ul>${rows}</ul></details>`;
+function select(id, label, allLabel, values, counts) {
+  const opts = values.map((v) => `<option value="${esc(v)}">${esc(v)} (${counts.get(v) ?? 0})</option>`).join("");
+  return `<label class="control"><span class="visually-hidden">${esc(label)}</span><select id="${id}"><option value="">${esc(allLabel)}</option>${opts}</select></label>`;
 }
 
 // ---------- index ----------
@@ -268,37 +266,43 @@ function indexPage(items, catalog) {
   </div>
 </section>
 
-<section id="gallery" class="gallery container">
-  <div class="gallery-layout">
-    <aside class="filters" aria-label="Filter the gallery">
-      <form id="filters" role="search" onsubmit="return false">
-        <label class="search">
-          <span class="visually-hidden">Search</span>
-          <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"/></svg>
-          <input id="q" type="search" placeholder="Search by name, tag or description" autocomplete="off">
-        </label>
-        ${facet("category", "Category", categoryOrder, byCategory)}
-        ${facet("subcategory", "Sub-category", sortedKeys(bySub), bySub)}
-        ${facet("platform", "Platform", sortedKeys(byPlatform), byPlatform)}
-        ${facet("author", "Author", sortedKeys(byAuthor), byAuthor)}
-        <button type="button" id="clear" class="btn btn-ghost btn-block">Clear all filters</button>
-      </form>
-    </aside>
-
-    <div class="results">
-      <div class="results-bar">
-        <p class="count" id="count" aria-live="polite">${plural(n, "result")}</p>
-        <label class="sort">Sort by <select id="sort"><option value="updated">Recently updated</option><option value="newest">Newest</option><option value="title">Title A–Z</option></select></label>
+<section id="gallery" class="gallery">
+  <div class="container">
+    <div class="gallery-head">
+      <div>
+        <p class="eyebrow">Skill catalog</p>
+        <h2>Explore agent skills</h2>
       </div>
-      <ul id="active" class="active-filters" aria-label="Active filters"></ul>
-      <div id="grid" class="grid"></div>
-      <div id="empty" class="empty" hidden>
-        <p><strong>Nothing matches.</strong> Try a broader search or <button type="button" class="link" data-clear>clear the filters</button>.</p>
-      </div>
-      <noscript>
-        <ul class="plain-list">${items.map((s) => `<li><a href="${s.url}">${esc(s.name)}</a> <span class="muted">· ${esc(s.category)} / ${esc(s.subcategory)}</span><br>${esc(s.description)}</li>`).join("")}</ul>
-      </noscript>
+      <ul class="count-pills" aria-label="Catalog counts">
+        ${typesPresent.map((t) => `<li><strong>${byCategory.get(t.label)}</strong> ${esc(byCategory.get(t.label) === 1 ? t.singular : t.label.toLowerCase())}</li>`).join("")}
+      </ul>
     </div>
+
+    <form class="toolbar" id="filters" role="search" aria-label="Filter skills" onsubmit="return false">
+      <label class="search">
+        <span class="visually-hidden">Search</span>
+        <svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"/></svg>
+        <input id="q" type="search" placeholder="Search skills" autocomplete="off">
+      </label>
+      ${select("category", "Category", "All categories", categoryOrder, byCategory)}
+      ${select("subcategory", "Sub-category", "All sub-categories", sortedKeys(bySub), bySub)}
+      ${select("platform", "Platform", "All platforms", sortedKeys(byPlatform), byPlatform)}
+      ${select("author", "Contributor", "All contributors", sortedKeys(byAuthor), byAuthor)}
+      <label class="control"><span class="visually-hidden">Sort</span><select id="sort"><option value="updated">Recently updated</option><option value="newest">Newest</option><option value="title">Title A–Z</option></select></label>
+    </form>
+
+    <div class="results-bar">
+      <p class="count" id="count" aria-live="polite">Showing ${plural(n, "skill")}</p>
+      <button type="button" id="clear" class="link">Clear filters</button>
+    </div>
+
+    <div id="grid" class="grid"></div>
+    <div id="empty" class="empty" hidden>
+      <p><strong>Nothing matches.</strong> Try a broader search or <button type="button" class="link" data-clear>clear the filters</button>.</p>
+    </div>
+    <noscript>
+      <ul class="plain-list">${items.map((s) => `<li><a href="${s.url}">${esc(s.name)}</a> <span class="muted">· ${esc(s.category)} / ${esc(s.subcategory)}</span><br>${esc(s.description)}</li>`).join("")}</ul>
+    </noscript>
   </div>
 </section>
 
