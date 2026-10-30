@@ -2,13 +2,20 @@
   "name": "agents-in-practice",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "description": "Skills for AI agents working with Microsoft 365, Copilot Studio and GitHub Copilot",
   "scripts": {
     "test": "node scripts/validate-skills.mjs",
-    "validate": "node scripts/validate-skills.mjs"
+    "validate": "node scripts/validate-skills.mjs",
+    "site:build": "node site/build.mjs",
+    "site:serve": "node site/serve.mjs",
+    "site:dev": "npm run site:build && npm run site:serve"
+  },
+  "dependencies": {
+    "marked": "^16.3.0"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "repository": {
     "type": "git",

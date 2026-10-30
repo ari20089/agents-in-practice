@@ -16,7 +16,7 @@ The files in the repo describe the process; these settings enforce it. Set them 
   - Require review from Code Owners
 - Require status checks to pass before merging
   - Require branches to be up to date before merging
-  - Required checks: `Validate skills`, `One skill per PR`
+  - Required checks: `Validate skills`, `One skill per PR`, `Build site`
 - Require conversation resolution before merging
 - Block force pushes
 - Restrict deletions
@@ -38,6 +38,13 @@ The two check names are the `name:` values of the jobs in [`.github/workflows/va
 - **Settings → General → Features**: Issues on, Discussions optional, Wiki off.
 - **Settings → Actions → General**: Allow actions from GitHub and verified creators; Workflow permissions: read-only (the workflow sets `permissions: contents: read` itself, but the repo default should match).
 
+### GitHub Pages (the gallery)
+
+- **Settings → Pages → Build and deployment → Source: GitHub Actions.** Until this is set, the `Deploy site` workflow's deploy job fails with a "Pages not enabled" error. The build job still runs.
+- The site publishes to `https://ari20089.github.io/agents-in-practice/`. The workflow deploys on every push to `main` that touches `skills/`, `site/` or the package files, and can be run by hand from the Actions tab (`workflow_dispatch`).
+- Add `Build site` to the ruleset's required checks alongside the two validator checks, so a PR that breaks the site build cannot merge.
+- `site/README.md` explains the build. There is nothing to configure in the site itself; it reads the skill folders.
+
 ### Labels
 
 Create these so issue templates and triage line up: `bug`, `enhancement`, `skill: <slug>` per skill as they arrive, `good first issue`, `needs-info`. Dependabot PRs are identified by their author and carry no label.
@@ -56,7 +63,7 @@ Style, wording and heading choices are the author's. Don't comment on them. The 
 
 ## Merging
 
-Squash-merge with the PR title as the message. Bump `metadata.json` `updatedAt` on skill changes if the author didn't. After merge, confirm the root README catalog renders and the `Validate skills` badge is green.
+Squash-merge with the PR title as the message. Bump `metadata.json` `updatedAt` on skill changes if the author didn't. After merge, confirm the root README catalog renders, the `Validate skills` badge is green, and the gallery shows the change once `Deploy site` finishes (a minute or two).
 
 ## Adding a co-owner for a skill
 
