@@ -121,14 +121,6 @@ function cover(slug, name, description) {
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 }
 
-// Square variant used as the skill's icon on cards and the skill page.
-function iconMark(slug, name) {
-  const initials = name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join("");
-  const h = 205 + (hue(slug) % 16);
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="hsl(${h},70%,47%)"/><stop offset="1" stop-color="hsl(${(h + 15) % 360},75%,30%)"/></linearGradient></defs><rect width="96" height="96" rx="22" fill="url(#g)"/><text x="48" y="62" font-family="system-ui,Segoe UI,sans-serif" font-size="40" font-weight="700" fill="#fff" text-anchor="middle" letter-spacing="-1">${esc(initials)}</text></svg>`;
-  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
-}
-
 // Rewrite links in rendered Markdown so relative paths point at GitHub, and keep
 // images relative (the item's assets/ folder is copied next to the page).
 function rewriteLinks(html, item) {
@@ -191,7 +183,6 @@ function readItems() {
         files: listFiles(dir).filter((f) => !["metadata.json", "README.md", "assets/preview.png"].includes(f.path)),
         hasPreview,
         image: hasPreview ? `${type.dir}/${slug}/assets/preview.png` : cover(slug, meta.name, skill?.fields.description ?? meta.description),
-        icon: iconMark(slug, meta.name),
         url: `${type.dir}/${slug}/`,
         sourceUrl: `${REPO}/tree/main/${type.dir}/${slug}`,
         skillFileUrl: skill ? `${RAW}/${type.dir}/${slug}/SKILL.md` : "",
@@ -372,7 +363,7 @@ function detailPage(s) {
   <header class="detail-hero${s.hasPreview ? " has-preview" : ""}">
     <div class="detail-hero-text">
       <p class="eyebrow kicker"><a class="kicker-cat" href="${rel}index.html?category=${encodeURIComponent(s.category)}#gallery">${esc(s.category)}</a>${s.subcategory ? `<a class="kicker-sub" href="${rel}index.html?subcategory=${encodeURIComponent(s.subcategory)}#gallery">${esc(s.subcategory)}</a>` : ""}</p>
-      <div class="detail-title"><img class="skill-icon skill-icon-lg" src="${s.icon}" alt="" width="56" height="56"><h1>${esc(s.name)}</h1></div>
+      <h1>${esc(s.name)}</h1>
       <p class="lead">${esc(s.description)}</p>
       <div class="byline">
         ${s.avatar ? `<img class="avatar avatar-lg" src="${s.avatar}" alt="" width="48" height="48">` : `<span class="avatar avatar-lg avatar-text" aria-hidden="true">${esc(s.author[0] ?? "?")}</span>`}
