@@ -63,12 +63,13 @@ For a prompt, paste its `PROMPT.md` into Copilot Chat. Its README says what it n
 
 ## Prompt catalog
 
-> 0 prompts
+> 1 prompt
 
 ### Developer productivity
 
 | Prompt | Platforms | Description |
 | --- | --- | --- |
+| [code-app-readiness-check](./prompts/code-app-readiness-check/) | GitHub Copilot, Any coding agent | Paste it into GitHub Copilot Chat on an existing React or Vue repository and it reports whether the app can become a Power Apps code app: its own sign-in, direct API calls that should go through connectors, offline and worker assumptions, and build output and routing problems, with a verdict and an ordered fix list. |
 
 ## Agent instructions catalog
 
