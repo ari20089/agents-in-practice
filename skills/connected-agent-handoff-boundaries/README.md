@@ -2,7 +2,7 @@
 
 ## Summary
 
-Copilot Studio agents can hand work to child agents, connected agents, external agents (A2A, Microsoft Foundry, Microsoft 365 Agents SDK), people through an engagement hub, and, through the Employee Self-Service agent, other Copilot agents. Microsoft's guidance for this is **spread across three pages** (multi-agent patterns, live-agent handoff, Employee Self-Service handoff). The decision tiers (no confirmation, confirmation in the conversation, offline approval) are on a fourth page, scoped to one agent. **No page defines who may delegate which kind of action to whom, or what survives the handoff.**
+Copilot Studio agents can hand work to child agents, connected agents, external agents (A2A, Microsoft Foundry, Microsoft 365 Agents SDK), people through an engagement hub, and, through the Employee Self-Service agent in Microsoft Copilot, other agents. Microsoft's guidance for this is **spread across three pages** (multi-agent patterns, live-agent handoff, Employee Self-Service handoff). The decision tiers (no confirmation, confirmation in the conversation, offline approval) are on a fourth page, scoped to one agent. **No page defines who may delegate which kind of action to whom, or what survives the handoff.**
 
 This skill gathers the documented mechanics into one dated reference and adds a decision-boundary pattern per action type. Makers, architects and reviewers can then approve a multi-agent design with the gaps in view.
 

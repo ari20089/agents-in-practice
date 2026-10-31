@@ -2,7 +2,7 @@
 
 **Who may delegate what to whom, and what survives the handoff**
 
-> **Status:** Written 30 October 2026, with every source re-read that day. Several of the mechanisms below are in preview: the standard-harness "Add other agents" page carries the preview banner, Foundry, Fabric and Agents SDK connections are public preview, agents on the GitHub Copilot harness are created through a page labelled "(preview)", and the Customer Conversation pages are "prerelease documentation and is subject to change." Treat every statement as "true of the docs on that date" and re-check the sources at the end before relying on it.
+> **Status:** Written 30 October 2026, with every source re-read that day. Several of the mechanisms below are in preview: the standard-harness "Add other agents" page carries the preview banner, Foundry, Fabric and Agents SDK connections are public preview, the GitHub Copilot harness pages point to "Create an agent (preview)", and the Customer Conversation pages are "prerelease documentation and is subject to change." Treat every statement as "true of the docs on that date" and re-check the sources at the end before relying on it.
 
 ## Who this is for
 
@@ -13,7 +13,7 @@
 
 ## The short version
 
-1. Microsoft's handoff guidance sits on three pages that never meet. Agent-to-agent delegation is on **Multi-agent orchestration patterns and best practices**, handoff to people on **Hand off to a live agent**, and handoff from the Employee Self-Service agent to other Copilot agents on **Agent handoff for Employee Self-Service agent**. A fourth page, **Apply generative orchestration capabilities**, defines the three decision tiers: no confirmation, confirmation in the conversation, and offline approval. It scopes them to one agent's own actions.
+1. Microsoft Copilot Studio's handoff guidance sits on three pages that never meet. Agent-to-agent delegation is on **Multi-agent orchestration patterns and best practices**, handoff to people on **Hand off to a live agent**, and handoff from the Employee Self-Service agent to other Copilot agents on **Agent handoff for Employee Self-Service agent**. A fourth page, **Apply generative orchestration capabilities**, defines the three decision tiers: no confirmation, confirmation in the conversation, and offline approval. It scopes them to one agent's own actions.
 2. No page says who may delegate which kind of action to which kind of agent. The closest is one example on the patterns page: "if the parent agent isn't allowed to delete records but the connected agent can, the parent agent shouldn't call the connected agent in scenarios where deletion might happen without proper approval."
 3. What survives a handoff depends on the mechanism and the harness, and the defaults lean towards passing more:
    - a child agent "always receives the parent's conversation context";
@@ -44,16 +44,18 @@ Three Copilot Studio harnesses and Microsoft 365 Copilot each handle delegation 
 
 | Mechanism | Harness or product | What it is (documented) |
 |---|---|---|
-| **Child agent** | Standard | "A lightweight agent that exists within the context of your main agent." For when "You don't need separate configuration settings, authentication, or deployment capabilities for the subagents." |
+| **Child agent** | Standard | "a lightweight agent that exists within the context of your main agent". For when "You don't need separate configuration settings, authentication, or deployment capabilities for the subagents." |
 | **Connected agent** (Copilot Studio) | Standard | A separate published agent "in the same environment as your main agent", configured to allow connections |
 | **External connected agent** | Standard | A2A, Microsoft Foundry (preview), Fabric Data agents (preview), Microsoft 365 Agents SDK (preview) |
 | **Topic redirect** | Standard | "You can explicitly redirect to a child or connected agent from within a topic. Once the agent is done, the originating topic where you redirected from resumes." Not supported for Fabric Data agents. |
 | **Connected agent** | GitHub Copilot | Copilot Studio, Foundry, A2A or Microsoft 365 Agents SDK agents, all added from one Add a connected agent dialog |
 | **Sub-agent** | Customer Conversation | A specialist built inside the primary agent that "shares its configuration, deployment, and application lifecycle management (ALM) with the primary agent" |
-| **Connected agent** | Customer Conversation | "Currently only Azure AI Foundry agents" |
+| **Connected agent** | Customer Conversation | "Currently only Azure AI Foundry agents" (the product's current name, used on the other pages, is Microsoft Foundry) |
 | **Live-agent handoff** | Standard; Customer Conversation has escalation paths per sub-agent | Transfer conversation node to an engagement hub; generic hubs need a custom adapter, and "Handoff currently supports only Direct Line" |
-| **Hub agent** | Microsoft 365 Copilot (Employee Self-Service) | The Employee Self-Service agent coordinates connected agents and assembles one answer; "only supports connecting agents within the same environment" |
-| **Agent handoff** | Microsoft 365 Copilot (Employee Self-Service) | The Employee Self-Service agent passes the conversation to a target agent that "owns the interaction for that task". Targets can be line-of-business agents or store agents "like Workday, Now Assist, or SAP Joule". It "can route to agents across environments". |
+| **Hub agent** | Microsoft Copilot (Employee Self-Service agent) | The Employee Self-Service agent coordinates connected agents and assembles one answer; "only supports connecting agents within the same environment" |
+| **Agent handoff** | Microsoft Copilot (Employee Self-Service agent) | The Employee Self-Service agent passes the conversation to a target agent that "owns the interaction for that task". Targets can be line-of-business agents or store agents "like Workday, Now Assist, or SAP Joule". It "can route to agents across environments". |
+
+Child agents are documented for the standard harness only. The GitHub Copilot harness pages describe connected agents; the Customer Conversation harness has sub-agents. The Employee Self-Service pages say "Microsoft Copilot" and "Copilot Chat" for the product and its chat surface; this guide follows them, and uses "Microsoft 365 Copilot" only as the catalog's platform label.
 
 The harnesses differ on who talks to the user:
 
@@ -65,11 +67,11 @@ The harnesses differ on who talks to the user:
 ### 3.1 Child agent (standard harness)
 
 - Context: "always receives the parent conversation context," with "no setting to exclude it."
-- Task: "By default, a child agent receives a natural language task to accomplish from the main agent."
+- Task: "By default, a child agent receives a natural language task to accomplish from the main agent when the agent calls it."
 - Inputs: optional, typed, optionally required. **Should prompt user** lets the child ask the user for a missing value.
 - Return: "a natural language summary of what happened during its execution," plus any configured outputs.
 - After running: **Don't respond** (default), **Write the response with generative AI**, **Send specific response** or **Send an adaptive card**. This setting "doesn't prevent these messages because it only tells the parent what to do when the subagent finishes."
-- Tools: has "its own limits for the number of tools, separate from the limits of the parent agent." A tool can be restricted to explicit references by clearing **Allow agent to decide dynamically when to use this tool**.
+- Tools: child agents "have their own limits for the number of tools, separate from the limits of the parent agent." A tool can be restricted to explicit references by clearing **Allow agent to decide dynamically when to use this tool**.
 
 ### 3.2 Connected Copilot Studio agent (standard harness)
 
@@ -78,17 +80,17 @@ The harnesses differ on who talks to the user:
 - Context: **Pass conversation history to this agent**, which "is enabled by default." Clearing it "limits the information being passed to the agent to just the explicit task that the main agent wants the other agent to complete."
 - Description: "once an agent is connected, you control its description locally. Any updates to the connected agent's description don't automatically sync with your main agent."
 - Version: "Your main agent can only use the latest version of a connected agent after that agent is published."
-- Sharing: "Depending on your authentication setup, you might need to share the connected agent with end users of the main agent."
+- Sharing: "Depending on your authentication setup, you might need to share the connected agent with end users of the main agent so they can access it and it can work correctly at runtime."
 - Knowledge: "Child and connected agents respect the Use general knowledge setting of the main agent," but "might sometimes use the underlying language model knowledge when generating questions or messages."
 - Citations: "might not always be maintained when passing outputs back from an agent back to a calling agent."
 - Depth: "If you use an agent as a main agent with one or more connected agents, you can't also use the same agent as a connected agent for a second main agent." The error `ConnectedAgentChainingNotSupported` says the same: "those subagents can't have their own connected agents."
-- Authentication (error `ConnectedAgentAuthMismatch`): "If the connected agent has No authentication configured, any orchestrator authentication is acceptable. If the connected agent requires authentication, the orchestrator must use the same authentication method." Manual Generic OAuth2 on the orchestrator "isn't compatible with connected agents that require authentication."
+- Authentication (error `ConnectedAgentAuthMismatch`), three rules: "If the connected agent has No authentication configured, any orchestrator authentication is acceptable." "If the connected agent requires authentication, the orchestrator must use the same authentication method." "Manual authentication (Generic OAuth2) on the orchestrator isn't compatible with connected agents that require authentication."
 
 ### 3.3 Connected agent (GitHub Copilot harness)
 
-- Flow, verbatim: "The connected agent runs in its own orchestration context, with its own configuration. The primary agent sends the relevant conversation history and user message to the connected agent."
+- Flow, two of the page's six steps: "The connected agent runs in its own orchestration context, with its own configuration." "The primary agent sends the relevant conversation history and user message to the connected agent."
 - Rephrasing: "the orchestrating model creates the task description and can rephrase or expand the user's request. Don't design connected-agent workflows that depend on the original prompt being forwarded verbatim."
-- Size: "Connected-agent handoffs are subject to a messaging payload limit, so an oversized file handoff might not reach the primary agent. Return compact structured data when possible." No number is given.
+- Size: "Connected-agent handoffs are subject to a messaging payload limit, so an oversized file handoff might not reach the primary agent. Return compact structured data when possible, and create or process the file in the primary agent." No number is given.
 - Sharing: "Access to a parent agent doesn't automatically grant access to its connected agents. Share each connected agent separately with every intended user or group."
 - Routing is based on "The connected agent's name and description", "The user's message and conversation context" and "Your primary agent's instructions."
 - Removal: "Removing a connected agent from your agent doesn't delete the connected agent itself. It only removes the delegation relationship."
@@ -97,7 +99,7 @@ The harnesses differ on who talks to the user:
 ### 3.4 External agents (A2A, Foundry, Agents SDK)
 
 - A2A payload (standard-harness sample): "A unique `contextId`", "Message IDs", "Locale information", "Full chat history, not just the latest user utterance", "Message content parts". The history sits in the metadata key `copilotstudio.microsoft.com/a2a/chathistory`.
-- A2A authentication: "None", "API key" or "OAuth 2.0". On the GitHub Copilot harness, "A2A connections use the custom connector infrastructure" and the remote agent must be "reachable from Copilot Studio over the public internet". The same note says this lets you reach A2A agents "running on-premises or within a virtual network".
+- A2A authentication: "None", "API key" or "OAuth 2.0". On the GitHub Copilot harness, "A2A connections use the custom connector infrastructure" and the prerequisites say the remote agent must be "reachable from Copilot Studio over the public internet", while a note on the same page says the custom connector infrastructure lets you reach A2A agents "running on-premises or within a virtual network". The page states both; check which applies to your network.
 - Foundry (GitHub Copilot harness): "The connection authenticates with your Microsoft Entra ID user login," and the authentication type field shows "Microsoft Entra ID User Login". The page does not say whose identity the connection uses when someone other than the maker chats with the agent.
 - Customer Conversation: connected Foundry agents "can't reference tools, topics, events, sub-agents, or variables from the primary agent's orchestration."
 - Responsibility, as worded on the A2A and Foundry pages: "When you connect to agents outside of Copilot Studio, you're responsible for the use of such agents." The pages list what you must ensure:
@@ -118,9 +120,9 @@ The harnesses differ on who talks to the user:
 - Generic hubs receive a `handoff.initiate` event activity with the context in its value and the transcript as an attachment.
 - **Not documented:** any way to exclude a user-defined topic variable from the payload.
 
-### 3.6 Employee Self-Service agent handoff (Microsoft 365 Copilot)
+### 3.6 Employee Self-Service agent handoff (Microsoft Copilot)
 
-- "Contextual handoff ... passes both the conversation history and the user's original prompt to the target agent."
+- The Employee Self-Service agent "supports contextual handoff, which passes both the conversation history and the user's original prompt to the target agent."
 - Target ownership: "The target agent owns the full session and can manage auth flows directly with the user." Step-up authentication such as an MFA prompt "for sensitive actions" is supported.
 - Return: "When the user is done with the target agent, they must take an explicit action to return to the Employee Self-Service agent."
 - Depth: "Don't go more than two levels deep in your agent hierarchy," because "Conversation context degrades as it passes through multiple layers."
@@ -140,7 +142,7 @@ From the standard-harness context pages:
 
 | Control | Where it is set | Documented behaviour |
 |---|---|---|
-| **Ask the end user before running** | Each tool, in the agent that owns it | "ask the agent for confirmation before running the tool. This option is set to No by default." |
+| **Ask the end user before running** | Each tool, in the agent that owns it (documented on a standard-harness page) | "ask the agent for confirmation before running the tool. This option is set to No by default." |
 | **Authentication** on a tool | Each tool | "End user" or "Maker-provided" credentials; "By default, user authentication applies." |
 | **Control maker credential options** | Power Platform admin center, per environment or environment group | Admins choose end-user, maker-provided or both; "By default, both End-user and Maker-provided credentials are enabled." With maker credentials, "an end user might retrieve information or perform actions that only the maker's account is permitted to do." |
 | Event triggers | Agent | "Currently, agents with event triggers use only the maker's credentials for authentication. Tools called by an agent in response to a trigger must also use the maker's credentials." |
@@ -364,7 +366,7 @@ Microsoft documentation, with each page's `ms.date` when it was retrieved on 30 
 - [Harnesses in Copilot Studio](https://learn.microsoft.com/en-us/microsoft-copilot-studio/harnesses-overview), 19 Oct 2026
 - [Compare Copilot Studio agent harnesses](https://learn.microsoft.com/en-us/microsoft-copilot-studio/guidance/choose-harness), 30 Sep 2026
 
-**Employee Self-Service (Microsoft 365 Copilot)**
+**Employee Self-Service agent (Microsoft Copilot)**
 
 - [Connecting agents overview](https://learn.microsoft.com/en-us/microsoft-365/copilot/employee-self-service/connecting-agents-overview), 10 Jun 2026
 - [Set up the Employee Self-Service hub for custom engine agents](https://learn.microsoft.com/en-us/microsoft-365/copilot/employee-self-service/multi-agent-hub), 2 Oct 2026

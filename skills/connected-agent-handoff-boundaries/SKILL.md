@@ -5,13 +5,13 @@ description: Use when the user is designing, reviewing or troubleshooting a Micr
 
 # Connected-Agent Handoff Boundaries
 
-Microsoft's handoff guidance for Copilot Studio is spread across three pages: agent-to-agent delegation, handoff to a live agent, and Employee Self-Service agent handoff. A fourth page defines the decision tiers for one agent's actions. No page says who may delegate which kind of action to which kind of agent, or states in one place what survives the handoff. This skill turns the documented mechanics into a decision-boundary pattern per action type. It is advisory: never change agents, settings, policies or credentials.
+Microsoft's handoff guidance for Microsoft Copilot Studio is spread across three pages: agent-to-agent delegation, handoff to a live agent, and Employee Self-Service agent handoff. A fourth page defines the decision tiers for one agent's actions. No page says who may delegate which kind of action to which kind of agent, or states in one place what survives the handoff. This skill turns the documented mechanics into a decision-boundary pattern per action type. It is advisory: never change agents, settings, policies or credentials.
 
 ## Before Starting
 
 Determine the following before proceeding. If the user has not supplied them, ask for the missing ones.
 
-1. **Harness or product** — standard, GitHub Copilot, or Customer Conversation harness in Copilot Studio, or the Employee Self-Service agent in Microsoft 365 Copilot. Behaviour differs by harness (see Step 1); if the user does not know, ask how the agent was created and say which you assumed.
+1. **Harness or product** — standard, GitHub Copilot, or Customer Conversation harness in Copilot Studio, or the Employee Self-Service agent in Microsoft Copilot. Behaviour differs by harness (see Step 1); if the user does not know, ask how the agent was created and say which you assumed.
 2. **Delegates** — every agent or person the design hands off to, and how: child agent, connected Copilot Studio agent, external agent (A2A, Foundry, Agents SDK, Fabric Data agent, third-party store agent), live agent through an engagement hub, or topic redirect.
 3. **Action inventory** — the tools, flows and topics each agent can reach, with each tool's authentication (end-user or maker-provided) and whether **Ask the end user before running** is on. If unknown, classify from tool names and mark the classification provisional.
 4. **Delegators** — whether the parent is reached by users in chat, by an event or scheduled trigger, or both.
@@ -44,10 +44,10 @@ Read [references/handoff-guide.md](references/handoff-guide.md) sections 1 and 2
 |---|---|---|
 | "Child agent" | Standard harness | Always receives parent context; no setting to exclude it |
 | "Sub-agent" | Customer Conversation harness (or loosely, any subagent) | Shares configuration, deployment and ALM with the primary agent |
-| "Connected agent" | Any harness | Standard: history toggle, same environment, one level. GitHub Copilot: parent is the only communicator; no history setting documented. Customer Conversation: Foundry agents only. |
+| "Connected agent" | Any harness | Standard: history toggle, same environment, one level. GitHub Copilot: parent is the only communicator; no history setting documented. Customer Conversation: Microsoft Foundry agents only. |
 | "A2A agent", "Foundry agent" | Standard or GitHub Copilot harness | External: Microsoft puts responsibility for data flows and approvals on the maker |
 | "Hand off to a human", "escalate" | Standard harness, or Customer Conversation escalation paths | Full history and all user-defined topic variables go to the hub |
-| "Agent handoff", "hub agent" | Employee Self-Service agent, Microsoft 365 Copilot | Handoff passes history and the original prompt, can cross environments, and can target third-party agents |
+| "Agent handoff", "hub agent" | Employee Self-Service agent in Microsoft Copilot | Handoff passes history and the original prompt, can cross environments, and can target third-party agents |
 
 If the user mixes harnesses in one design, treat each delegation edge separately.
 
@@ -89,13 +89,13 @@ Give a clear position: ready, ready with listed fixes, or not ready. A design is
 - **Always** keep three classes of fact apart: *documented* (page and date), *observed in tenant* (whose test, when), and *not documented*.
 - **Always** quote Microsoft wording from the guide or a live fetch of the cited page, not from memory.
 - **Always** resolve the "only agent that talks to the user" conflict (Q6) in favour of the newer subagent page: instruct the subagent to stay silent; do not rely on a parent-only instruction.
-- **Always** use Microsoft's current names: standard harness, GitHub Copilot harness (a Copilot Studio runtime, not the GitHub Copilot service), Customer Conversation harness, Microsoft Foundry, Agent2Agent (A2A), Microsoft 365 Agents SDK, engagement hub.
+- **Always** use Microsoft's current names: standard harness; GitHub Copilot harness ("a Microsoft Copilot Studio authoring and orchestration framework, not the GitHub Copilot service"); Customer Conversation harness, whose specialists are sub-agents; Microsoft Foundry (not Azure AI Foundry); Agent2Agent (A2A); Microsoft 365 Agents SDK; engagement hub; and, for the Employee Self-Service agent, Microsoft Copilot and Copilot Chat as its pages say.
 - **Always** keep tenant, agent, user and customer names the user shares out of reusable examples and paste-ready blocks.
 - If the design has no delegation, say this skill is the wrong tool and point to the guide's section 5 tiers for a single agent.
 
 ## Examples
 
-**Input:** "Our IT helpdesk agent (standard harness) routes to a Facilities connected agent in the same environment and to a vendor's A2A agent that can cancel hardware orders. Users chat with it in Teams. What boundaries do we need?"
+**Input:** "Our IT helpdesk agent (standard harness) routes to a Facilities connected agent in the same environment and to a vendor's A2A agent that can cancel hardware orders. Users chat with it in Microsoft Teams. What boundaries do we need?"
 
 **Output (abridged):**
 
