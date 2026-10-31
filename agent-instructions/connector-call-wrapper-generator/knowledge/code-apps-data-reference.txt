@@ -39,6 +39,8 @@ Each generated service (CLI 1.3.0) imports `getClient` and `IOperationResult` fr
 | `create(record: Omit<T, '<primary key>'>)` | `Promise<IOperationResult<T>>` |
 | `update(id: string, changedFields: Partial<Omit<T, '<primary key>'>>, partitionId?: string)` | `Promise<IOperationResult<T>>` |
 | `delete(id: string, partitionId?: string)` | `Promise<IOperationResult<void>>` |
+
+`partitionId` (for elastic tables) is only on the Dataverse `update` and `delete` templates; SQL and SharePoint tables generate the same methods without it.
 | `get(id: string, options?: IGetOptions)` | `Promise<IOperationResult<T>>` |
 | `getAll(options?: IGetAllOptions)` | `Promise<IOperationResult<T[]>>` |
 | `getMetadata(options?: GetEntityMetadataOptions<T>)` (Dataverse) | `Promise<IOperationResult<Partial<EntityMetadata>>>` |
