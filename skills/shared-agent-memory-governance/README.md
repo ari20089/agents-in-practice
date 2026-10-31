@@ -25,7 +25,7 @@ The full skill definition is in [`SKILL.md`](./SKILL.md), which points the agent
 The skill works through six steps:
 
 1. **Identify which "memory" the user means.** Four features are called memory (Microsoft 365 Copilot memory, Copilot Studio per-user memory on two harnesses, and shared memory for agents with an account) and they behave differently. The skill refuses to let the answer slide between them.
-2. **State what is documented, with dates.** Shared across all users with no privacy boundary; surfaces content to users without permission to the source "regardless of sensitivity label"; viewable and deletable by any user; auto-deleted after 28 days with no interaction; no opt-out; no independent admin switch; exclusion list is model guidance, not a filter; agent deletion removes the Entra Agent ID and says nothing about memory.
+2. **State what is documented, with dates.** Shared across all users with no privacy boundary; surfaces content to users without permission to the source "regardless of sensitivity label"; viewable and deletable by any user; auto-deleted after 28 days with no interaction; no opt-out; no independent admin switch; an exclusion list whose enforcement is not documented; agent deletion removes the Entra Agent ID and says nothing about memory.
 3. **Map Purview coverage honestly** across three data types: prompts and responses (documented), the agent account's own mail and Teams traffic (documented, treat the agent as a user), and shared memory (not documented for any capability). "Not documented" is kept distinct from "not supported".
 4. **Surface the open questions** (Q1 to Q10: storage location, retention, holds, eDiscovery search, audit, deletion on agent removal, the 28-day clock for always-on agents, admin export, residency, and what happens when the maker leaves) that apply to the user's scenario. If the user has run any of the tenant tests, their results are reported as a separate class, "observed in tenant", never blended with what Microsoft documents.
 5. **Produce the artifact requested:** governance assessment, instruction-level memory rules, legal-hold checklist, DSR access/erasure runbook, decommission plan, retention schedule entry, or the seven-test tenant plan.
@@ -39,7 +39,7 @@ The skill works through six steps:
 
 ## Limitations
 
-- Written against **Frontier preview** documentation dated 14 to 22 October 2026. Agent accounts and shared memory are prerelease and Microsoft's pages carry the "subject to change" banner.
+- Written against **Frontier preview** documentation: the agent-account pages are dated 14 and 15 October 2026, and every source was re-read on 30 October 2026. Agent accounts and shared memory are prerelease and Microsoft's pages carry the "subject to change" banner.
 - The Purview pages for Copilot Studio and Agent 365 are dated May 2026 and predate agent accounts; a revision there would change the coverage matrix.
 - One source (Message Center notice MC1478965) was read from a public archive because the Message Center requires tenant sign-in.
 - The statement that deleting an agent deletes its Entra Agent ID comes from a Microsoft page scoped to the standard harness; agents with accounts run on the GitHub Copilot harness. The skill reports it as inferred, not documented.
