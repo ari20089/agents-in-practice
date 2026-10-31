@@ -282,7 +282,6 @@ function indexPage(items, catalog) {
 <section class="intro">
   <div class="container">
     <div class="intro-text">
-      <p class="eyebrow">Open skills catalog</p>
       <h1>${esc(SITE.title)}</h1>
       <p class="subtitle">Agent skills you can copy into your own agent</p>
       <p class="lead">${esc(SITE.tagline)} Each one is a folder in the open <a href="${REPO}/blob/main/SKILL-SCHEMA.md">Agent Skills</a> format, so it runs in any host that supports&nbsp;it.</p>
