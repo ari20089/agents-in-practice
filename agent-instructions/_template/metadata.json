@@ -1,0 +1,13 @@
+{
+  "name": "Your Agent Title",
+  "description": "One friendly sentence for the catalog card.",
+  "platforms": ["Microsoft 365 Copilot", "Copilot Studio"],
+  "tags": ["tag-one", "tag-two"],
+  "subcategory": "Productivity",
+  "author": "Your Name",
+  "authorGithub": "your-handle",
+  "authorUrl": "https://www.linkedin.com/in/your-handle/",
+  "version": "1.0",
+  "createdAt": "2026-01-01",
+  "updatedAt": "2026-01-01"
+}

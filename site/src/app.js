@@ -124,6 +124,22 @@
     sync();
   }
 
+  // ---------- copy instructions ----------
+
+  const copy = $("copy-instructions");
+  if (copy) {
+    copy.addEventListener("click", async () => {
+      const text = $(copy.dataset.target).textContent;
+      try {
+        await navigator.clipboard.writeText(text);
+        copy.textContent = "Copied";
+      } catch {
+        copy.textContent = "Select the text and copy it";
+      }
+      setTimeout(() => (copy.textContent = "Copy instructions"), 2000);
+    });
+  }
+
   // ---------- detail tabs ----------
 
   const tablist = document.querySelector(".tabs[role=tablist]");

@@ -80,8 +80,9 @@ function fmtSize(bytes) {
   return `${(bytes / 1024).toFixed(bytes < 10240 ? 1 : 0)} KB`;
 }
 
-// Generated cover for skills without assets/preview.png: an editor window showing the
-// skill's own SKILL.md frontmatter, the closest thing to a screenshot of a skill.
+// Generated cover for items without assets/preview.png: an editor window showing the
+// item's own file (SKILL.md frontmatter, or the opening of INSTRUCTIONS.md), the closest
+// thing to a screenshot of it.
 function wrap(text, first, rest, maxLines) {
   const words = String(text).split(/\s+/).filter(Boolean);
   const lines = [];
@@ -100,19 +101,22 @@ function wrap(text, first, rest, maxLines) {
   return lines;
 }
 
-function cover(slug, name, description) {
+function cover(slug, name, description, instructions = "") {
   const mono = "ui-monospace,SFMono-Regular,Menlo,Consolas,monospace";
+  const file = instructions ? "INSTRUCTIONS.md" : "SKILL.md";
   const desc = wrap(description || "", 40, 52, 5);
-  const rows = [
-    `<tspan fill="#64748b">---</tspan>`,
-    `<tspan fill="#93c5fd">name:</tspan><tspan fill="#e2e8f0"> ${esc(slug.length > 46 ? slug.slice(0, 45) + "…" : slug)}</tspan>`,
-    `<tspan fill="#93c5fd">description:</tspan><tspan fill="#cbd5e1"> ${esc(desc[0] ?? "")}</tspan>`,
-    ...desc.slice(1).map((l) => `<tspan fill="#cbd5e1">  ${esc(l)}</tspan>`),
-    `<tspan fill="#64748b">---</tspan>`,
-  ];
+  const rows = instructions
+    ? wrap(instructions.replace(/^#+\s*/gm, ""), 54, 54, 7).map((l) => `<tspan fill="#cbd5e1">${esc(l)}</tspan>`)
+    : [
+        `<tspan fill="#64748b">---</tspan>`,
+        `<tspan fill="#93c5fd">name:</tspan><tspan fill="#e2e8f0"> ${esc(slug.length > 46 ? slug.slice(0, 45) + "…" : slug)}</tspan>`,
+        `<tspan fill="#93c5fd">description:</tspan><tspan fill="#cbd5e1"> ${esc(desc[0] ?? "")}</tspan>`,
+        ...desc.slice(1).map((l) => `<tspan fill="#cbd5e1">  ${esc(l)}</tspan>`),
+        `<tspan fill="#64748b">---</tspan>`,
+      ];
   const text = rows.map((r, i) => `<text x="62" y="${106 + i * 23}" font-family="${mono}" font-size="15" xml:space="preserve">${r}</text>`).join("");
   const heading = `<text x="62" y="${106 + rows.length * 23 + 12}" font-family="${mono}" font-size="16.5" font-weight="700" fill="#ffffff" xml:space="preserve"><tspan fill="#fbbf24"># </tspan>${esc(name)}</text>`;
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360"><defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0a1428"/><stop offset="1" stop-color="#132a5c"/></linearGradient><radialGradient id="glow" cx=".85" cy=".1" r=".7"><stop offset="0" stop-color="#2563eb" stop-opacity=".55"/><stop offset="1" stop-color="#2563eb" stop-opacity="0"/></radialGradient></defs><rect width="640" height="360" fill="url(#bg)"/><rect width="640" height="360" fill="url(#glow)"/><rect x="36" y="34" width="568" height="300" rx="12" fill="#0b1222" stroke="#ffffff" stroke-opacity=".1"/><path d="M36 46a12 12 0 0 1 12-12h544a12 12 0 0 1 12 12v24H36z" fill="#111b31"/><circle cx="58" cy="52" r="5" fill="#ff5f57"/><circle cx="76" cy="52" r="5" fill="#febc2e"/><circle cx="94" cy="52" r="5" fill="#28c840"/><rect x="116" y="40" width="104" height="30" rx="6" fill="#0b1222"/><text x="130" y="60" font-family="${mono}" font-size="13.5" fill="#cbd5e1">SKILL.md</text><rect x="36" y="70" width="568" height="1" fill="#ffffff" fill-opacity=".08"/>${text}${heading}</svg>`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360"><defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0a1428"/><stop offset="1" stop-color="#132a5c"/></linearGradient><radialGradient id="glow" cx=".85" cy=".1" r=".7"><stop offset="0" stop-color="#2563eb" stop-opacity=".55"/><stop offset="1" stop-color="#2563eb" stop-opacity="0"/></radialGradient></defs><rect width="640" height="360" fill="url(#bg)"/><rect width="640" height="360" fill="url(#glow)"/><rect x="36" y="34" width="568" height="300" rx="12" fill="#0b1222" stroke="#ffffff" stroke-opacity=".1"/><path d="M36 46a12 12 0 0 1 12-12h544a12 12 0 0 1 12 12v24H36z" fill="#111b31"/><circle cx="58" cy="52" r="5" fill="#ff5f57"/><circle cx="76" cy="52" r="5" fill="#febc2e"/><circle cx="94" cy="52" r="5" fill="#28c840"/><rect x="116" y="40" width="${file.length * 8.2 + 28}" height="30" rx="6" fill="#0b1222"/><text x="130" y="60" font-family="${mono}" font-size="13.5" fill="#cbd5e1">${file}</text><rect x="36" y="70" width="568" height="1" fill="#ffffff" fill-opacity=".08"/>${text}${heading}</svg>`;
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 }
 
@@ -152,6 +156,7 @@ function readItems() {
       const meta = JSON.parse(readFileSync(join(dir, "metadata.json"), "utf8"));
       const readme = existsSync(join(dir, "README.md")) ? readFileSync(join(dir, "README.md"), "utf8") : "";
       const skill = existsSync(join(dir, "SKILL.md")) ? frontmatter(readFileSync(join(dir, "SKILL.md"), "utf8")) : null;
+      const instructions = existsSync(join(dir, "INSTRUCTIONS.md")) ? readFileSync(join(dir, "INSTRUCTIONS.md"), "utf8").trim() : "";
       const hasPreview = existsSync(join(dir, "assets", "preview.png"));
       items.push({
         slug,
@@ -172,14 +177,17 @@ function readItems() {
         updatedAt: meta.updatedAt ?? "",
         agentDescription: skill?.fields.description ?? "",
         skillBody: skill?.body ?? "",
+        instructions,
+        instructionChars: [...instructions].length,
         readme,
         // metadata.json, README.md and the gallery preview are for people, not the agent.
         files: listFiles(dir).filter((f) => !["metadata.json", "README.md", "assets/preview.png"].includes(f.path)),
         hasPreview,
-        image: hasPreview ? `${type.dir}/${slug}/assets/preview.png` : cover(slug, meta.name, skill?.fields.description ?? meta.description),
+        image: hasPreview ? `${type.dir}/${slug}/assets/preview.png` : cover(slug, meta.name, skill?.fields.description ?? meta.description, instructions),
         url: `${type.dir}/${slug}/`,
         sourceUrl: `${REPO}/tree/main/${type.dir}/${slug}`,
         skillFileUrl: skill ? `${RAW}/${type.dir}/${slug}/SKILL.md` : "",
+        instructionsFileUrl: instructions ? `${RAW}/${type.dir}/${slug}/INSTRUCTIONS.md` : "",
         issueUrl: `${REPO}/issues/new/choose`,
         install: type.install.replace("<slug>", slug),
       });
@@ -374,6 +382,7 @@ function detailPage(s) {
       <div class="actions">
         <a class="btn btn-primary" href="${s.sourceUrl}">View on GitHub</a>
         ${s.skillFileUrl ? `<a class="btn" href="${s.skillFileUrl}">Open SKILL.md</a>` : ""}
+        ${s.instructionsFileUrl ? `<a class="btn" href="${s.instructionsFileUrl}">Open INSTRUCTIONS.md</a>` : ""}
         <a class="btn btn-ghost" href="${s.issueUrl}">Report an issue</a>
       </div>
     </div>
@@ -388,6 +397,7 @@ function detailPage(s) {
       <div class="tabs" role="tablist" aria-label="Sections">
         <button role="tab" id="tab-overview" aria-controls="overview" aria-selected="true">Overview</button>
         ${skillHtml ? `<button role="tab" id="tab-instructions" aria-controls="instructions" aria-selected="false">Skill instructions</button>` : ""}
+        ${s.instructions ? `<button role="tab" id="tab-instructions" aria-controls="instructions" aria-selected="false">Instructions</button>` : ""}
         <button role="tab" id="tab-files" aria-controls="files" aria-selected="false">Files <span class="tab-count">${s.files.length}</span></button>
       </div>
 
@@ -407,9 +417,20 @@ function detailPage(s) {
         ${skillHtml}
       </section>` : ""}
 
+      ${s.instructions ? `<section id="instructions" class="tab-panel prose" role="tabpanel" aria-labelledby="tab-instructions">
+        <h2 class="panel-title">Instructions</h2>
+        <div class="callout">
+          <p class="callout-label">Paste into the agent's Instructions field</p>
+          <p>${s.instructionChars.toLocaleString("en-US")} of 8,000 characters. Everything the agent does is defined here; its knowledge files hold reference data only.</p>
+          <button class="btn btn-small" type="button" id="copy-instructions" data-target="instructions-text">Copy instructions</button>
+        </div>
+        <p class="muted small">From <a href="${REPO}/blob/main/${s.type}/${s.slug}/INSTRUCTIONS.md"><code>${esc(s.type)}/${esc(s.slug)}/INSTRUCTIONS.md</code></a>, shown exactly as it is pasted.</p>
+        <pre class="instructions-text" id="instructions-text">${esc(s.instructions)}</pre>
+      </section>` : ""}
+
       <section id="files" class="tab-panel" role="tabpanel" aria-labelledby="tab-files">
         <h2 class="panel-title">Files</h2>
-        <p class="muted">Everything the agent loads. Copy the whole folder; <code>metadata.json</code>, <code>README.md</code> and the gallery preview image are for people and are not listed.</p>
+        <p class="muted">${s.instructions ? "Everything you add to the agent, plus any extras for people in <code>assets/</code>" : "Everything the agent loads. Copy the whole folder"}; <code>metadata.json</code>, <code>README.md</code> and the gallery preview image are for people and are not listed.</p>
         <table class="files"><thead><tr><th>Path</th><th class="num">Size</th></tr></thead><tbody>${fileRows}</tbody></table>
       </section>
     </div>
@@ -487,7 +508,7 @@ function zip(entries, iso) {
 // ---------- build ----------
 
 const items = readItems();
-const catalog = items.map(({ readme, skillBody, files, ...rest }) => rest);
+const catalog = items.map(({ readme, skillBody, instructions, files, ...rest }) => rest);
 
 rmSync(OUT, { recursive: true, force: true });
 mkdirSync(join(OUT, "assets"), { recursive: true });
