@@ -356,10 +356,10 @@ function detailPage(s) {
     .join("");
 
   const body = `
+<article class="detail" style="--h:${s.hue}">
+<div class="detail-band">
 <div class="container">
 <nav class="breadcrumb" aria-label="Breadcrumb"><a href="${rel}index.html">Gallery</a> <span aria-hidden="true">›</span> <a href="${rel}index.html?category=${encodeURIComponent(s.category)}#gallery">${esc(s.category)}</a> <span aria-hidden="true">›</span> <span aria-current="page">${esc(s.name)}</span></nav>
-
-<article class="detail" style="--h:${s.hue}">
   <header class="detail-hero${s.hasPreview ? " has-preview" : ""}">
     <div class="detail-hero-text">
       <p class="eyebrow kicker"><a class="kicker-cat" href="${rel}index.html?category=${encodeURIComponent(s.category)}#gallery">${esc(s.category)}</a>${s.subcategory ? `<a class="kicker-sub" href="${rel}index.html?subcategory=${encodeURIComponent(s.subcategory)}#gallery">${esc(s.subcategory)}</a>` : ""}</p>
@@ -381,7 +381,10 @@ function detailPage(s) {
     </div>
     ${s.hasPreview ? `<a class="detail-art" href="assets/preview.png" title="Open the full-size image"><img src="assets/preview.png" alt="Example: ${esc(s.name)} answering a question in an agent chat" width="640" height="360"></a>` : ""}
   </header>
+</div>
+</div>
 
+<div class="container">
   <div class="detail-grid">
     <div class="detail-main">
       <div class="tabs" role="tablist" aria-label="Sections">
@@ -442,8 +445,8 @@ function detailPage(s) {
       </section>
     </aside>
   </div>
-</article>
 </div>
+</article>
 `;
   return layout({ title: `${s.name} · ${SITE.title}`, description: s.description, rel, body, bodyClass: "page-detail" });
 }

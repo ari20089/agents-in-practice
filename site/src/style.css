@@ -269,9 +269,12 @@ button.link { font: inherit; color: var(--blue); background: none; border: 0; pa
 /* ---------- skill page ---------- */
 
 .page-detail main { padding-bottom: 64px; }
-.breadcrumb { margin: 24px 0 16px; color: var(--muted); font-size: 0.9em; display: flex; gap: 8px; flex-wrap: wrap; }
+.detail-band { position: relative; background: var(--intro-wash); border-bottom: 1px solid var(--intro-line); margin-bottom: 36px; }
+.detail-band::before { content: ""; position: absolute; inset: 0; pointer-events: none; background-image: linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px); background-size: 32px 32px; }
+.detail-band .container { position: relative; }
+.breadcrumb { margin: 0 0 16px; padding-top: 24px; color: var(--muted); font-size: 0.9em; display: flex; gap: 8px; flex-wrap: wrap; }
 .breadcrumb a { text-decoration: none; font-weight: 600; }
-.detail-hero { display: grid; grid-template-columns: minmax(0, 1fr); gap: 36px; align-items: center; padding: 4px 0 30px; border-bottom: 1px solid var(--border); margin-bottom: 28px; }
+.detail-hero { display: grid; grid-template-columns: minmax(0, 1fr); gap: 36px; align-items: center; padding: 4px 0 40px; }
 .detail-hero.has-preview { grid-template-columns: minmax(0, 1fr) minmax(0, 460px); }
 .detail-hero-text { max-width: 820px; }
 .detail-hero h1 { margin: 12px 0; font-size: clamp(1.8rem, 3.6vw, 2.5rem); font-weight: 800; }
