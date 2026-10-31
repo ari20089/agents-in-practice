@@ -36,9 +36,9 @@ const TYPES = [
 
 marked.setOptions({ gfm: true });
 
-// Sub-category colours are picked from hues that sit well with the sunset palette:
-// violet, rose, coral, amber, sky, indigo. Each sub-category keeps the same one.
-const SUB_HUES = [340, 280, 20, 38, 200, 250];
+// Sub-category colours come from a fixed set of distinct hues so each one is easy to tell
+// apart from the blue accent: violet, teal, coral, amber, rose, green. Each keeps the same one.
+const SUB_HUES = [280, 175, 20, 38, 340, 140];
 
 // ---------- helpers ----------
 
@@ -86,7 +86,7 @@ function hue(slug) {
 
 function monogram(slug, name) {
   const initials = name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join("");
-  const h = 325 + (hue(slug) % 20); // rose to magenta, varied slightly per skill, matching the site palette
+  const h = 205 + (hue(slug) % 16); // blue, varied slightly per skill, matching the site palette
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="hsl(${h},70%,45%)"/><stop offset="1" stop-color="hsl(${(h + 15) % 360},75%,28%)"/></linearGradient></defs><rect width="640" height="360" fill="url(#g)"/><circle cx="560" cy="60" r="140" fill="rgba(255,255,255,.07)"/><circle cx="90" cy="330" r="110" fill="rgba(255,255,255,.06)"/><text x="320" y="202" font-family="system-ui,Segoe UI,sans-serif" font-size="124" font-weight="700" fill="rgba(255,255,255,.94)" text-anchor="middle" letter-spacing="-4">${esc(initials)}</text></svg>`;
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 }
@@ -94,7 +94,7 @@ function monogram(slug, name) {
 // Square variant used as the skill's icon on cards and the skill page.
 function iconMark(slug, name) {
   const initials = name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join("");
-  const h = 325 + (hue(slug) % 20);
+  const h = 205 + (hue(slug) % 16);
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="hsl(${h},70%,47%)"/><stop offset="1" stop-color="hsl(${(h + 15) % 360},75%,30%)"/></linearGradient></defs><rect width="96" height="96" rx="22" fill="url(#g)"/><text x="48" y="62" font-family="system-ui,Segoe UI,sans-serif" font-size="40" font-weight="700" fill="#fff" text-anchor="middle" letter-spacing="-1">${esc(initials)}</text></svg>`;
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 }
