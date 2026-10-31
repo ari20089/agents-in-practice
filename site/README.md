@@ -25,8 +25,8 @@ npm run site:serve     # http://localhost:4321/
 
 ## What each page shows
 
-- **Index:** a hero with a three-step how-it-works panel and a tested-with line, then a catalog header with per-category count pills, a toolbar (search, category, sub-category, platform, contributor and sort dropdowns, each option with its count), a "Showing N" line with Clear filters, the card grid, an empty state, a getting-started section and a `<noscript>` list. Filter state is kept in the URL so views can be shared.
-- **Skill page:** preview image or generated monogram, description, platform chips, View on GitHub / Open SKILL.md / Report an issue buttons, then three tabs: **Overview** (the README), **Skill instructions** (the agent-facing `description` and the full `SKILL.md`) and **Files** (what the agent loads, with sizes). The sidebar shows author, category, sub-category, platforms, version, dates, install path and tags. Without JavaScript the tabs render stacked.
+- **Index:** a short hero with the title, description, buttons and catalog counts; a toolbar that overlaps the hero's bottom edge (search, category, sub-category, platform, contributor and sort, each option with its count); a "Showing N" line with Clear filters; compact cards with the skill's icon, sub-category, platforms, author and date; a three-step Getting started row; and a `<noscript>` list. Filter state is kept in the URL so views can be shared.
+- **Skill page:** category and sub-category pills, the skill's icon beside its name, `assets/preview.png` on the right if the skill ships one, description, platform chips, View on GitHub / Open SKILL.md / Report an issue buttons, then three tabs: **Overview** (the README), **Skill instructions** (the agent-facing `description` and the full `SKILL.md`) and **Files** (what the agent loads, with sizes). The sidebar shows author, category, sub-category, platforms, version, dates, install path and tags. Without JavaScript the tabs render stacked.
 - **catalog.json:** everything the index knows, for anyone who wants to consume the catalog programmatically.
 
 ## Category and sub-category
@@ -37,4 +37,4 @@ The **sub-category** comes from `subcategory` in each item's `metadata.json` (fo
 
 ## Adding a preview image
 
-Drop `assets/preview.png` into the skill folder (16:9, at least 640×360). The build picks it up for the card and the skill page. Without one, a monogram is generated from the skill name.
+Drop `assets/preview.png` into the skill folder (16:9, at least 640×360). The build shows it on the skill page. Cards always use a small icon generated from the skill name.

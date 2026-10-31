@@ -66,10 +66,14 @@
 
     function card(s) {
       return `<article class="card" style="--h:${Number(s.hue) || 220}">
-  <a class="card-art" href="${esc(s.url)}" tabindex="-1" aria-hidden="true"><img src="${s.image}" alt="" loading="lazy" width="640" height="360"></a>
   <div class="card-body">
-    <p class="card-kicker kicker"><span class="kicker-cat">${esc(s.category)}</span>${s.subcategory ? `<span class="kicker-sub">${esc(s.subcategory)}</span>` : ""}</p>
-    <h3><a href="${esc(s.url)}">${esc(s.name)}</a></h3>
+    <div class="card-head">
+      <img class="skill-icon" src="${s.icon || s.image}" alt="" width="44" height="44" loading="lazy">
+      <div class="card-titles">
+        <p class="card-kicker kicker">${s.subcategory ? `<span class="kicker-sub">${esc(s.subcategory)}</span>` : `<span class="kicker-cat">${esc(s.category)}</span>`}</p>
+        <h3><a href="${esc(s.url)}">${esc(s.name)}</a></h3>
+      </div>
+    </div>
     <p class="card-desc">${esc(s.description)}</p>
     <ul class="chips">${s.platforms.map((p) => `<li class="chip chip-platform" data-value="${slug(p)}">${esc(p)}</li>`).join("")}</ul>
     <footer class="card-foot">

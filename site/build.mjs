@@ -87,6 +87,14 @@ function monogram(slug, name) {
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 }
 
+// Square variant used as the skill's icon on cards and the skill page.
+function iconMark(slug, name) {
+  const initials = name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join("");
+  const h = 165 + (hue(slug) % 20);
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="hsl(${h},70%,38%)"/><stop offset="1" stop-color="hsl(${h + 10},80%,22%)"/></linearGradient></defs><rect width="96" height="96" rx="22" fill="url(#g)"/><text x="48" y="62" font-family="system-ui,Segoe UI,sans-serif" font-size="40" font-weight="700" fill="#fff" text-anchor="middle" letter-spacing="-1">${esc(initials)}</text></svg>`;
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+}
+
 // Rewrite links in rendered Markdown so relative paths point at GitHub, and keep
 // images relative (the item's assets/ folder is copied next to the page).
 function rewriteLinks(html, item) {
@@ -147,6 +155,7 @@ function readItems() {
         files: listFiles(dir).filter((f) => f.path !== "metadata.json" && f.path !== "README.md"),
         hasPreview,
         image: hasPreview ? `${type.dir}/${slug}/assets/preview.png` : monogram(slug, meta.name),
+        icon: iconMark(slug, meta.name),
         url: `${type.dir}/${slug}/`,
         sourceUrl: `${REPO}/tree/main/${type.dir}/${slug}`,
         skillFileUrl: skill ? `${RAW}/${type.dir}/${slug}/SKILL.md` : "",
@@ -245,48 +254,31 @@ function indexPage(items, catalog) {
   const n = items.length;
   const typesPresent = TYPES.filter((t) => byCategory.has(t.label));
 
+  const stats = [
+    ...typesPresent.map((t) => plural(byCategory.get(t.label), t.singular)),
+    plural(bySub.size, "sub-category").replace("sub-categorys", "sub-categories"),
+    plural(byPlatform.size, "platform"),
+    plural(byAuthor.size, "contributor"),
+  ];
+
   const body = `
 <section class="hero">
-  <div class="container hero-grid">
-    <div class="hero-text">
-      <p class="eyebrow">Community catalog</p>
-      <h1>${esc(SITE.title)}</h1>
-      <p class="lead">${esc(SITE.tagline)} Each one is a folder in the open <a href="${REPO}/blob/main/SKILL-SCHEMA.md">Agent Skills</a> format, so it runs in any host that supports&nbsp;it.</p>
+  <div class="container hero-inner">
+    <h1>${esc(SITE.title)}</h1>
+    <p class="lead">${esc(SITE.tagline)} Each one is a folder in the open <a href="${REPO}/blob/main/SKILL-SCHEMA.md">Agent Skills</a> format, so it runs in any host that supports&nbsp;it.</p>
+    <div class="hero-row">
       <div class="hero-actions">
-        <a class="btn btn-primary" href="#gallery">Browse the gallery</a>
+        <a class="btn btn-primary" href="#gallery">Browse skills</a>
         <a class="btn" href="${REPO}/blob/main/CONTRIBUTING.md">Contribute a skill</a>
       </div>
-      <p class="hero-meta">Tested with ${sortedKeys(byPlatform).map((p) => `<span class="hero-chip">${esc(p)}</span>`).join("")}</p>
+      <ul class="hero-stats" aria-label="Catalog at a glance">${stats.map((t) => `<li>${t.replace(/^(\d+)/, "<strong>$1</strong>")}</li>`).join("")}</ul>
     </div>
-    <ol class="steps" aria-label="How it works">
-      <li class="step">
-        <span class="step-icon"><svg viewBox="0 0 16 16" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"/></svg></span>
-        <div><p class="step-title">Find a skill</p><p class="step-text">Search by platform, sub-category or tag.</p></div>
-      </li>
-      <li class="step">
-        <span class="step-icon"><svg viewBox="0 0 16 16" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M1.75 1A1.75 1.75 0 0 0 0 2.75v10.5C0 14.216.784 15 1.75 15h12.5A1.75 1.75 0 0 0 16 13.25v-8.5A1.75 1.75 0 0 0 14.25 3H7.5a.25.25 0 0 1-.2-.1l-.9-1.2C6.07 1.26 5.55 1 5 1H1.75Z"/></svg></span>
-        <div><p class="step-title">Copy the folder</p><p class="step-text">Into your repository or your agent's skills library.</p></div>
-      </li>
-      <li class="step">
-        <span class="step-icon"><svg viewBox="0 0 16 16" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M8 0l1.8 6.2L16 8l-6.2 1.8L8 16l-1.8-6.2L0 8l6.2-1.8z"/></svg></span>
-        <div><p class="step-title">Ask your agent</p><p class="step-text">It picks up the skill when your request matches.</p></div>
-      </li>
-    </ol>
   </div>
 </section>
 
 <section id="gallery" class="gallery">
   <div class="container">
-    <div class="gallery-head">
-      <div>
-        <p class="eyebrow">Skill catalog</p>
-        <h2>Explore agent skills</h2>
-      </div>
-      <ul class="count-pills" aria-label="Catalog counts">
-        ${typesPresent.map((t) => `<li><strong>${byCategory.get(t.label)}</strong> ${esc(byCategory.get(t.label) === 1 ? t.singular : t.label.toLowerCase())}</li>`).join("")}
-      </ul>
-    </div>
-
+    <h2 class="visually-hidden">Skills</h2>
     <form class="toolbar" id="filters" role="search" aria-label="Filter skills" onsubmit="return false">
       <label class="search">
         <span class="visually-hidden">Search</span>
@@ -318,32 +310,12 @@ function indexPage(items, catalog) {
 <section id="getting-started" class="getting-started">
   <div class="container">
     <h2>Getting started</h2>
-    <div class="two-col">
-      <div>
-        <h3>Use a skill</h3>
-        <p>Copy the whole folder, not just <code>SKILL.md</code>: the agent needs the <code>references/</code> the instructions point to. The host discovers the skill by the <code>name</code> in its frontmatter.</p>
-        <table>
-          <thead><tr><th>Host</th><th>Where to put it</th></tr></thead>
-          <tbody>
-            <tr><td>GitHub Copilot (VS Code, CLI)</td><td><code>.github/skills/&lt;slug&gt;/</code> in your repository</td></tr>
-            <tr><td>Copilot Studio (GitHub Copilot harness)</td><td>Add as a skill to the agent, per the Copilot Studio documentation</td></tr>
-            <tr><td>Microsoft 365 Copilot / Copilot in SharePoint</td><td>Upload the folder to the site's <strong>Agent Assets</strong> library, <strong>Skills</strong> folder</td></tr>
-            <tr><td>Any other Agent Skills host</td><td>Per the host's documentation; the layout is the standard one</td></tr>
-          </tbody>
-        </table>
-        <p class="muted">Use skills selectively. Loading many at once dilutes the agent's attention.</p>
-      </div>
-      <div>
-        <h3>Add one</h3>
-        <ol>
-          <li>Copy <code>skills/_template/</code> to <code>skills/&lt;your-slug&gt;/</code>.</li>
-          <li>Fill in <code>SKILL.md</code>, <code>README.md</code> and <code>metadata.json</code>.</li>
-          <li>Run <code>npm test</code>, open a pull request.</li>
-        </ol>
-        <p>CI validates the folder, a code owner reviews it, and this page rebuilds when it merges. The category comes from the folder; the sub-category is yours to choose in <code>metadata.json</code>.</p>
-        <p><a class="btn" href="${REPO}/blob/main/CONTRIBUTING.md">Read the contribution guide</a></p>
-      </div>
-    </div>
+    <ol class="steps">
+      <li><span class="step-num">1</span><div><strong>Find a skill</strong><span>Search or filter the catalog above.</span></div></li>
+      <li><span class="step-num">2</span><div><strong>Copy the whole folder</strong><span>Not just <code>SKILL.md</code>. <a href="${REPO}/blob/main/skills/README.md">Where each host expects it</a></span></div></li>
+      <li><span class="step-num">3</span><div><strong>Ask your agent</strong><span>It loads the skill when your request matches.</span></div></li>
+    </ol>
+    <p class="muted getting-note">Want to add one? Copy <code>skills/_template/</code>, run <code>npm test</code> and open a pull request. <a href="${REPO}/blob/main/CONTRIBUTING.md">Contribution guide</a></p>
   </div>
 </section>
 
@@ -367,10 +339,10 @@ function detailPage(s) {
 <nav class="breadcrumb" aria-label="Breadcrumb"><a href="${rel}index.html">Gallery</a> <span aria-hidden="true">›</span> <a href="${rel}index.html?category=${encodeURIComponent(s.category)}#gallery">${esc(s.category)}</a> <span aria-hidden="true">›</span> <span aria-current="page">${esc(s.name)}</span></nav>
 
 <article class="detail" style="--h:${s.hue}">
-  <header class="detail-hero">
+  <header class="detail-hero${s.hasPreview ? " has-preview" : ""}">
     <div class="detail-hero-text">
       <p class="eyebrow kicker"><a class="kicker-cat" href="${rel}index.html?category=${encodeURIComponent(s.category)}#gallery">${esc(s.category)}</a>${s.subcategory ? `<a class="kicker-sub" href="${rel}index.html?subcategory=${encodeURIComponent(s.subcategory)}#gallery">${esc(s.subcategory)}</a>` : ""}</p>
-      <h1>${esc(s.name)}</h1>
+      <div class="detail-title"><img class="skill-icon skill-icon-lg" src="${s.icon}" alt="" width="56" height="56"><h1>${esc(s.name)}</h1></div>
       <p class="lead">${esc(s.description)}</p>
       <ul class="chips">${chips(s.platforms, "chip-platform")}</ul>
       <div class="actions">
@@ -379,7 +351,7 @@ function detailPage(s) {
         <a class="btn btn-ghost" href="${s.issueUrl}">Report an issue</a>
       </div>
     </div>
-    <div class="detail-art"><img src="${s.hasPreview ? "assets/preview.png" : s.image}" alt="" width="640" height="360"></div>
+    ${s.hasPreview ? `<div class="detail-art"><img src="assets/preview.png" alt="" width="640" height="360"></div>` : ""}
   </header>
 
   <div class="detail-grid">
