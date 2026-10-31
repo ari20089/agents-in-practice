@@ -6,7 +6,7 @@ The gallery at https://ari20089.github.io/agents-in-practice/ is generated from 
 site/
 ├── build.mjs    # reads skills/, writes site/dist (index, one page per skill, catalog.json)
 ├── serve.mjs    # tiny static server for local preview
-└── src/         # style.css, app.js (search/filter/sort), favicon.svg — copied to dist/assets
+└── src/         # style.css, app.js (search/filter/sort), favicon.svg, deco-*.svg — copied to dist/assets
 ```
 
 ## Build and preview locally
@@ -25,7 +25,7 @@ npm run site:serve     # http://localhost:4321/
 
 ## What each page shows
 
-- **Index:** a typographic intro (title, subtitle, description) on a light blue-to-mint band; a toolbar that overlaps the band's bottom edge (search, category, sub-category, platform and sort, each option with its count), a "Showing N" line with Clear filters, cards with a cover image, type pill, sub-category, date, title, description, author and a Details link, a Getting started section with three numbered steps, and a `<noscript>` list. Filter state is kept in the URL so views can be shared. Headings use Plus Jakarta Sans from Google Fonts; everything else uses system fonts.
+- **Index:** a typographic intro (title, subtitle, description) on a light blue-to-mint band; a toolbar that overlaps the band's bottom edge (search, category, sub-category, platform and sort, each option with its count), a "Showing N" line with Clear filters, decorative glass-tile artwork beside the grid on wide screens (`src/deco-left.svg`, `src/deco-right.svg`, original SVG), cards with a cover image, type pill, sub-category, date, title, description, author and a Details link, a Getting started section with three numbered steps, and a `<noscript>` list. Filter state is kept in the URL so views can be shared. Headings use Plus Jakarta Sans from Google Fonts; everything else uses system fonts.
 - **Skill page:** category and sub-category pills, the skill's icon beside its name, `assets/preview.png` on the right if the skill ships one, description, platform chips, View on GitHub / Open SKILL.md / Report an issue buttons, then three tabs: **Overview** (the README), **Skill instructions** (the agent-facing `description` and the full `SKILL.md`) and **Files** (what the agent loads, with sizes). The sidebar shows author, category, sub-category, platforms, version, dates, install path and tags. Without JavaScript the tabs render stacked.
 - **catalog.json:** everything the index knows, for anyone who wants to consume the catalog programmatically.
 

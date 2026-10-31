@@ -305,6 +305,8 @@ function indexPage(items, catalog) {
 
 
 <section id="gallery" class="gallery">
+  <img class="deco deco-left" src="assets/deco-left.svg" alt="" aria-hidden="true" width="420" height="1100">
+  <img class="deco deco-right" src="assets/deco-right.svg" alt="" aria-hidden="true" width="420" height="1100">
   <div class="container">
     <h2 class="visually-hidden">Browse the skills</h2>
 
