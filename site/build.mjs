@@ -186,7 +186,8 @@ function readItems() {
         agentDescription: skill?.fields.description ?? "",
         skillBody: skill?.body ?? "",
         readme,
-        files: listFiles(dir).filter((f) => f.path !== "metadata.json" && f.path !== "README.md"),
+        // metadata.json, README.md and the gallery preview are for people, not the agent.
+        files: listFiles(dir).filter((f) => !["metadata.json", "README.md", "assets/preview.png"].includes(f.path)),
         hasPreview,
         image: hasPreview ? `${type.dir}/${slug}/assets/preview.png` : cover(slug, meta.name, skill?.fields.description ?? meta.description),
         icon: iconMark(slug, meta.name),
@@ -379,7 +380,7 @@ function detailPage(s) {
         <a class="btn btn-ghost" href="${s.issueUrl}">Report an issue</a>
       </div>
     </div>
-    ${s.hasPreview ? `<div class="detail-art"><img src="assets/preview.png" alt="" width="640" height="360"></div>` : ""}
+    ${s.hasPreview ? `<a class="detail-art" href="assets/preview.png" title="Open the full-size image"><img src="assets/preview.png" alt="Example: ${esc(s.name)} answering a question in an agent chat" width="640" height="360"></a>` : ""}
   </header>
 
   <div class="detail-grid">
@@ -408,7 +409,7 @@ function detailPage(s) {
 
       <section id="files" class="tab-panel" role="tabpanel" aria-labelledby="tab-files">
         <h2 class="panel-title">Files</h2>
-        <p class="muted">Everything the agent loads. Copy the whole folder; <code>metadata.json</code> and <code>README.md</code> are for people and are not listed.</p>
+        <p class="muted">Everything the agent loads. Copy the whole folder; <code>metadata.json</code>, <code>README.md</code> and the gallery preview image are for people and are not listed.</p>
         <table class="files"><thead><tr><th>Path</th><th class="num">Size</th></tr></thead><tbody>${fileRows}</tbody></table>
       </section>
     </div>
