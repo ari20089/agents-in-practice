@@ -1,0 +1,590 @@
+# Code apps data reference
+
+**Reference data for the Connector Call Wrapper Generator: generated files, service signatures, result and option types, documented data rules, unsupported scenarios, wrapper templates and open questions**
+
+> **Status:** Compiled 31 October 2026 from the Microsoft Learn pages listed under Sources, each read that day, and from the published packages `@microsoft/power-apps` 1.5.0 (29 Sep 2026) and `@microsoft/power-apps-cli` 1.3.0 (13 Oct 2026). Code apps, the CLI and the client library change often. Where Learn and the packages differ, this file says so. The wrapper templates in section 7 are this item's pattern, not Microsoft guidance; they compile under TypeScript strict mode against `@microsoft/power-apps` 1.5.0.
+
+## 1. Names
+
+| Name | What it is |
+|---|---|
+| Power Apps client library for code apps | The npm package `@microsoft/power-apps`, "sometimes called the 'Power Apps SDK'" (Architecture) |
+| Power Apps CLI | The `pa` command from `@microsoft/power-apps-cli`: `pa app`, `pa auth`, `pa connection`, `pa connector`, `pa solution`, `pa telemetry` |
+| Generated models and services | TypeScript files the CLI writes when a data source is added. "Generated models and services for connectors" are one of the four parts of a code app (Architecture) |
+| `power.config.json` | Metadata used by the CLI and client library. "Your app logic doesn't need to interact with the `power.config.json` file." (Architecture) |
+
+Version 1.0 of the client library removed `initialize`: "Apps must no longer import or call `initialize`." (Migrate to v1.0)
+
+## 2. Generated files
+
+| File | What it holds |
+|---|---|
+| `src/generated/models/<Name>Model.ts` | The data model for the table or connector |
+| `src/generated/services/<Name>Service.ts` | A class of static methods for the data source |
+| `src/generated/models/CommonModels.ts` | `IGetOptions` and `IGetAllOptions` (CLI 1.3.0) |
+| `<schemaPath>/appschemas/dataSourcesInfo.ts` | Data source information the services pass to `getClient` |
+
+"When you add the data sources to the app, the process automatically generates a typed TypeScript model and service file in the repo." (Connect to data)
+
+The generated files are rewritten by the CLI. If the schema changes, use `pa app refresh data-source --name <data-source-name>` "to refresh the generated model and service files", and running `pa app add dataverse-api` or `pa app add flow` again regenerates that operation's files. Keep wrapper code outside `src/generated/`.
+
+Each generated service (CLI 1.3.0) imports `getClient` and `IOperationResult` from `@microsoft/power-apps/data`, holds `private static readonly client = getClient(dataSourcesInfo)`, and exposes `public static async` methods.
+
+## 3. Service methods by data source type
+
+### 3.1 Tabular: Dataverse, SQL, SharePoint
+
+| Method (CLI 1.3.0) | Returns |
+|---|---|
+| `create(record: Omit<T, '<primary key>'>)` | `Promise<IOperationResult<T>>` |
+| `update(id: string, changedFields: Partial<Omit<T, '<primary key>'>>, partitionId?: string)` | `Promise<IOperationResult<T>>` |
+| `delete(id: string, partitionId?: string)` | `Promise<IOperationResult<void>>` |
+| `get(id: string, options?: IGetOptions)` | `Promise<IOperationResult<T>>` |
+| `getAll(options?: IGetAllOptions)` | `Promise<IOperationResult<T[]>>` |
+| `getMetadata(options?: GetEntityMetadataOptions<T>)` (Dataverse) | `Promise<IOperationResult<Partial<EntityMetadata>>>` |
+| `upload`, `downloadFile`, `downloadImage`, `deleteFileOrImage` (Dataverse tables with file or image columns) | `IOperationResult<void>` or `IOperationResult<Uint8Array>` |
+| `getReferencedEntity(search, entityName)` (SharePoint) | Possible values for choice, lookup or person columns |
+
+Some connector tables generate `<Name>Read`, `<Name>Write` or `<Name>Base` model types instead of one type. Use the types the generated service declares.
+
+Add commands:
+- Dataverse: `pa app add data-source --connector dataverse --table <table-logical-name>`
+- SQL or SharePoint: `pa app add data-source --connector <connector-id> --connection-id <connection-id> --dataset <dataset> --table <table>`
+- With a connection reference: `--connection-ref <logical-name> --solution-id <solution-id>` in place of `--connection-id`
+
+### 3.2 Connector operations (non-tabular)
+
+One static method per operation, named after the operation ID, for example `Office365UsersService.MyProfile_V2(...)` and `UserPhoto_V2(...)` (Connect to data). Parameters and return type come from the connector definition; read them in the generated file.
+
+Add: `pa app add data-source --connector <connector-id> --connection-id <connection-id>`. For connectors with both tables and actions (SharePoint, SQL Server), add `--as action` for the actions.
+
+Some connectors return `{ value: [...] }` and others return the array: "some connectors return a structure in the format `{ value: [] }`, while others provide the array directly." (SharePoint operations)
+
+### 3.3 Dataverse actions and functions
+
+`pa app find-dataverse-api --search "<name>"`, then `pa app add dataverse-api --api-name <ApiName>`. Requires `@microsoft/power-apps` 1.1.1 or later. The service is `<ApiName>Service.<ApiName>(...)`; for a bound action, "the first argument is the ID of the record the action operates on."
+
+| Operation returns | Generated type |
+|---|---|
+| Nothing | `Promise<IOperationResult<void>>` |
+| A scalar | `Promise<IOperationResult<T>>` |
+| A complex type or table | `Promise<IOperationResult<Record<string, unknown>>>` |
+
+GUID parameters are `string`; lookup parameters are `Record<string, unknown>`.
+
+### 3.4 Power Automate flows
+
+`pa app list-flows`, then `pa app add flow --flow-id <flow-id>`. Requires `@microsoft/power-apps` 1.1.1 or later. "The generated service class provides a static `Run` method." The result has `success`, `data` and `error`.
+
+"Code apps support only solution-aware instant flows that use the Power Apps trigger." End users "need sufficient Dataverse permissions to invoke the flow."
+
+## 4. Types
+
+From `@microsoft/power-apps` 1.5.0 (`import type { IOperationResult } from '@microsoft/power-apps/data'`):
+
+```ts
+interface IOperationResult<TResponse> {
+  success: boolean;
+  data: TResponse;
+  error?: Error | PowerDataRuntimeHttpError;
+  skipToken?: string;   // next page
+  count?: number;       // when the request sets count: true
+  fileName?: string;    // file and image downloads
+}
+```
+
+`PowerDataRuntimeHttpError` has `message`, `status?`, `requestId?` and `stack?`. The package marks it private and doesn't export it, so read `status` and `requestId` by checking the object's shape.
+
+The package comment on `count`: "For Dataverse this comes from the `@odata.count` annotation, which the platform caps at 5000; result sets larger than 5000 report 5000."
+
+`IGetAllOptions` as generated by CLI 1.3.0 in `CommonModels.ts`: `maxPageSize`, `partitionId`, `select`, `filter` (OData string), `orderBy`, `top`, `skip`, `count`, `skipToken`. `IGetOptions`: `partitionId`, `select`. Learn's Dataverse page lists the same options without `partitionId` and `count`.
+
+The `DataClient` methods behind the services take no AbortSignal, so a call can't be cancelled. Ignore late responses instead.
+
+## 5. Documented data rules
+
+| Rule | Basis |
+|---|---|
+| Limit columns | "Always limit the number of columns you retrieve by using the `select` parameter." (Connect to Dataverse) |
+| Server-side query | Connect to Dataverse lists delegation for `Filter`, `Sort` and `Top` queries, and "Paging support." |
+| Create without system columns | "When creating a record, exclude system-managed or read-only columns such as primary keys and ownership fields." Example for accounts: `accountid`, `ownerid`, `owneridname`, `owneridtype`, `owneridyominame` (Connect to Dataverse) |
+| Update only what changed | "When you update a record, only include the properties you're changing in the request." Sending unchanged values can "trigger business logic that expects the values changed, or can corrupt auditing data" (Connect to Dataverse) |
+| Quotes in filters | "If the filter is for a single value, replace the single quote character with two consecutive single quote characters" (Filter rows using OData) |
+| Lookups | Code apps point to the Web API guidance to "associate with a single-valued navigation property" or "associate records on create" (Connect to Dataverse). Use the `@odata.bind` annotation: `"primarycontactid@odata.bind": "/contacts(<id>)"` (Create a table row) |
+| SharePoint payloads | Generated models "might include internal property names with `#` (for example: `Choices1#Id`) that are used for binding in forms but shouldn't be included in the payload". When you create or update a row, "the SharePoint API expects you to provide the expanded object for referenced columns (author, editor, person/group columns, and so on) rather than just the IDs." (SharePoint operations) |
+| SharePoint IDs | "Ensure `recordId` is the string ID the service expects. This is often a numeric item ID converted to string." (SharePoint operations) |
+| Metadata | "Metadata calls can be heavy. Cache at app start or per session." Prefer a column list over `"all"`. (Get metadata for Dataverse tables) |
+| Hosting | Compiled assets are on "a publicly accessible endpoint". "Don't store sensitive user or organizational data in the app." (System configuration) |
+| Current user | `getContext()` from `@microsoft/power-apps/app` returns `ctx.user.systemUserId`, "the ID of the current user's `systemuser` row", without a separate query (Get context data) |
+
+## 6. Unsupported and limits
+
+| Scenario | Status | Alternative |
+|---|---|---|
+| Excel Online (Business), Excel Online (OneDrive) connectors | "Connectors that aren't yet supported" (Connect to data) | Move the data to Dataverse, SharePoint or SQL |
+| Dataverse polymorphic lookups, FetchXML, alternate keys, table definition CRUD | "The following features aren't yet supported" (Connect to Dataverse) | OData `filter` on the generated service; set lookups by GUID with `@odata.bind` |
+| SharePoint Document Processing APIs, item synchronization, permission changes | Not supported by the client library and CLI; Learn suggests "creating a custom service file" (SharePoint operations) | Name it as a gap; don't generate a direct REST call |
+| Scheduled or automated flows, instant flows with other triggers | Not supported (Add flows) | Use a solution-aware instant flow with the Power Apps trigger |
+| Native Dataverse tables or SQL stored procedures | One per `pa app add data-source` command (CLI reference) | Run the command once per table |
+
+## 7. Wrapper templates
+
+Folder layout:
+
+```
+src/data/
+├── dataResult.ts              # once: run(), DataResult, helpers
+├── useData.ts                 # once: React hooks with four states
+└── <name>/
+    ├── <name>Repository.ts    # per data source: typed calls through run()
+    └── use<Name>.ts           # per data source: hooks for the screens
+```
+
+States: lists and single records are `loading`, `error`, `empty` or `success`; writes are `idle`, `saving`, `saved` or `error`. A list's "load more" failure keeps the loaded rows and sets `loadMoreError`.
+
+`useDataQuery` and `useListQuery` reload when the `load` function changes, so build it with `useCallback` from the query's primitive values, and keep `isEmpty` at module level.
+
+### 7.1 Shared result module
+
+`src/data/dataResult.ts`. Add once. Every repository function goes through `run()`.
+
+```ts
+import type { IOperationResult } from '@microsoft/power-apps/data';
+
+/** What the UI needs to know about a failed call. Show `message`; log `status` and `requestId`. */
+export interface DataError {
+  message: string;
+  status?: number;
+  requestId?: string;
+}
+
+export type DataResult<T> =
+  | { ok: true; data: T; skipToken?: string; count?: number }
+  | { ok: false; error: DataError };
+
+function toDataError(e: unknown): DataError {
+  if (e && typeof e === 'object') {
+    const o = e as { message?: unknown; status?: unknown; requestId?: unknown };
+    return {
+      message: typeof o.message === 'string' && o.message ? o.message : 'The request failed.',
+      status: typeof o.status === 'number' ? o.status : undefined,
+      requestId: typeof o.requestId === 'string' ? o.requestId : undefined,
+    };
+  }
+  return { message: typeof e === 'string' && e ? e : 'The request failed.' };
+}
+
+/**
+ * Runs a generated service call. A failure can come back as `success: false`
+ * or as a thrown error; both become `{ ok: false }`, never an empty result.
+ */
+export async function run<T>(call: () => Promise<IOperationResult<T>>): Promise<DataResult<T>> {
+  try {
+    const r = await call();
+    if (!r.success) return { ok: false, error: toDataError(r.error) };
+    return { ok: true, data: r.data, skipToken: r.skipToken, count: r.count };
+  } catch (e) {
+    return { ok: false, error: toDataError(e) };
+  }
+}
+
+/** Quotes a string for an OData filter, doubling single quotes: O'Bryan -> 'O''Bryan'. */
+export function odataString(value: string): string {
+  return `'${value.replace(/'/g, "''")}'`;
+}
+
+/** Only the columns whose values changed, so an update doesn't rewrite unchanged data. */
+export function changedFields<T extends object>(original: T, edited: Partial<T>): Partial<T> {
+  const changes: Partial<T> = {};
+  for (const key of Object.keys(edited) as (keyof T)[]) {
+    if (edited[key] !== original[key]) changes[key] = edited[key];
+  }
+  return changes;
+}
+
+/** Sets a Dataverse lookup: bindLookup('parentcustomerid_account', 'accounts', id). */
+export function bindLookup(navigationProperty: string, entitySet: string, id: string): Record<string, string> {
+  return { [`${navigationProperty}@odata.bind`]: `/${entitySet}(${id})` };
+}
+
+/** Some connectors return `{ value: [...] }`, others the array itself. */
+export function asArray<T>(data: T[] | { value?: T[] } | null | undefined): T[] {
+  if (Array.isArray(data)) return data;
+  return data?.value ?? [];
+}
+```
+
+### 7.2 Shared React hooks
+
+`src/data/useData.ts`. Add once. For Vue, write composables with the same states.
+
+```ts
+import { useCallback, useEffect, useRef, useState } from 'react';
+import type { DataError, DataResult } from './dataResult';
+
+export type QueryState<T> =
+  | { status: 'loading' }
+  | { status: 'error'; error: DataError }
+  | { status: 'empty' }
+  | { status: 'success'; data: T };
+
+/** Loads once per `load` identity; wrap `load` in useCallback with the query as its dependency. */
+export function useDataQuery<T>(load: () => Promise<DataResult<T>>, isEmpty: (data: T) => boolean) {
+  const [state, setState] = useState<QueryState<T>>({ status: 'loading' });
+  const [attempt, setAttempt] = useState(0);
+
+  useEffect(() => {
+    let current = true; // generated calls take no AbortSignal, so drop late responses
+    setState({ status: 'loading' });
+    load().then((r) => {
+      if (!current) return;
+      if (!r.ok) setState({ status: 'error', error: r.error });
+      else if (r.data == null || isEmpty(r.data)) setState({ status: 'empty' });
+      else setState({ status: 'success', data: r.data });
+    });
+    return () => {
+      current = false;
+    };
+  }, [load, isEmpty, attempt]);
+
+  const retry = useCallback(() => setAttempt((n) => n + 1), []);
+  return { state, retry };
+}
+
+export type ListState<T> =
+  | { status: 'loading' }
+  | { status: 'error'; error: DataError }
+  | { status: 'empty' }
+  | { status: 'success'; rows: T[]; hasMore: boolean; loadingMore: boolean; loadMoreError?: DataError };
+
+/** Paged list: first page on load, `loadMore` follows `skipToken`. */
+export function useListQuery<T>(loadPage: (skipToken?: string) => Promise<DataResult<T[]>>) {
+  const [state, setState] = useState<ListState<T>>({ status: 'loading' });
+  const [attempt, setAttempt] = useState(0);
+  const nextToken = useRef<string | undefined>(undefined);
+  const generation = useRef(0);
+
+  useEffect(() => {
+    const mine = ++generation.current;
+    nextToken.current = undefined;
+    setState({ status: 'loading' });
+    loadPage().then((r) => {
+      if (mine !== generation.current) return;
+      if (!r.ok) return setState({ status: 'error', error: r.error });
+      nextToken.current = r.skipToken;
+      setState(
+        r.data.length === 0
+          ? { status: 'empty' }
+          : { status: 'success', rows: r.data, hasMore: Boolean(r.skipToken), loadingMore: false },
+      );
+    });
+    return () => {
+      generation.current++;
+    };
+  }, [loadPage, attempt]);
+
+  const loadMore = useCallback(async () => {
+    const token = nextToken.current;
+    if (!token) return;
+    const mine = generation.current;
+    setState((s) => (s.status === 'success' ? { ...s, loadingMore: true, loadMoreError: undefined } : s));
+    const r = await loadPage(token);
+    if (mine !== generation.current) return;
+    if (!r.ok) {
+      setState((s) => (s.status === 'success' ? { ...s, loadingMore: false, loadMoreError: r.error } : s));
+      return;
+    }
+    nextToken.current = r.skipToken;
+    setState((s) =>
+      s.status === 'success'
+        ? { status: 'success', rows: [...s.rows, ...r.data], hasMore: Boolean(r.skipToken), loadingMore: false }
+        : s,
+    );
+  }, [loadPage]);
+
+  const retry = useCallback(() => setAttempt((n) => n + 1), []);
+  return { state, loadMore, retry };
+}
+
+export type MutationState = { status: 'idle' } | { status: 'saving' } | { status: 'saved' } | { status: 'error'; error: DataError };
+
+/** Create, update or delete with its own state; disable the trigger while `saving`. */
+export function useMutation<A extends unknown[], T>(mutate: (...args: A) => Promise<DataResult<T>>) {
+  const [state, setState] = useState<MutationState>({ status: 'idle' });
+  const run = useCallback(
+    async (...args: A) => {
+      setState({ status: 'saving' });
+      const r = await mutate(...args);
+      setState(r.ok ? { status: 'saved' } : { status: 'error', error: r.error });
+      return r;
+    },
+    [mutate],
+  );
+  return { state, run };
+}
+```
+
+### 7.3 Tabular repository (Dataverse example)
+
+`src/data/accounts/accountsRepository.ts`. One per table. The column constants keep `select` small and the names real; the single cast in `createAccount` is the only place the generated parameter type is bypassed.
+
+```ts
+import { AccountsService } from '../../generated/services/AccountsService';
+import type { Accounts } from '../../generated/models/AccountsModel';
+import { changedFields, odataString, run, type DataResult } from '../dataResult';
+
+// Columns the screens use. `select` keeps responses small; the type keeps the names real.
+const LIST_COLUMNS = ['accountid', 'name', 'accountnumber', 'address1_city'] as const satisfies readonly (keyof Accounts)[];
+const DETAIL_COLUMNS = [...LIST_COLUMNS, 'telephone1', 'revenue'] as const satisfies readonly (keyof Accounts)[];
+const EDITABLE = ['name', 'accountnumber', 'address1_city', 'telephone1'] as const satisfies readonly (keyof Accounts)[];
+
+export type AccountRow = Pick<Accounts, (typeof LIST_COLUMNS)[number]>;
+export type AccountDetail = Pick<Accounts, (typeof DETAIL_COLUMNS)[number]>;
+export type AccountInput = Pick<Accounts, 'name'> & Partial<Pick<Accounts, (typeof EDITABLE)[number]>>;
+
+export interface AccountListQuery {
+  search?: string;
+  city?: string;
+  pageSize?: number;
+}
+
+export function listAccounts(query: AccountListQuery, skipToken?: string): Promise<DataResult<AccountRow[]>> {
+  const filters: string[] = [];
+  if (query.search) filters.push(`contains(name,${odataString(query.search)})`);
+  if (query.city) filters.push(`address1_city eq ${odataString(query.city)}`);
+  return run(() =>
+    AccountsService.getAll({
+      select: [...LIST_COLUMNS],
+      filter: filters.length ? filters.join(' and ') : undefined,
+      orderBy: ['name asc'],
+      maxPageSize: query.pageSize ?? 50,
+      skipToken,
+    }),
+  );
+}
+
+export function getAccount(id: string): Promise<DataResult<AccountDetail>> {
+  return run(() => AccountsService.get(id, { select: [...DETAIL_COLUMNS] }));
+}
+
+export function createAccount(input: AccountInput): Promise<DataResult<AccountDetail>> {
+  // The generated parameter type also lists system columns; send only what the user entered.
+  return run(() => AccountsService.create(input as Parameters<typeof AccountsService.create>[0]));
+}
+
+export function updateAccount(original: AccountDetail, edited: Partial<AccountInput>): Promise<DataResult<AccountDetail>> {
+  return run(() => AccountsService.update(original.accountid, changedFields<AccountInput>(original, edited)));
+}
+
+export function deleteAccount(id: string): Promise<DataResult<void>> {
+  return run(() => AccountsService.delete(id));
+}
+```
+
+### 7.4 Tabular hooks
+
+`src/data/accounts/useAccounts.ts`. One per table.
+
+```ts
+import { useCallback } from 'react';
+import { useDataQuery, useListQuery, useMutation } from '../useData';
+import {
+  createAccount,
+  deleteAccount,
+  getAccount,
+  listAccounts,
+  updateAccount,
+  type AccountDetail,
+  type AccountListQuery,
+} from './accountsRepository';
+
+const isMissing = (a: AccountDetail) => !a.accountid;
+
+export function useAccountList(query: AccountListQuery) {
+  const { search, city, pageSize } = query;
+  const loadPage = useCallback(
+    (skipToken?: string) => listAccounts({ search, city, pageSize }, skipToken),
+    [search, city, pageSize],
+  );
+  return useListQuery(loadPage);
+}
+
+export function useAccount(id: string) {
+  const load = useCallback(() => getAccount(id), [id]);
+  return useDataQuery(load, isMissing);
+}
+
+export const useCreateAccount = () => useMutation(createAccount);
+export const useUpdateAccount = () => useMutation(updateAccount);
+export const useDeleteAccount = () => useMutation(deleteAccount);
+```
+
+### 7.5 Connector operation repository
+
+`src/data/myProfile/myProfileRepository.ts`. One function per operation the app uses, named for what it does.
+
+```ts
+import { Office365UsersService } from '../../generated/services/Office365UsersService';
+import type { User } from '../../generated/models/Office365UsersModel';
+import { run, type DataResult } from '../dataResult';
+
+export type MyProfile = Pick<User, 'id' | 'displayName' | 'jobTitle' | 'userPrincipalName'>;
+
+// Office 365 Users operation MyProfile_V2
+export function getMyProfile(): Promise<DataResult<MyProfile>> {
+  return run(() => Office365UsersService.MyProfile_V2('id,displayName,jobTitle,userPrincipalName'));
+}
+```
+
+### 7.6 Component
+
+`src/AccountsList.tsx`. Every screen handles all four states.
+
+```tsx
+import { useAccountList } from './data/accounts/useAccounts';
+
+export function AccountsList({ search }: { search: string }) {
+  const { state, loadMore, retry } = useAccountList({ search });
+
+  switch (state.status) {
+    case 'loading':
+      return <p role="status">Loading accounts…</p>;
+    case 'error':
+      return (
+        <div role="alert">
+          <p>Couldn't load accounts. {state.error.message}</p>
+          <button onClick={retry}>Try again</button>
+        </div>
+      );
+    case 'empty':
+      return <p>No accounts match "{search}".</p>;
+    case 'success':
+      return (
+        <>
+          <ul>
+            {state.rows.map((a) => (
+              <li key={a.accountid}>{a.name}</li>
+            ))}
+          </ul>
+          {state.loadMoreError && <p role="alert">{state.loadMoreError.message}</p>}
+          {state.hasMore && (
+            <button onClick={loadMore} disabled={state.loadingMore}>
+              {state.loadingMore ? 'Loading…' : 'Load more'}
+            </button>
+          )}
+        </>
+      );
+  }
+}
+```
+
+### 7.7 Tests
+
+`src/data/dataResult.test.ts`. Vitest. The cases every data source needs: success, `success: false`, a thrown error, an empty list, and the exact options sent to the service.
+
+```ts
+import { describe, expect, it, vi } from 'vitest';
+import { asArray, bindLookup, changedFields, odataString, run } from './dataResult';
+
+vi.mock('../generated/services/AccountsService', () => ({
+  AccountsService: { getAll: vi.fn() },
+}));
+import { AccountsService } from '../generated/services/AccountsService';
+import { listAccounts } from './accounts/accountsRepository';
+
+describe('run', () => {
+  it('passes data, skipToken and count through on success', async () => {
+    const r = await run(async () => ({ success: true, data: [1, 2], skipToken: 't', count: 2 }));
+    expect(r).toEqual({ ok: true, data: [1, 2], skipToken: 't', count: 2 });
+  });
+  it('turns success:false into an error, not an empty result', async () => {
+    const r = await run(async () => ({ success: false, data: undefined as unknown as number[], error: { message: 'Forbidden', status: 403, requestId: 'r1' } }));
+    expect(r).toEqual({ ok: false, error: { message: 'Forbidden', status: 403, requestId: 'r1' } });
+  });
+  it('turns a thrown error into an error result', async () => {
+    const r = await run(async () => { throw new Error('Token acquisition failed'); });
+    expect(r).toEqual({ ok: false, error: { message: 'Token acquisition failed', status: undefined, requestId: undefined } });
+  });
+  it('keeps an empty list as success', async () => {
+    const r = await run(async () => ({ success: true, data: [] }));
+    expect(r.ok && r.data).toEqual([]);
+  });
+});
+
+describe('helpers', () => {
+  it('doubles single quotes', () => expect(odataString("O'Bryan")).toBe("'O''Bryan'"));
+  it('sends only changed fields', () =>
+    expect(changedFields({ name: 'A', city: 'X', phone: '1' }, { name: 'A', city: 'Y' })).toEqual({ city: 'Y' }));
+  it('builds a lookup binding', () =>
+    expect(bindLookup('parentcustomerid_account', 'accounts', 'id-1')).toEqual({ 'parentcustomerid_account@odata.bind': '/accounts(id-1)' }));
+  it('normalizes value wrappers', () => {
+    expect(asArray({ value: [1] })).toEqual([1]);
+    expect(asArray([2])).toEqual([2]);
+    expect(asArray(undefined)).toEqual([]);
+  });
+});
+
+describe('listAccounts', () => {
+  it('filters on the server with escaped values and selected columns', async () => {
+    vi.mocked(AccountsService.getAll).mockResolvedValue({ success: true, data: [] });
+    await listAccounts({ search: "Men's", city: 'Oslo' }, 'tok');
+    expect(AccountsService.getAll).toHaveBeenCalledWith({
+      select: ['accountid', 'name', 'accountnumber', 'address1_city'],
+      filter: "contains(name,'Men''s') and address1_city eq 'Oslo'",
+      orderBy: ['name asc'],
+      maxPageSize: 50,
+      skipToken: 'tok',
+    });
+  });
+});
+```
+
+## 8. Where Learn and the packages differ
+
+| Topic | What differs | Follow |
+|---|---|---|
+| List method name | Connect to data shows `getall()`; Connect to Dataverse, SharePoint operations and the CLI 1.3.0 template use `getAll` | The generated file |
+| Generated folders | Connect to data also mentions `src/Models` and `src/Services`; Add flows shows `src/services/` and `./services/`; the CLI 1.3.0 template writes `generated/models` and `generated/services` | The generated file's actual path |
+| Error handling in examples | Learn's Dataverse examples wrap calls in try/catch and check `result.data`; the result type also reports failure as `success: false` with `error` | Check `success` and catch, as `run()` does |
+| Dataverse action results | The WhoAmI example comments "result.value contains BusinessUnitId, UserId, and OrganizationId"; the declared return type is `IOperationResult<Record<string, unknown>>` | Read `result.data` and check the generated type |
+| Get options | Learn's `IGetAllOptions` has no `count` or `partitionId`; CLI 1.3.0 generates both | The generated `CommonModels.ts` |
+
+## 9. Open questions
+
+| # | Question | What's known |
+|---|---|---|
+| Q1 | Does the client library URL-encode values in `filter`? | Filter rows using OData says "If the string you use as a value in a filter function includes a special character, you need to URL encode it." The code apps pages don't say whether the library does this. Test with a value containing `&`, `#` or `%`. |
+| Q2 | Does every failure come back as `success: false`, or can some throw? | The type allows both, and the code apps examples use try/catch. Handle both. |
+| Q3 | How do code apps request Dataverse formatted values (choice labels)? | Connect to Dataverse lists "Retrieve formatted values (labels) for option sets option values" as supported but doesn't show how. Look for label properties in the generated model. |
+| Q4 | Lookups beyond `@odata.bind` | "A dedicated how-to guide is coming soon." (Connect to Dataverse) |
+
+## 10. Sources
+
+Microsoft Learn, with each page's `ms.date` when it was read on 31 October 2026:
+
+**Power Apps code apps**
+
+- [Power Apps code apps overview](https://learn.microsoft.com/en-us/power-apps/developer/code-apps/overview), 23 Sep 2026
+- [Code apps architecture](https://learn.microsoft.com/en-us/power-apps/developer/code-apps/architecture), 12 Aug 2026
+- [Code apps system configuration](https://learn.microsoft.com/en-us/power-apps/developer/code-apps/system-limits-configuration), 15 Sep 2026
+- [Connect your code app to data](https://learn.microsoft.com/en-us/power-apps/developer/code-apps/how-to/connect-to-data), 2 Oct 2026
+- [Connect your code app to Dataverse](https://learn.microsoft.com/en-us/power-apps/developer/code-apps/how-to/connect-to-dataverse), 14 Aug 2026
+- [Add a Dataverse action or function to a code app](https://learn.microsoft.com/en-us/power-apps/developer/code-apps/how-to/add-dataverse-action-function), 13 Aug 2026
+- [Get metadata for Dataverse tables](https://learn.microsoft.com/en-us/power-apps/developer/code-apps/how-to/get-table-metadata), 5 Mar 2026
+- [SharePoint operations](https://learn.microsoft.com/en-us/power-apps/developer/code-apps/how-to/sharepoint-operations), 12 Aug 2026
+- [Add Power Automate flows to a code app](https://learn.microsoft.com/en-us/power-apps/developer/code-apps/how-to/add-flows), 13 Aug 2026
+- [Get context data](https://learn.microsoft.com/en-us/power-apps/developer/code-apps/how-to/retrieve-context), 2 Oct 2026
+- [Power Apps client library for code apps v1.0 migration guide](https://learn.microsoft.com/en-us/power-apps/developer/code-apps/how-to/migrate-to-v1), 5 Mar 2026
+- [Power Apps CLI command reference](https://learn.microsoft.com/en-us/power-apps/developer/code-apps/reference/cli), 2 Oct 2026
+- [Troubleshoot adding a data source](https://learn.microsoft.com/en-us/power-apps/developer/code-apps/troubleshoot-add-datasource), 13 Aug 2026
+
+**Dataverse Web API**
+
+- [Filter rows using OData](https://learn.microsoft.com/en-us/power-apps/developer/data-platform/webapi/query/filter-rows), 26 Oct 2026
+- [Create a table row using the Web API](https://learn.microsoft.com/en-us/power-apps/developer/data-platform/webapi/create-table-row), 9 Mar 2026
+- [Associate and disassociate table rows using the Web API](https://learn.microsoft.com/en-us/power-apps/developer/data-platform/webapi/associate-disassociate-table-rows), 29 Oct 2026
+
+**Packages**
+
+- [@microsoft/power-apps](https://www.npmjs.com/package/@microsoft/power-apps) 1.5.0, published 29 Sep 2026: `IOperationResult`, `DataClient`, the error type
+- [@microsoft/power-apps-cli](https://www.npmjs.com/package/@microsoft/power-apps-cli) 1.3.0, published 13 Oct 2026: generated service and `CommonModels.ts` templates
