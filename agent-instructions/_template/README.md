@@ -37,6 +37,10 @@ Then give the steps for each tool you support: Agent Builder in Microsoft 365 Co
 
 - Known gaps, preview caveats, the documentation date relied on
 
+## Sources
+
+- [Page title](https://learn.microsoft.com/), DD Mon YYYY
+
 ## Contributors
 
 | Name | Links |

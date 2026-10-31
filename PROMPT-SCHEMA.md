@@ -45,7 +45,7 @@ The human-facing page. It must say:
 - each `<placeholder>`, if there are any;
 - the Microsoft Learn pages behind every claim the prompt makes, with their dates.
 
-Use the same sections as a skill README: Summary, Prerequisites, Limitations, Contributors, Version history, Help and Disclaimer.
+Use the same sections as a skill README: Summary, Prerequisites, Limitations, Sources, Contributors, Version history, Help and Disclaimer.
 
 ## `metadata.json` (required)
 
@@ -53,7 +53,7 @@ The same fields as a skill's `metadata.json` (see [CONTRIBUTING.md](./CONTRIBUTI
 
 ## Validation
 
-`node scripts/validate-prompts.mjs` enforces the layout, the 8,000-character limit, the frontmatter rule, the `metadata.json` schema, README links and the catalog row. `npm test` runs it with the other validators, and CI runs all of them on every pull request.
+`node scripts/validate-prompts.mjs` enforces the layout, the 8,000-character limit, the frontmatter rule, the `metadata.json` schema, README links, the README `## Sources` section and the catalog row. `npm test` runs it with the other validators, and CI runs all of them on every pull request.
 
 ## Sources
 

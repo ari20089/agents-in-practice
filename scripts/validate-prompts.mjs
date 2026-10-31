@@ -68,7 +68,12 @@ function validateItem(slug) {
   if (!existsSync(readmePath)) {
     fail("missing README.md");
   } else {
-    for (const link of brokenLinks(readmePath, readFileSync(readmePath, "utf8"))) fail(`README.md links to "${link}" but that file does not exist`);
+    const readme = readFileSync(readmePath, "utf8");
+    for (const link of brokenLinks(readmePath, readme)) fail(`README.md links to "${link}" but that file does not exist`);
+    // Readers need the pages behind the item's claims, not only the agent-facing copy.
+    const sources = readme.split(/^## Sources[ \t]*$/m)[1]?.split(/^## /m)[0] ?? "";
+    if (!sources) fail('README.md has no "## Sources" section');
+    else if (!/\]\(https?:\/\//.test(sources)) fail('README.md "## Sources" section links to no pages');
   }
 
   // metadata.json

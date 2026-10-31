@@ -91,6 +91,7 @@ Every skill `README.md` must:
 - explain the scenario, expected outcome, prerequisites, setup and usage;
 - list trigger phrases;
 - identify known limitations and product, licence or preview-status assumptions;
+- include a `## Sources` section listing every page the skill relies on, with the date each one shows (the same list as in `references/`, if the skill has one);
 - link to the primary source (`SKILL.md`);
 - include contributor attribution and version history;
 - include the standard as-is disclaimer.
@@ -129,6 +130,7 @@ These jobs run on every pull request.
 - `SKILL.md` is missing one of the required sections `## Before Starting`, `## Output Structure`, `## Step 1`, `## Rules` (see [SKILL-SCHEMA.md](./SKILL-SCHEMA.md));
 - `SKILL.md` exceeds 500 lines (move material to `references/`);
 - `SKILL.md` or `README.md` links to a file that does not exist;
+- `README.md` has no `## Sources` section, the section links to no pages, or its links differ from a Sources list in `references/`;
 - `metadata.json` is invalid JSON, lacks a required field, names an unknown platform, or sets `category` (use `subcategory`);
 - the folder contains stray top-level files beyond the allowed set;
 - the root `README.md` catalog has no row linking to `skills/<slug>/`.
@@ -139,7 +141,7 @@ These jobs run on every pull request.
 - `INSTRUCTIONS.md`, `README.md` or `metadata.json` is missing;
 - `INSTRUCTIONS.md` is empty, starts with frontmatter, or is over 8,000 characters;
 - a `knowledge/` file has an unsupported type, is over 1 MB, or there are more than 10;
-- `README.md` links to a file that does not exist, `metadata.json` breaks the rules above, or there are stray top-level files;
+- `README.md` links to a file that does not exist, has no `## Sources` section with at least one link, has Sources links that differ from a Sources list in `knowledge/`, `metadata.json` breaks the rules above, or there are stray top-level files;
 - the root `README.md` catalog has no row linking to `agent-instructions/<slug>/`.
 
 **Validate prompts** (`scripts/validate-prompts.mjs`) fails when:
@@ -148,7 +150,7 @@ These jobs run on every pull request.
 - `PROMPT.md`, `README.md` or `metadata.json` is missing;
 - `PROMPT.md` is empty, starts with frontmatter, or is over 8,000 characters;
 - the folder has anything other than those three files and `assets/`;
-- `README.md` links to a file that does not exist, or `metadata.json` breaks the rules above;
+- `README.md` links to a file that does not exist, has no `## Sources` section with at least one link, or `metadata.json` breaks the rules above;
 - the root `README.md` catalog has no row linking to `prompts/<slug>/`.
 
 **One skill per PR** (the check's name; it covers every kind of item) fails when the changed files span more than one `skills/<slug>/`, `prompts/<slug>/` or `agent-instructions/<slug>/` folder.
@@ -161,7 +163,7 @@ Run all three validators locally with `npm test`, or pass a slug to any of the s
 - [ ] `description` is one line, trigger-focused, with an out-of-scope clause
 - [ ] `SKILL.md` follows [SKILL-SCHEMA.md](./SKILL-SCHEMA.md) and is under 500 lines; a prompt's `PROMPT.md` follows [PROMPT-SCHEMA.md](./PROMPT-SCHEMA.md) (no frontmatter, 8,000 characters or less, self-contained)
 - [ ] `metadata.json` is complete and valid
-- [ ] `README.md` has trigger phrases, prerequisites, limitations, attribution, version history and disclaimer
+- [ ] `README.md` has trigger phrases, prerequisites, limitations, sources, attribution, version history and disclaimer
 - [ ] Any Microsoft feature described is labelled with its release state (preview, GA) and the documentation date relied on
 - [ ] Claims about Microsoft behaviour cite a Microsoft Learn page
 - [ ] No tenant names, user names, keys or other secrets

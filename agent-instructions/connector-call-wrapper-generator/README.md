@@ -90,6 +90,40 @@ This is where the generator works best: it reads `src/generated/` itself and wri
 - The wrapper pattern (state names, file layout, helpers) is this item's design, not Microsoft guidance.
 - Review generated code like any other pull request. Test writes against a non-production environment first.
 
+## Sources
+
+Microsoft Learn, with each page's `ms.date` when it was read on 31 October 2026:
+
+**Power Apps code apps**
+
+- [Power Apps code apps overview](https://learn.microsoft.com/en-us/power-apps/developer/code-apps/overview), 23 Sep 2026
+- [Code apps architecture](https://learn.microsoft.com/en-us/power-apps/developer/code-apps/architecture), 12 Aug 2026
+- [Code apps system configuration](https://learn.microsoft.com/en-us/power-apps/developer/code-apps/system-limits-configuration), 15 Sep 2026
+- [Connect your code app to data](https://learn.microsoft.com/en-us/power-apps/developer/code-apps/how-to/connect-to-data), 2 Oct 2026
+- [Connect your code app to Dataverse](https://learn.microsoft.com/en-us/power-apps/developer/code-apps/how-to/connect-to-dataverse), 14 Aug 2026
+- [Add a Dataverse action or function to a code app](https://learn.microsoft.com/en-us/power-apps/developer/code-apps/how-to/add-dataverse-action-function), 13 Aug 2026
+- [Get metadata for Dataverse tables](https://learn.microsoft.com/en-us/power-apps/developer/code-apps/how-to/get-table-metadata), 5 Mar 2026
+- [SharePoint operations](https://learn.microsoft.com/en-us/power-apps/developer/code-apps/how-to/sharepoint-operations), 12 Aug 2026
+- [Add Power Automate flows to a code app](https://learn.microsoft.com/en-us/power-apps/developer/code-apps/how-to/add-flows), 13 Aug 2026
+- [Get context data](https://learn.microsoft.com/en-us/power-apps/developer/code-apps/how-to/retrieve-context), 2 Oct 2026
+- [Power Apps client library for code apps v1.0 migration guide](https://learn.microsoft.com/en-us/power-apps/developer/code-apps/how-to/migrate-to-v1), 5 Mar 2026
+- [Power Apps CLI command reference](https://learn.microsoft.com/en-us/power-apps/developer/code-apps/reference/cli), 2 Oct 2026
+- [Troubleshoot adding a data source](https://learn.microsoft.com/en-us/power-apps/developer/code-apps/troubleshoot-add-datasource), 13 Aug 2026
+
+**Dataverse Web API**
+
+- [Filter rows using OData](https://learn.microsoft.com/en-us/power-apps/developer/data-platform/webapi/query/filter-rows), 26 Oct 2026
+- [Select columns using OData](https://learn.microsoft.com/en-us/power-apps/developer/data-platform/webapi/query/select-columns), 28 Oct 2026
+- [Create a table row using the Web API](https://learn.microsoft.com/en-us/power-apps/developer/data-platform/webapi/create-table-row), 9 Mar 2026
+- [Associate and disassociate table rows using the Web API](https://learn.microsoft.com/en-us/power-apps/developer/data-platform/webapi/associate-disassociate-table-rows), 29 Oct 2026
+
+**Packages**
+
+- [@microsoft/power-apps](https://www.npmjs.com/package/@microsoft/power-apps) 1.5.0, published 29 Sep 2026: `IOperationResult`, `DataClient`, the error type, query-string encoding, the `Prefer` headers it sends
+- [@microsoft/power-apps-cli](https://www.npmjs.com/package/@microsoft/power-apps-cli) 1.3.0, published 13 Oct 2026: generated service and `CommonModels.ts` templates
+
+The agent reads the same list at the end of [`knowledge/code-apps-data-reference.txt`](./knowledge/code-apps-data-reference.txt).
+
 ## Contributors
 
 | Name | Links |

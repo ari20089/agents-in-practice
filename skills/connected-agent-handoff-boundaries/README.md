@@ -57,6 +57,63 @@ The action types, delegation table, seven rules and `actionsTaken` output are th
 - The boundary pattern is a design recommendation, not a Microsoft control. Test it in your tenant before relying on it.
 - This is not security or legal advice. Verify against the cited pages before relying on the output for an approval decision.
 
+## Sources
+
+Microsoft documentation, with each page's `ms.date` when it was retrieved on 30 October 2026:
+
+**Handoff guidance (the three pages)**
+
+- [Multi-agent orchestration patterns and best practices](https://learn.microsoft.com/en-us/microsoft-copilot-studio/guidance/multi-agent-patterns), 21 May 2026
+- [Hand off to a live agent](https://learn.microsoft.com/en-us/microsoft-copilot-studio/advanced-hand-off), 30 Apr 2026
+- [Agent handoff for Employee Self-Service agent](https://learn.microsoft.com/en-us/microsoft-365/copilot/employee-self-service/agent-handoff), 15 May 2026
+
+**Decision tiers**
+
+- [Apply generative orchestration capabilities](https://learn.microsoft.com/en-us/microsoft-copilot-studio/guidance/generative-orchestration), 18 Sep 2026
+- [FAQ for generative orchestration](https://learn.microsoft.com/en-us/microsoft-copilot-studio/faqs-generative-orchestration), 14 Oct 2026
+
+**Mechanics: standard harness**
+
+- [Add other agents overview](https://learn.microsoft.com/en-us/microsoft-copilot-studio/authoring-add-other-agents) (preview), 15 May 2026
+- [Add a child agent](https://learn.microsoft.com/en-us/microsoft-copilot-studio/add-agent-child-agent), 25 Aug 2026
+- [Connect to an existing Copilot Studio agent](https://learn.microsoft.com/en-us/microsoft-copilot-studio/add-agent-copilot-studio-agent), 30 Mar 2026
+- [Connect to an agent over the Agent2Agent (A2A) protocol](https://learn.microsoft.com/en-us/microsoft-copilot-studio/add-agent-agent-to-agent), 26 Aug 2026
+- [Context distribution in the standard harness](https://learn.microsoft.com/en-us/microsoft-copilot-studio/guidance/generative-orchestration-context-design), 27 Aug 2026
+- [Design subagents that avoid duplicate messages](https://learn.microsoft.com/en-us/microsoft-copilot-studio/guidance/generative-orchestration-subagents), 27 Aug 2026
+- [Configure handoff to any generic engagement hub](https://learn.microsoft.com/en-us/microsoft-copilot-studio/configure-generic-handoff), 16 Sep 2026
+
+**Mechanics: GitHub Copilot harness**
+
+- [Connected agents overview (GitHub Copilot)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/authoring-add-other-agents), 6 Oct 2026
+- [Add a Copilot Studio agent as a connected agent (GitHub Copilot)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/add-agent-connected), 14 Oct 2026
+- [Manage connected agents in an agent (GitHub Copilot)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/manage-connected-agents), 14 Oct 2026
+- [Add an Agent2Agent (A2A) agent as a connected agent (GitHub Copilot)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/add-agent-to-agent), 14 Oct 2026
+- [Add a Foundry agent as a connected agent (GitHub Copilot)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/add-agent-foundry), 14 Oct 2026
+
+**Mechanics: Customer Conversation harness (prerelease)**
+
+- [Sub-agents overview (Customer Conversation)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/sub-agents-overview-customer-conversation), 8 Oct 2026
+- [Add a connected agent (Customer Conversation)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/add-agent-connected-customer-conversation), 23 Oct 2026
+
+**Harnesses**
+
+- [Harnesses in Copilot Studio](https://learn.microsoft.com/en-us/microsoft-copilot-studio/harnesses-overview), 19 Oct 2026
+- [Compare Copilot Studio agent harnesses](https://learn.microsoft.com/en-us/microsoft-copilot-studio/guidance/choose-harness), 30 Sep 2026
+
+**Employee Self-Service agent (Microsoft Copilot)**
+
+- [Connecting agents overview](https://learn.microsoft.com/en-us/microsoft-365/copilot/employee-self-service/connecting-agents-overview), 10 Jun 2026
+- [Set up the Employee Self-Service hub for custom engine agents](https://learn.microsoft.com/en-us/microsoft-365/copilot/employee-self-service/multi-agent-hub), 2 Oct 2026
+
+**Credentials, confirmation and admin controls**
+
+- [Add tools to custom agents](https://learn.microsoft.com/en-us/microsoft-copilot-studio/add-tools-custom-agent), 1 Oct 2026
+- [Control maker-provided credentials for authentication](https://learn.microsoft.com/en-us/microsoft-copilot-studio/configure-no-maker-authentication), 1 Sep 2025
+- [Configure data policies for agents](https://learn.microsoft.com/en-us/microsoft-copilot-studio/admin-data-loss-prevention), 1 Oct 2026
+- [Resolve agent error codes in Microsoft Copilot Studio](https://learn.microsoft.com/en-us/troubleshoot/power-platform/copilot-studio/authoring/error-codes), 28 Oct 2026
+
+Every Learn page above still showed the same date on 31 October 2026. The agent reads the same list at the end of [`references/handoff-guide.md`](./references/handoff-guide.md).
+
 ## Contributors
 
 | Name | Links |
