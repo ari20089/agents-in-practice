@@ -298,7 +298,6 @@ function indexPage(items, catalog) {
     plural(byPlatform.size, "platform"),
   ];
 
-  const newest = items.slice().sort((x, y) => (y.createdAt || "").localeCompare(x.createdAt || "") || x.name.localeCompare(y.name))[0];
   const pills = [
     ...typesPresent.map((t) => plural(byCategory.get(t.label), t.singular)),
     plural(bySub.size, "sub-category").replace("sub-categorys", "sub-categories"),
@@ -307,22 +306,13 @@ function indexPage(items, catalog) {
 
   const body = `
 <section class="intro">
-  <div class="container intro-grid">
+  <div class="container">
     <div class="intro-text">
       <p class="eyebrow">Open skills catalog</p>
       <h1>${esc(SITE.title)}</h1>
       <p class="subtitle">Agent skills you can copy into your own agent</p>
       <p class="lead">${esc(SITE.tagline)} Each one is a folder in the open <a href="${REPO}/blob/main/SKILL-SCHEMA.md">Agent Skills</a> format, so it runs in any host that supports&nbsp;it.</p>
     </div>
-    ${newest ? `<a class="feature" href="${newest.url}">
-      <span class="feature-art"><img src="${newest.image}" alt="" width="640" height="360"></span>
-      <span class="feature-body">
-        <span class="feature-label">Newest skill</span>
-        <strong class="feature-title">${esc(newest.name)}</strong>
-        <span class="feature-meta">${newest.subcategory ? `${esc(newest.subcategory)} · ` : ""}added ${esc(fmtDate(newest.createdAt))}</span>
-        <span class="feature-go">Read the skill <span aria-hidden="true">→</span></span>
-      </span>
-    </a>` : ""}
   </div>
 </section>
 
