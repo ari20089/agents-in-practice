@@ -1,5 +1,5 @@
 // Gallery: search, filter and sort over the catalog embedded in index.html.
-// State lives in the URL (?q=&category=&subcategory=&platform=&author=&sort=) so views are shareable.
+// State lives in the URL (?q=&category=&subcategory=&platform=&sort=) so views are shareable.
 // Detail pages: tab switching, with the active tab kept in the hash.
 (function () {
   const $ = (id) => document.getElementById(id);
@@ -12,7 +12,7 @@
   const catalogEl = $("catalog");
   if (catalogEl) {
     const data = JSON.parse(catalogEl.textContent);
-    const els = { q: $("q"), category: $("category"), subcategory: $("subcategory"), platform: $("platform"), author: $("author"), sort: $("sort") };
+    const els = { q: $("q"), category: $("category"), subcategory: $("subcategory"), platform: $("platform"), sort: $("sort") };
     const grid = $("grid");
     const empty = $("empty");
     const count = $("count");
@@ -42,7 +42,6 @@
       if (els.category.value && s.category !== els.category.value) return false;
       if (els.subcategory.value && s.subcategory !== els.subcategory.value) return false;
       if (els.platform.value && !s.platforms.includes(els.platform.value)) return false;
-      if (els.author.value && s.author !== els.author.value) return false;
       const terms = els.q.value.trim().toLowerCase().split(/\s+/).filter(Boolean);
       if (!terms.length) return true;
       const hay = [s.name, s.slug, s.description, s.agentDescription, s.author, s.category, s.subcategory, ...s.tags, ...s.platforms].join(" ").toLowerCase();
@@ -105,7 +104,7 @@
 
     let t;
     els.q.addEventListener("input", () => { clearTimeout(t); t = setTimeout(render, 120); });
-    for (const k of ["category", "subcategory", "platform", "author", "sort"]) els[k].addEventListener("change", render);
+    for (const k of ["category", "subcategory", "platform", "sort"]) els[k].addEventListener("change", render);
     clearBtn.addEventListener("click", clear);
     document.querySelectorAll("[data-clear]").forEach((b) => b.addEventListener("click", clear));
 

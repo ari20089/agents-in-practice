@@ -247,7 +247,6 @@ function indexPage(items, catalog) {
   const byCategory = count((i) => i.category);
   const bySub = count((i) => i.subcategory);
   const byPlatform = count((i) => i.platforms);
-  const byAuthor = count((i) => i.author);
   const sortedKeys = (m) => [...m.keys()].sort((a, b) => a.localeCompare(b));
   const categoryOrder = TYPES.map((t) => t.label).filter((l) => byCategory.has(l));
 
@@ -258,7 +257,6 @@ function indexPage(items, catalog) {
     ...typesPresent.map((t) => plural(byCategory.get(t.label), t.singular)),
     plural(bySub.size, "sub-category").replace("sub-categorys", "sub-categories"),
     plural(byPlatform.size, "platform"),
-    plural(byAuthor.size, "contributor"),
   ];
 
   const body = `
@@ -288,7 +286,6 @@ function indexPage(items, catalog) {
       ${select("category", "Category", "All categories", categoryOrder, byCategory)}
       ${select("subcategory", "Sub-category", "All sub-categories", sortedKeys(bySub), bySub)}
       ${select("platform", "Platform", "All platforms", sortedKeys(byPlatform), byPlatform)}
-      ${select("author", "Contributor", "All contributors", sortedKeys(byAuthor), byAuthor)}
       <label class="control"><span class="visually-hidden">Sort</span><select id="sort"><option value="updated">Recently updated</option><option value="newest">Newest</option><option value="title">Title A–Z</option></select></label>
     </form>
 
