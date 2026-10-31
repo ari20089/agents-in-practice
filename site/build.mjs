@@ -371,7 +371,7 @@ function detailPage(s) {
           <p class="byline-links">${[s.authorGithub ? `<a href="https://github.com/${esc(s.authorGithub)}">@${esc(s.authorGithub)}</a>` : "", s.authorUrl && !/github\.com/i.test(s.authorUrl) ? `<a href="${esc(s.authorUrl)}">${/linkedin/i.test(s.authorUrl) ? "LinkedIn" : "Profile"}</a>` : ""].filter(Boolean).join(" · ")}</p>
         </div>
       </div>
-      <ul class="chips tag-pills">${chips(s.tags)}</ul>
+      <ul class="chips tag-pills">${s.tags.map((t) => `<li><a class="chip" href="${rel}index.html?q=${encodeURIComponent(t)}#gallery" title="Find items matching ${esc(t)}">${esc(t)}</a></li>`).join("")}</ul>
       <div class="actions">
         <a class="btn btn-primary" href="${s.sourceUrl}">View on GitHub</a>
         ${s.skillFileUrl ? `<a class="btn" href="${s.skillFileUrl}">Open SKILL.md</a>` : ""}
