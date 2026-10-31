@@ -17,7 +17,9 @@
     const empty = $("empty");
     const count = $("count");
     const clearBtn = $("clear");
-    const word = (n) => `skill${n === 1 ? "" : "s"}`;
+    // "skill" while the catalog holds one type, "item" once it mixes them.
+    const label = new Set(data.map((s) => s.typeLabel)).size === 1 ? data[0].typeLabel : "item";
+    const word = (n) => `${label}${n === 1 ? "" : "s"}`;
 
     function readState() {
       const p = new URLSearchParams(location.search);
@@ -113,7 +115,7 @@
 
   // ---------- download gate ----------
 
-  // The download stays off until the reader confirms they trust the skill.
+  // The download stays off until the reader confirms they trust the item.
   // Without JavaScript the link simply works.
   const trust = $("trust-ok");
   const download = $("download");

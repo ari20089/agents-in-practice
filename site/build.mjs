@@ -24,7 +24,7 @@ const RAW = `https://raw.githubusercontent.com/${OWNER}/${REPO_NAME}/main`;
 
 const SITE = {
   title: "Agents in Practice",
-  tagline: "Hands-on skills for AI agents working with Microsoft 365, Copilot Studio and GitHub Copilot.",
+  tagline: "Hands-on skills, prompts and agent instructions for AI agents working with Microsoft 365, Copilot Studio and GitHub Copilot.",
   author: { name: "Arindam Choudhury", github: "https://github.com/ari20089", linkedin: "https://www.linkedin.com/in/arindam-choudhury/" },
 };
 
@@ -45,6 +45,8 @@ const SUB_HUES = [280, 175, 20, 38, 340, 140];
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const plural = (n, word) => `${n} ${word}${n === 1 ? "" : "s"}`;
+// "skill" while the list holds one type, "item" once it mixes them.
+const countWord = (list) => (new Set(list.map((i) => i.typeLabel)).size === 1 ? list[0].typeLabel : "item");
 
 function frontmatter(text) {
   const m = text.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/);
@@ -234,7 +236,7 @@ ${body}
 <footer class="site-footer">
   <div class="container">
     <p class="footer-title">${esc(SITE.title)}</p>
-    <p class="footer-tag">Community work, not a Microsoft product. Provided as-is. Check the Microsoft Learn pages each skill cites before relying on it.</p>
+    <p class="footer-tag">Community work, not a Microsoft product. Provided as-is. Check the Microsoft Learn pages each item cites before relying on it.</p>
     <nav class="footer-links" aria-label="Footer">
       <a href="${REPO}">GitHub</a>
       <a href="${REPO}/blob/main/CONTRIBUTING.md">Contribute</a>
@@ -283,8 +285,8 @@ function indexPage(items, catalog) {
   <div class="container">
     <div class="intro-text">
       <h1>${esc(SITE.title)}</h1>
-      <p class="subtitle">Agent skills you can copy into your own agent</p>
-      <p class="lead">${esc(SITE.tagline)} Each one is a folder in the open <a href="${REPO}/blob/main/SKILL-SCHEMA.md">Agent Skills</a> format, so it runs in any host that supports&nbsp;it.</p>
+      <p class="subtitle">Ready-to-use building blocks for your own agents</p>
+      <p class="lead">${esc(SITE.tagline)} Skills use the open <a href="${REPO}/blob/main/SKILL-SCHEMA.md">Agent Skills</a> format, so they run in any host that supports&nbsp;it.</p>
     </div>
   </div>
 </section>
@@ -294,13 +296,13 @@ function indexPage(items, catalog) {
   <img class="deco deco-left" src="assets/deco-left.svg" alt="" aria-hidden="true" width="420" height="1100">
   <img class="deco deco-right" src="assets/deco-right.svg" alt="" aria-hidden="true" width="420" height="1100">
   <div class="container">
-    <h2 class="visually-hidden">Browse the skills</h2>
+    <h2 class="visually-hidden">Browse the catalog</h2>
 
-    <form class="toolbar" id="filters" role="search" aria-label="Filter skills" onsubmit="return false">
+    <form class="toolbar" id="filters" role="search" aria-label="Filter the catalog" onsubmit="return false">
       <label class="search">
         <span class="visually-hidden">Search</span>
         <svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"/></svg>
-        <input id="q" type="search" placeholder="Search skills" autocomplete="off">
+        <input id="q" type="search" placeholder="Search the catalog" autocomplete="off">
       </label>
       ${select("category", "Category", "All categories", categoryOrder, byCategory)}
       ${select("subcategory", "Sub-category", "All sub-categories", sortedKeys(bySub), bySub)}
@@ -309,7 +311,7 @@ function indexPage(items, catalog) {
     </form>
 
     <div class="results-bar">
-      <p class="count" id="count" aria-live="polite">Showing ${plural(n, "skill")}</p>
+      <p class="count" id="count" aria-live="polite">Showing ${plural(n, countWord(items))}</p>
       <button type="button" id="clear" class="link">Clear filters</button>
     </div>
 
@@ -327,21 +329,21 @@ function indexPage(items, catalog) {
   <div class="container gs-grid">
     <div class="gs-intro">
       <p class="eyebrow">Getting started</p>
-      <h2>Install a skill</h2>
-      <p>A skill is a folder: a <code>SKILL.md</code> with the instructions, plus any reference files it points to. Your agent host reads the folder; nothing needs building.</p>
-      <p><a class="text-link" href="${REPO}/blob/main/CONTRIBUTING.md">Contribute a skill <span aria-hidden="true">→</span></a></p>
+      <h2>Put one to work</h2>
+      <p>Every item is a folder: the text your agent needs, plus a README for you. Nothing needs building.</p>
+      <p><a class="text-link" href="${REPO}/blob/main/CONTRIBUTING.md">Contribute <span aria-hidden="true">→</span></a></p>
     </div>
     <ol class="gs-steps">
-      <li><span class="gs-num">01</span><div><h3>Find a skill</h3><p>Search or filter the catalog above, then open its page to read what it does and what it relies on.</p></div></li>
-      <li><span class="gs-num">02</span><div><h3>Copy the whole folder</h3><p>Not just <code>SKILL.md</code>; the agent needs the references too. <a href="${REPO}/blob/main/skills/README.md">Where each host expects it</a>.</p></div></li>
-      <li><span class="gs-num">03</span><div><h3>Ask your agent</h3><p>Once installed, the host loads the skill when your request matches its description.</p></div></li>
+      <li><span class="gs-num">01</span><div><h3>Find one</h3><p>Search or filter the catalog above, then open its page to read what it does and what it relies on.</p></div></li>
+      <li><span class="gs-num">02</span><div><h3>Put it in place</h3><p>Copy a skill's whole folder into your host's skills directory (<a href="${REPO}/blob/main/skills/README.md">where each host expects it</a>), paste a prompt into chat, or paste agent instructions into your agent.</p></div></li>
+      <li><span class="gs-num">03</span><div><h3>Ask your agent</h3><p>A skill loads when your request matches its description; prompts and agent instructions work as soon as they're in place.</p></div></li>
     </ol>
   </div>
 </section>
 
 <script id="catalog" type="application/json">${JSON.stringify(catalog).replace(/</g, "\\u003c")}</script>
 `;
-  return layout({ title: `${SITE.title} · skills gallery`, description: SITE.tagline, rel: "", body, bodyClass: "page-index" });
+  return layout({ title: `${SITE.title} · gallery`, description: SITE.tagline, rel: "", body, bodyClass: "page-index" });
 }
 
 // ---------- detail page ----------
@@ -422,12 +424,12 @@ function detailPage(s) {
       </section>
       <section class="meta-sec">
         <h2 class="meta-h">Add this ${esc(s.typeLabel)}</h2>
-        <p class="meta-p">Download the folder and unzip it into your host's skills directory${s.install ? `, such as <code>${esc(s.install.replace(`${s.slug}/`, ""))}</code>` : ""}.</p>
+        <p class="meta-p">${s.install ? `Download the folder and unzip it into your host's skills directory, such as <code>${esc(s.install.replace(`${s.slug}/`, ""))}</code>.` : "Download the folder; its README says where each file goes."}</p>
         <div class="trust">
           <svg class="trust-icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 2.5 4 5.5v6c0 5 3.4 8.9 8 10 4.6-1.1 8-5 8-10v-6Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 7.5v5.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="16.3" r="1.1" fill="currentColor"/></svg>
           <div>
             <p class="trust-title">Add only what you trust</p>
-            <label class="trust-check"><input type="checkbox" id="trust-ok"> <span>I understand that this is a community-provided skill. It runs with my agent's permissions, so I should review it carefully and add it only if I trust the source.</span></label>
+            <label class="trust-check"><input type="checkbox" id="trust-ok"> <span>I understand that this is a community-provided ${esc(s.typeLabel)}. It runs with my agent's permissions, so I should review it carefully and add it only if I trust the source.</span></label>
           </div>
         </div>
         <a class="btn btn-primary btn-block" id="download" href="${esc(s.slug)}.zip" download><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 1.75a.75.75 0 0 1 .75.75v6.19l2.22-2.22a.75.75 0 1 1 1.06 1.06l-3.5 3.5a.75.75 0 0 1-1.06 0l-3.5-3.5a.75.75 0 0 1 1.06-1.06l2.22 2.22V2.5A.75.75 0 0 1 8 1.75ZM2.75 12.5a.75.75 0 0 0 0 1.5h10.5a.75.75 0 0 0 0-1.5Z"/></svg>Download ${esc(s.typeLabel)} (.zip)</a>

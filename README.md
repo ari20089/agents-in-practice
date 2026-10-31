@@ -5,10 +5,10 @@
 
 **[Browse the gallery → ari20089.github.io/agents-in-practice](https://ari20089.github.io/agents-in-practice/)**
 
-Hands-on **skills** for AI agents working with Microsoft 365, Copilot Studio and GitHub Copilot: reusable instruction packages (a `SKILL.md` plus optional `references/`, `scripts/` and `assets/`) that give an agent a focused, repeatable capability. Skills follow the [Agent Skills specification](https://agentskills.io/specification) and install into any host that reads it.
+Hands-on **skills**, **prompts** and **agent instructions** for AI agents working with Microsoft 365, Copilot Studio and GitHub Copilot. Skills are reusable instruction packages (a `SKILL.md` plus optional `references/`, `scripts/` and `assets/`) that give an agent a focused, repeatable capability; they follow the [Agent Skills specification](https://agentskills.io/specification) and install into any host that reads it. Prompts and agent instructions are coming.
 
 > [!IMPORTANT]
-> Skills here are provided as-is, are not Microsoft products, and include no official Microsoft support or service-level agreement. Several describe **preview** features that change without notice. Validate every skill against the Microsoft Learn pages it cites and against your own security, privacy, compliance and governance requirements before relying on it. See [SUPPORT.md](./SUPPORT.md).
+> Everything here is provided as-is, are not Microsoft products, and include no official Microsoft support or service-level agreement. Several describe **preview** features that change without notice. Validate every item against the Microsoft Learn pages it cites and against your own security, privacy, compliance and governance requirements before relying on it. See [SUPPORT.md](./SUPPORT.md).
 
 ## Quick start
 
