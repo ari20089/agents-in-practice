@@ -82,8 +82,8 @@ function hue(slug) {
 
 function monogram(slug, name) {
   const initials = name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join("");
-  const h = hue(slug);
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="hsl(${h},60%,42%)"/><stop offset="1" stop-color="hsl(${(h + 50) % 360},65%,28%)"/></linearGradient></defs><rect width="640" height="360" fill="url(#g)"/><circle cx="560" cy="60" r="140" fill="rgba(255,255,255,.07)"/><circle cx="90" cy="330" r="110" fill="rgba(255,255,255,.06)"/><text x="320" y="202" font-family="system-ui,Segoe UI,sans-serif" font-size="124" font-weight="700" fill="rgba(255,255,255,.94)" text-anchor="middle" letter-spacing="-4">${esc(initials)}</text></svg>`;
+  const h = 165 + (hue(slug) % 20); // teal, varied slightly per skill, matching the site palette
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="hsl(${h},70%,36%)"/><stop offset="1" stop-color="hsl(${h + 10},80%,20%)"/></linearGradient></defs><rect width="640" height="360" fill="url(#g)"/><circle cx="560" cy="60" r="140" fill="rgba(255,255,255,.07)"/><circle cx="90" cy="330" r="110" fill="rgba(255,255,255,.06)"/><text x="320" y="202" font-family="system-ui,Segoe UI,sans-serif" font-size="124" font-weight="700" fill="rgba(255,255,255,.94)" text-anchor="middle" letter-spacing="-4">${esc(initials)}</text></svg>`;
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 }
 
