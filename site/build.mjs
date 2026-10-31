@@ -264,13 +264,7 @@ function indexPage(items, catalog) {
   <div class="container hero-inner">
     <h1>${esc(SITE.title)}</h1>
     <p class="lead">${esc(SITE.tagline)} Each one is a folder in the open <a href="${REPO}/blob/main/SKILL-SCHEMA.md">Agent Skills</a> format, so it runs in any host that supports&nbsp;it.</p>
-    <div class="hero-row">
-      <div class="hero-actions">
-        <a class="btn btn-primary" href="#gallery">Browse skills</a>
-        <a class="btn" href="${REPO}/blob/main/CONTRIBUTING.md">Contribute a skill</a>
-      </div>
-      <ul class="hero-stats" aria-label="Catalog at a glance">${stats.map((t) => `<li>${t.replace(/^(\d+)/, "<strong>$1</strong>")}</li>`).join("")}</ul>
-    </div>
+    <ul class="hero-stats" aria-label="Catalog at a glance">${stats.map((t) => `<li>${t.replace(/^(\d+)/, "<strong>$1</strong>")}</li>`).join("")}</ul>
   </div>
 </section>
 
