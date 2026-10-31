@@ -4,6 +4,7 @@
 (function () {
   const $ = (id) => document.getElementById(id);
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const fmt = (iso) => (iso ? new Date(iso + "T00:00:00Z").toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }) : "");
   const slug = (v) => String(v).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
   // ---------- gallery ----------
@@ -67,7 +68,10 @@
   <a class="card-art" href="${esc(s.url)}" tabindex="-1" aria-hidden="true"><img src="${s.image}" alt="" loading="lazy" width="640" height="360"></a>
   <span class="type-pill card-type">${esc(s.typeLabel || s.category)}</span>
   <div class="card-body">
-    ${s.subcategory ? `<div class="card-top"><span class="card-sub">${esc(s.subcategory)}</span></div>` : ""}
+    <div class="card-top">
+      ${s.subcategory ? `<span class="card-sub">${esc(s.subcategory)}</span>` : ""}
+      <time datetime="${esc(s.updatedAt)}" title="Last updated">${esc(fmt(s.updatedAt))}</time>
+    </div>
     <h3><a href="${esc(s.url)}">${esc(s.name)}</a></h3>
     <p class="card-desc">${esc(s.description)}</p>
     <footer class="card-foot">
