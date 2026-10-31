@@ -237,18 +237,25 @@ function layout({ title, description, rel, body, bodyClass = "" }) {
 ${body}
 </main>
 <footer class="site-footer">
-  <div class="container footer-row">
-    <div>
-      <strong>${esc(SITE.title)}</strong> · maintained by <a href="${SITE.author.github}">${esc(SITE.author.name)}</a> (<a href="${SITE.author.linkedin}">LinkedIn</a>)
-      <div class="muted">Community work, not a Microsoft product. Provided as-is. Check the Microsoft Learn pages each skill cites before relying on it.</div>
+  <div class="container footer-grid">
+    <div class="footer-brand">
+      <a class="brand" href="${r}index.html"><img class="brand-mark" src="${r}assets/favicon.svg" alt="" width="26" height="26">${esc(SITE.title)}</a>
+      <p>Community work, not a Microsoft product. Provided as-is. Check the Microsoft Learn pages each skill cites before relying on it.</p>
     </div>
-    <nav aria-label="Footer">
+    <nav aria-label="Project">
+      <h3>Project</h3>
+      <a href="${REPO}">GitHub repository</a>
+      <a href="${REPO}/blob/main/CONTRIBUTING.md">Contribute</a>
       <a href="${r}catalog.json">Catalog JSON</a>
+    </nav>
+    <nav aria-label="Support">
+      <h3>Support</h3>
       <a href="${REPO}/issues/new/choose">Report an issue</a>
       <a href="${REPO}/blob/main/SECURITY.md">Security</a>
       <a href="${REPO}/blob/main/CODE_OF_CONDUCT.md">Code of conduct</a>
     </nav>
   </div>
+  <div class="container"><div class="footer-bottom">Maintained by <a href="${SITE.author.github}">${esc(SITE.author.name)}</a> · <a href="${SITE.author.linkedin}">LinkedIn</a></div></div>
 </footer>
 <script src="${r}assets/app.js" defer></script>
 </body>
@@ -338,13 +345,20 @@ function indexPage(items, catalog) {
 
 <section id="getting-started" class="getting-started">
   <div class="container">
-    <h2>Getting started</h2>
+    <p class="eyebrow">Getting started</p>
+    <h2>Use a skill in three steps</h2>
     <ol class="steps">
-      <li><span class="step-num">1</span><div><strong>Find a skill</strong><span>Search or filter the catalog above.</span></div></li>
-      <li><span class="step-num">2</span><div><strong>Copy the whole folder</strong><span>Not just <code>SKILL.md</code>. <a href="${REPO}/blob/main/skills/README.md">Where each host expects it</a></span></div></li>
-      <li><span class="step-num">3</span><div><strong>Ask your agent</strong><span>It loads the skill when your request matches.</span></div></li>
+      <li><span class="step-icon"><svg viewBox="0 0 16 16" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"/></svg></span><span class="step-num">Step 1</span><strong>Find a skill</strong><span class="step-text">Search or filter the catalog above.</span></li>
+      <li><span class="step-icon"><svg viewBox="0 0 16 16" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M1.75 1A1.75 1.75 0 0 0 0 2.75v10.5C0 14.216.784 15 1.75 15h12.5A1.75 1.75 0 0 0 16 13.25v-8.5A1.75 1.75 0 0 0 14.25 3H7.5a.25.25 0 0 1-.2-.1l-.9-1.2C6.07 1.26 5.55 1 5 1H1.75Z"/></svg></span><span class="step-num">Step 2</span><strong>Copy the whole folder</strong><span class="step-text">Not just <code>SKILL.md</code>. <a href="${REPO}/blob/main/skills/README.md">Where each host expects it</a></span></li>
+      <li><span class="step-icon"><svg viewBox="0 0 16 16" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M8 0l1.8 6.2L16 8l-6.2 1.8L8 16l-1.8-6.2L0 8l6.2-1.8z"/></svg></span><span class="step-num">Step 3</span><strong>Ask your agent</strong><span class="step-text">It loads the skill when your request matches.</span></li>
     </ol>
-    <p class="muted getting-note">Want to add one? Copy <code>skills/_template/</code>, run <code>npm test</code> and open a pull request. <a href="${REPO}/blob/main/CONTRIBUTING.md">Contribution guide</a></p>
+    <div class="cta">
+      <div>
+        <p class="cta-title">Have a skill to share?</p>
+        <p class="cta-text">Copy <code>skills/_template/</code>, run <code>npm test</code> and open a pull request. CI checks the folder and a maintainer reviews it.</p>
+      </div>
+      <a class="btn cta-btn" href="${REPO}/blob/main/CONTRIBUTING.md">Read the contribution guide</a>
+    </div>
   </div>
 </section>
 
