@@ -143,10 +143,10 @@ if (only && checked === 0) {
 }
 
 if (errors.length) {
-  console.error(`\n${errors.length} problem(s) in ${checked} agent instruction set(s):\n`);
+  console.error(`\n${errors.length} problem(s) in ${checked} agent instruction(s):\n`);
   for (const e of errors) console.error(`  ✗ ${e}`);
   console.error();
   process.exit(1);
 }
 
-console.log(`✓ ${checked} agent instruction set(s) validated, no problems found.`);
+console.log(`✓ ${checked} agent instruction(s) validated, no problems found.`);
