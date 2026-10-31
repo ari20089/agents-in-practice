@@ -295,8 +295,9 @@ ul.tag-pills { margin-bottom: 22px; gap: 8px; }
 .detail-grid { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 40px; align-items: start; }
 .detail-main { background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius); padding: 6px 28px 28px; box-shadow: var(--shadow); }
 
-.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin: 0 -28px 24px; padding: 0 20px; overflow-x: auto; }
-.tabs [role=tab] { font: inherit; font-weight: 600; color: var(--muted); background: none; border: 0; border-bottom: 2px solid transparent; padding: 14px 12px 12px; margin-bottom: -1px; cursor: pointer; white-space: nowrap; }
+.tabs { display: flex; gap: 4px; box-shadow: inset 0 -1px 0 var(--border); margin: 0 -28px 24px; padding: 0 20px; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tabs [role=tab] { font: inherit; font-weight: 600; color: var(--muted); background: none; border: 0; border-bottom: 2px solid transparent; padding: 14px 12px 12px; cursor: pointer; white-space: nowrap; }
 .tabs [role=tab]:hover { color: var(--ink); }
 .tabs [role=tab][aria-selected=true] { color: var(--ink); border-bottom-color: var(--blue); }
 .tab-count { display: inline-block; min-width: 20px; padding: 0 6px; border-radius: 999px; background: var(--chip); color: var(--chip-fg); font-size: 0.78rem; text-align: center; margin-left: 4px; }
