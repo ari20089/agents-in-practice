@@ -27,6 +27,10 @@ What the skill does step by step, in plain language.
 
 - Known gaps, preview caveats, the documentation date relied on
 
+## Sources
+
+- [Page title](https://learn.microsoft.com/), DD Mon YYYY
+
 ## Contributors
 
 | Name | Links |

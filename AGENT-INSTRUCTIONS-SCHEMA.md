@@ -49,7 +49,7 @@ The human-facing page. It must say what goes where:
 - the recommended agent settings (name, description, web search, actions, audience) and conversation starters;
 - setup steps for each tool the instructions support.
 
-Use the same sections as a skill README: Summary, Prerequisites, Limitations, Contributors, Version history, Help and Disclaimer.
+Use the same sections as a skill README: Summary, Prerequisites, Limitations, Sources, Contributors, Version history, Help and Disclaimer. Sources lists every page the instructions and knowledge files rely on, with its date; the validator checks that its links are the same as the knowledge file's Sources list.
 
 ## `metadata.json` (required)
 
@@ -57,7 +57,7 @@ The same fields as a skill's `metadata.json` (see [CONTRIBUTING.md](./CONTRIBUTI
 
 ## Validation
 
-`node scripts/validate-agent-instructions.mjs` enforces the layout, the 8,000-character limit, the knowledge file types, sizes and count, the `metadata.json` schema and the catalog row. `npm test` runs it with the skill validator, and CI runs both on every pull request.
+`node scripts/validate-agent-instructions.mjs` enforces the layout, the 8,000-character limit, the knowledge file types, sizes and count, the `metadata.json` schema, the README `## Sources` section (present, with links, and the same links as any Sources list in `knowledge/`) and the catalog row. `npm test` runs it with the skill validator, and CI runs both on every pull request.
 
 ## Sources
 

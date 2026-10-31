@@ -24,6 +24,14 @@ const KNOWN_PLATFORMS = new Set(["GitHub Copilot", "Copilot Studio", "Microsoft 
 const errors = [];
 let checked = 0;
 
+// The "## Sources" section of a markdown or text file ("" when there is none), and the URLs it links.
+function sourcesSection(text) {
+  return text.split(/^## (?:\d+\. )?Sources[ \t]*$/m)[1]?.split(/^## /m)[0] ?? "";
+}
+function sourceUrls(section) {
+  return new Set([...section.matchAll(/\]\((https?:\/\/[^)\s]+)\)/g)].map((m) => m[1]));
+}
+
 function frontmatter(text) {
   const match = text.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n/);
   if (!match) return null;
@@ -94,7 +102,22 @@ function validateSkill(slug) {
   if (!existsSync(readmePath)) {
     fail("missing README.md");
   } else {
-    for (const link of brokenLinks(readmePath, readFileSync(readmePath, "utf8"))) fail(`README.md links to "${link}" but that file does not exist`);
+    const readme = readFileSync(readmePath, "utf8");
+    for (const link of brokenLinks(readmePath, readme)) fail(`README.md links to "${link}" but that file does not exist`);
+    // Readers need the pages behind the item's claims, not only the agent-facing copy.
+    const sources = sourcesSection(readme);
+    const urls = sourceUrls(sources);
+    if (!sources) fail('README.md has no "## Sources" section');
+    else if (!urls.size) fail('README.md "## Sources" section links to no pages');
+    // The agent-facing copy of the list must not drift from the one people read.
+    const refDir = join(dir, "references");
+    if (urls.size && existsSync(refDir)) {
+      for (const f of readdirSync(refDir).filter((f) => /\.(md|txt)$/i.test(f))) {
+        const refUrls = sourceUrls(sourcesSection(readFileSync(join(refDir, f), "utf8")));
+        for (const u of refUrls) if (!urls.has(u)) fail(`README.md Sources is missing ${u}, listed in references/${f}`);
+        for (const u of urls) if (refUrls.size && !refUrls.has(u)) fail(`references/${f} Sources is missing ${u}, listed in README.md`);
+      }
+    }
   }
 
   // metadata.json

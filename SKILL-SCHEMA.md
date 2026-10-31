@@ -91,4 +91,4 @@ Relative links to the documents the agent should read, with one line each on wha
 
 ## Validation
 
-`node scripts/validate-skills.mjs` enforces the frontmatter rules, the line limit, the `metadata.json` schema and the folder layout. CI runs it on every pull request.
+`node scripts/validate-skills.mjs` enforces the frontmatter rules, the line limit, the `metadata.json` schema, the folder layout and the README `## Sources` section (present, with links, and the same links as any Sources list in `references/`). CI runs it on every pull request.
