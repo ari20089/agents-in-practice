@@ -5,8 +5,8 @@
   "type": "module",
   "description": "Skills, prompts and agent instructions for AI agents working with Microsoft 365, Copilot Studio and GitHub Copilot",
   "scripts": {
-    "test": "node scripts/validate-skills.mjs && node scripts/validate-agent-instructions.mjs",
-    "validate": "node scripts/validate-skills.mjs && node scripts/validate-agent-instructions.mjs",
+    "test": "node scripts/validate-skills.mjs && node scripts/validate-agent-instructions.mjs && node scripts/validate-prompts.mjs",
+    "validate": "node scripts/validate-skills.mjs && node scripts/validate-agent-instructions.mjs && node scripts/validate-prompts.mjs",
     "site:build": "node site/build.mjs",
     "site:serve": "node site/serve.mjs",
     "site:dev": "npm run site:build && npm run site:serve"

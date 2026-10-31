@@ -1,0 +1,13 @@
+{
+  "name": "Code App Readiness Check",
+  "description": "Paste it into GitHub Copilot Chat on an existing React or Vue repository and it reports whether the app can become a Power Apps code app: its own sign-in, direct API calls that should go through connectors, offline and worker assumptions, and build output and routing problems, with a verdict and an ordered fix list.",
+  "platforms": ["GitHub Copilot", "Any coding agent"],
+  "tags": ["power-apps", "code-apps", "readiness", "migration", "react", "vue", "vite", "content-security-policy", "connectors", "github-copilot"],
+  "subcategory": "Developer productivity",
+  "author": "Arindam Choudhury",
+  "authorGithub": "ari20089",
+  "authorUrl": "https://www.linkedin.com/in/arindam-choudhury/",
+  "version": "1.0",
+  "createdAt": "2026-10-31",
+  "updatedAt": "2026-10-31"
+}

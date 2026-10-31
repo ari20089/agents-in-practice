@@ -1,7 +1,7 @@
 {
   "name": "Connector Call Wrapper Generator",
   "description": "Agent instructions for a coding agent: name a Dataverse table or connector operation in a Power Apps code app and it writes the typed data access layer over the generated services, with loading, error and empty states, instead of raw generated calls scattered through components.",
-  "platforms": ["GitHub Copilot", "Copilot Studio", "Microsoft 365 Copilot"],
+  "platforms": ["GitHub Copilot", "Copilot Studio", "Microsoft 365 Copilot", "Any coding agent"],
   "tags": ["power-apps", "code-apps", "dataverse", "connectors", "typescript", "react", "data-access-layer", "power-automate", "github-copilot", "custom-agents"],
   "subcategory": "Developer productivity",
   "author": "Arindam Choudhury",

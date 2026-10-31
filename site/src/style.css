@@ -29,6 +29,7 @@
   --p-github: #ede9fe; --p-github-fg: #5b21b6;
   --p-studio: #d5f5ee; --p-studio-fg: #0d6b5d;
   --p-m365: #fdecdc; --p-m365-fg: #a8460f;
+  --p-any: #dbeafe; --p-any-fg: #1d4ed8;
   --t-pink: #fce7f3; --t-pink-fg: #9d174d;
   --t-sky: #e0f2fe; --t-sky-fg: #075985;
 
@@ -74,6 +75,7 @@
     --p-github: #2a1b4d; --p-github-fg: #c4b5fd;
     --p-studio: #0b2e29; --p-studio-fg: #6ee7cf;
     --p-m365: #3a1e0c; --p-m365-fg: #fdba74;
+    --p-any: #172554; --p-any-fg: #93c5fd;
     --t-pink: #3d0f27; --t-pink-fg: #f9a8d4;
     --t-sky: #0c2c44; --t-sky-fg: #7dd3fc;
 
@@ -141,6 +143,7 @@ button.link { font: inherit; color: var(--blue); background: none; border: 0; pa
 .chip-platform[data-value="github-copilot"] { background: var(--p-github); color: var(--p-github-fg); }
 .chip-platform[data-value="copilot-studio"] { background: var(--p-studio); color: var(--p-studio-fg); }
 .chip-platform[data-value="microsoft-365-copilot"] { background: var(--p-m365); color: var(--p-m365-fg); }
+.chip-platform[data-value="any-coding-agent"] { background: var(--p-any); color: var(--p-any-fg); }
 .chip-tag:nth-child(5n+1) { background: var(--p-github); color: var(--p-github-fg); }
 .chip-tag:nth-child(5n+2) { background: var(--p-studio); color: var(--p-studio-fg); }
 .chip-tag:nth-child(5n+3) { background: var(--p-m365); color: var(--p-m365-fg); }
@@ -237,7 +240,7 @@ button.link { font: inherit; color: var(--blue); background: none; border: 0; pa
 .card:focus-within { outline: 2px solid var(--blue); outline-offset: 2px; }
 .card-art { display: block; aspect-ratio: 16 / 9; background: var(--surface-2); border-bottom: 1px solid var(--border-soft); overflow: hidden; }
 .card-art img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform 0.35s ease; }
-.card:hover .card-art img, .card:focus-within .card-art img { transform: scale(1.03); }
+.card-art:hover img { transform: scale(1.03); }
 .card-body { padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
 .card-top { display: flex; align-items: center; gap: 8px; min-width: 0; }
 .card-top time { margin-left: auto; flex: none; color: var(--muted); font-size: 0.8rem; }
@@ -250,7 +253,7 @@ button.link { font: inherit; color: var(--blue); background: none; border: 0; pa
 .card-sub { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.78rem; font-weight: 700; padding: 4px 10px; border-radius: 6px; background: var(--sub-bg); color: var(--sub-fg); border: 1px solid color-mix(in srgb, var(--sub-line) 35%, transparent); }
 .card h3 { margin: 4px 0 0; font-size: 1.32rem; font-weight: 800; line-height: 1.22; }
 .card h3 a { color: var(--ink); text-decoration: underline 2px transparent; text-underline-offset: 4px; transition: color 0.15s ease, text-decoration-color 0.15s ease; }
-.card:hover h3 a, .card h3 a:focus-visible { color: var(--blue-strong); text-decoration-color: currentColor; }
+.card h3 a:hover, .card h3 a:focus-visible { color: var(--blue-strong); text-decoration-color: currentColor; }
 .card-desc { margin: 0; color: var(--ink-2); font-size: 0.98rem; line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .card-foot { margin-top: auto; padding-top: 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 0.9rem; }
 .card-author { color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -330,6 +333,10 @@ html.js .panel-title { position: absolute; width: 1px; height: 1px; overflow: hi
 .prose h4 { font-size: 1rem; margin: 18px 0 6px; }
 .prose ul, .prose ol { padding-left: 1.4em; }
 .prose img { border-radius: var(--radius-sm); }
+/* Wide README tables scroll inside their own box instead of widening the page. */
+.table-wrap { overflow-x: auto; margin: 14px 0; }
+.table-wrap table { margin: 0; }
+.prose code { overflow-wrap: anywhere; }
 .callout { background: var(--surface-2); border: 1px solid var(--border-soft); border-left: 3px solid var(--blue); border-radius: var(--radius-sm); padding: 12px 16px; margin: 0 0 18px; }
 .callout p { margin: 0 0 6px; }
 .callout p:last-child { margin: 0; }
@@ -352,6 +359,7 @@ table.files td:first-child { font-family: var(--font-mono); font-size: 0.9em; wo
 .works li[data-value="github-copilot"]::before { background: var(--p-github-fg); }
 .works li[data-value="copilot-studio"]::before { background: var(--p-studio-fg); }
 .works li[data-value="microsoft-365-copilot"]::before { background: var(--p-m365-fg); }
+.works li[data-value="any-coding-agent"]::before { background: var(--p-any-fg); }
 .trust { display: flex; gap: 10px; padding: 14px; margin-bottom: 14px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface-2); }
 .trust-icon { flex: none; color: #c27c0e; margin-top: 1px; }
 .trust-title { margin: 0 0 8px; font-weight: 700; color: var(--ink); }
@@ -367,9 +375,9 @@ table.files td:first-child { font-family: var(--font-mono); font-size: 0.9em; wo
 .meta-note a { color: inherit; }
 
 @media (max-width: 900px) {
-  .detail-hero, .detail-hero.has-preview { grid-template-columns: 1fr; gap: 20px; }
+  .detail-hero, .detail-hero.has-preview { grid-template-columns: minmax(0, 1fr); gap: 20px; }
   .detail-art { order: -1; }
-  .detail-grid { grid-template-columns: 1fr; gap: 24px; }
+  .detail-grid { grid-template-columns: minmax(0, 1fr); gap: 24px; }
   .detail-main { padding: 6px 18px 22px; }
   .tabs { margin-inline: -18px; padding-inline: 10px; }
   .meta { position: static; }

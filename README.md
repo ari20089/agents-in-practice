@@ -5,7 +5,7 @@
 
 **[Browse the gallery → ari20089.github.io/agents-in-practice](https://ari20089.github.io/agents-in-practice/)**
 
-Hands-on **skills**, **prompts** and **agent instructions** for AI agents working with Microsoft 365, Copilot Studio and GitHub Copilot. Skills are reusable instruction packages (a `SKILL.md` plus optional `references/`, `scripts/` and `assets/`) that give an agent a focused, repeatable capability; they follow the [Agent Skills specification](https://agentskills.io/specification) and install into any host that reads it. Agent instructions are the instructions and knowledge files that define an agent's role, ready to paste into Agent Builder, Copilot Studio or the Microsoft 365 Agents Toolkit. Prompts are coming.
+Hands-on **skills**, **prompts** and **agent instructions** for AI agents working with Microsoft 365, Copilot Studio and GitHub Copilot. Skills are reusable instruction packages (a `SKILL.md` plus optional `references/`, `scripts/` and `assets/`) that give an agent a focused, repeatable capability; they follow the [Agent Skills specification](https://agentskills.io/specification) and install into any host that reads it. Agent instructions are the instructions and knowledge files that define an agent's role, ready to paste into Agent Builder, Copilot Studio or the Microsoft 365 Agents Toolkit. Prompts are single, self-contained instructions you paste into a Copilot chat for a focused result, such as a readiness check of the repository you have open.
 
 > [!IMPORTANT]
 > Everything here is provided as-is, are not Microsoft products, and include no official Microsoft support or service-level agreement. Several describe **preview** features that change without notice. Validate every item against the Microsoft Learn pages it cites and against your own security, privacy, compliance and governance requirements before relying on it. See [SUPPORT.md](./SUPPORT.md).
@@ -22,6 +22,8 @@ Each skill folder is self-contained: copy the whole folder, not just `SKILL.md`,
 
 For agent instructions, paste the item's `INSTRUCTIONS.md` into your agent's instructions and upload its `knowledge/` files. Each item's README gives the settings and steps for each tool; see [agent-instructions/README.md](./agent-instructions/README.md).
 
+For a prompt, paste its `PROMPT.md` into Copilot Chat. Its README says what it needs and how to save it as a prompt file; see [prompts/README.md](./prompts/README.md).
+
 > [!TIP]
 > Use skills selectively. Loading many skills at once dilutes the agent's attention and wastes context. Copy only the ones a project needs.
 
@@ -31,10 +33,13 @@ For agent instructions, paste the item's `INSTRUCTIONS.md` into your agent's ins
 | --- | --- |
 | **[Gallery](https://ari20089.github.io/agents-in-practice/)** | Searchable site generated from the item folders ([how it works](./site/README.md)) |
 | **[Skill catalog](#skill-catalog)** | Every published skill, by sub-category |
+| **[Prompt catalog](#prompt-catalog)** | Every published prompt, by sub-category |
 | **[Agent instructions catalog](#agent-instructions-catalog)** | Every published agent instructions item, by sub-category |
 | **[skills/](./skills/)** | Source folders, one per skill, with a `_template/` to copy |
+| **[prompts/](./prompts/)** | Source folders, one per prompt, with a `_template/` to copy |
 | **[agent-instructions/](./agent-instructions/)** | Source folders, one per agent instructions item, with a `_template/` to copy |
 | **[SKILL-SCHEMA.md](./SKILL-SCHEMA.md)** | Skill authoring spec: frontmatter, required sections, limits |
+| **[PROMPT-SCHEMA.md](./PROMPT-SCHEMA.md)** | Prompt spec: folder shape, the 8,000-character limit, running it as a prompt file |
 | **[AGENT-INSTRUCTIONS-SCHEMA.md](./AGENT-INSTRUCTIONS-SCHEMA.md)** | Agent instructions spec: folder shape, the 8,000-character limit, knowledge files |
 | **[AGENTS.md](./AGENTS.md)** | Guidance for coding agents working inside this repo |
 | **[CONTRIBUTING.md](./CONTRIBUTING.md)** | How to submit an item, how review works, what CI checks |
@@ -48,13 +53,23 @@ For agent instructions, paste the item's `INSTRUCTIONS.md` into your agent's ins
 
 | Skill | Platforms | Description |
 | --- | --- | --- |
-| [connected-agent-handoff-boundaries](./skills/connected-agent-handoff-boundaries/) | GitHub Copilot, Microsoft 365 Copilot, Copilot Studio | Decision boundaries for Copilot Studio multi-agent designs: who may delegate which actions to child, connected, external and live agents, what context crosses each handoff and what comes back, with instruction blocks, a handoff contract, open questions and a tenant test plan. |
+| [connected-agent-handoff-boundaries](./skills/connected-agent-handoff-boundaries/) | GitHub Copilot, Microsoft 365 Copilot, Copilot Studio, Any coding agent | Decision boundaries for Copilot Studio multi-agent designs: who may delegate which actions to child, connected, external and live agents, what context crosses each handoff and what comes back, with instruction blocks, a handoff contract, open questions and a tenant test plan. |
 
 ### Governance & compliance
 
 | Skill | Platforms | Description |
 | --- | --- | --- |
-| [shared-agent-memory-governance](./skills/shared-agent-memory-governance/) | GitHub Copilot, Microsoft 365 Copilot, Copilot Studio | Governance for the shared memory of Copilot Studio agents with an account (Frontier preview): what Microsoft documents, where Purview retention, eDiscovery and holds reach and where they don't, the open questions, and runbooks for holds, data subject requests, decommissioning and a tenant test plan. |
+| [shared-agent-memory-governance](./skills/shared-agent-memory-governance/) | GitHub Copilot, Microsoft 365 Copilot, Copilot Studio, Any coding agent | Governance for the shared memory of Copilot Studio agents with an account (Frontier preview): what Microsoft documents, where Purview retention, eDiscovery and holds reach and where they don't, the open questions, and runbooks for holds, data subject requests, decommissioning and a tenant test plan. |
+
+## Prompt catalog
+
+> 1 prompt
+
+### Developer productivity
+
+| Prompt | Platforms | Description |
+| --- | --- | --- |
+| [code-app-readiness-check](./prompts/code-app-readiness-check/) | GitHub Copilot, Any coding agent | Paste it into GitHub Copilot Chat on an existing React or Vue repository and it reports whether the app can become a Power Apps code app: its own sign-in, direct API calls that should go through connectors, offline and worker assumptions, and build output and routing problems, with a verdict and an ordered fix list. |
 
 ## Agent instructions catalog
 
@@ -70,15 +85,15 @@ For agent instructions, paste the item's `INSTRUCTIONS.md` into your agent's ins
 
 | Agent | Platforms | Description |
 | --- | --- | --- |
-| [connector-call-wrapper-generator](./agent-instructions/connector-call-wrapper-generator/) | GitHub Copilot, Copilot Studio, Microsoft 365 Copilot | Name a Dataverse table or connector operation in a Power Apps code app and it writes the typed data access layer over the generated services, with loading, error and empty states, instead of raw generated calls scattered through components. |
+| [connector-call-wrapper-generator](./agent-instructions/connector-call-wrapper-generator/) | GitHub Copilot, Copilot Studio, Microsoft 365 Copilot, Any coding agent | Name a Dataverse table or connector operation in a Power Apps code app and it writes the typed data access layer over the generated services, with loading, error and empty states, instead of raw generated calls scattered through components. |
 
 ## Contribute
 
-New skills, agent instructions, corrections and documentation fixes are welcome.
+New skills, prompts, agent instructions, corrections and documentation fixes are welcome.
 
-1. Search the [skill](#skill-catalog) and [agent instructions](#agent-instructions-catalog) catalogs and [open issues](https://github.com/ari20089/agents-in-practice/issues) to avoid duplicates.
+1. Search the [skill](#skill-catalog), [prompt](#prompt-catalog) and [agent instructions](#agent-instructions-catalog) catalogs and [open issues](https://github.com/ari20089/agents-in-practice/issues) to avoid duplicates.
 2. Read [CONTRIBUTING.md](./CONTRIBUTING.md) and [SKILL-SCHEMA.md](./SKILL-SCHEMA.md).
-3. Copy [`skills/_template/`](./skills/_template/) to `skills/<your-slug>/`, or [`agent-instructions/_template/`](./agent-instructions/_template/) to `agent-instructions/<your-slug>/` (see [AGENT-INSTRUCTIONS-SCHEMA.md](./AGENT-INSTRUCTIONS-SCHEMA.md)), fill it in, run `npm test`, and open a pull request. CI validates the folder and a code owner reviews it.
+3. Copy [`skills/_template/`](./skills/_template/) to `skills/<your-slug>/`, [`prompts/_template/`](./prompts/_template/) to `prompts/<your-slug>/` (see [PROMPT-SCHEMA.md](./PROMPT-SCHEMA.md)), or [`agent-instructions/_template/`](./agent-instructions/_template/) to `agent-instructions/<your-slug>/` (see [AGENT-INSTRUCTIONS-SCHEMA.md](./AGENT-INSTRUCTIONS-SCHEMA.md)), fill it in, run `npm test`, and open a pull request. CI validates the folder and a code owner reviews it.
 
 Keep one item or one logical change per pull request. Never include credentials or real tenant, customer or personal data.
 

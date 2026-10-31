@@ -1,8 +1,8 @@
 # Contributing
 
-Thanks for helping grow **Agents in Practice**. A *skill* is a reusable instruction set for an AI agent, published here as an unpacked folder with optional `references/`, `scripts/` and `assets/`. An *agent instructions* item is the instructions and knowledge files that define an agent's role; see [Agent instructions](#agent-instructions) below.
+Thanks for helping grow **Agents in Practice**. A *skill* is a reusable instruction set for an AI agent, published here as an unpacked folder with optional `references/`, `scripts/` and `assets/`. A *prompt* is one self-contained instruction a person pastes into a Copilot chat; see [Prompts](#prompts) below. An *agent instructions* item is the instructions and knowledge files that define an agent's role; see [Agent instructions](#agent-instructions) below.
 
-You contribute by adding **one folder under [`skills/`](./skills/) or [`agent-instructions/`](./agent-instructions/)** and opening a pull request. CI validates the folder; nothing else is generated or edited by hand.
+You contribute by adding **one folder under [`skills/`](./skills/), [`prompts/`](./prompts/) or [`agent-instructions/`](./agent-instructions/)** and opening a pull request. CI validates the folder; nothing else is generated or edited by hand.
 
 > [!NOTE]
 > This is a volunteer-maintained community project, not a Microsoft product. Reviews and assistance are best-effort. See [SUPPORT.md](./SUPPORT.md).
@@ -75,7 +75,7 @@ description: Use when the user asks to summarize a meeting transcript, before dr
 | --- | --- | --- |
 | `name` | yes | Display name shown in the catalog |
 | `description` | yes | Catalog one-liner |
-| `platforms` | yes | One or more of `GitHub Copilot`, `Copilot Studio`, `Microsoft 365 Copilot`, `Other` |
+| `platforms` | yes | One or more of `GitHub Copilot`, `Copilot Studio`, `Microsoft 365 Copilot`, `Any coding agent` (works in any agent that can read a repository, such as the GitHub Copilot CLI or Claude Code), `Other` |
 | `tags` | yes | Lowercase tags for search |
 | `subcategory` | yes | Catalog section inside the category, for example `Governance & compliance`. The category itself is not a field: the gallery derives it from the top-level folder (`skills/` → **Skills**) |
 | `author` | yes | Person or team who wrote the skill |
@@ -96,6 +96,16 @@ Every skill `README.md` must:
 - include the standard as-is disclaimer.
 
 Use the exact uppercase filename `README.md`.
+
+## Prompts
+
+A prompt lives in `prompts/<slug>/`. [PROMPT-SCHEMA.md](./PROMPT-SCHEMA.md) defines its shape and limits:
+
+- `PROMPT.md` is pasted into chat as is: no frontmatter, 8,000 characters or less, and no knowledge files or links the agent must open.
+- State the Microsoft behaviour the prompt relies on inside `PROMPT.md`, and cite a Microsoft Learn page and its date for each fact in the README.
+- `README.md` and `metadata.json` follow the same rules as a skill's, with how to run it in each tool (including the VS Code prompt file header) in place of trigger phrases.
+
+Copy [`prompts/_template/`](./prompts/_template/) to get started.
 
 ## Agent instructions
 
@@ -132,15 +142,24 @@ These jobs run on every pull request.
 - `README.md` links to a file that does not exist, `metadata.json` breaks the rules above, or there are stray top-level files;
 - the root `README.md` catalog has no row linking to `agent-instructions/<slug>/`.
 
-**One skill per PR** (the check's name; it covers both kinds of item) fails when the changed files span more than one `skills/<slug>/` or `agent-instructions/<slug>/` folder.
+**Validate prompts** (`scripts/validate-prompts.mjs`) fails when:
 
-Run both validators locally with `npm test`, or pass a slug to either script to check one item.
+- the folder name is not lowercase kebab-case;
+- `PROMPT.md`, `README.md` or `metadata.json` is missing;
+- `PROMPT.md` is empty, starts with frontmatter, or is over 8,000 characters;
+- the folder has anything other than those three files and `assets/`;
+- `README.md` links to a file that does not exist, or `metadata.json` breaks the rules above;
+- the root `README.md` catalog has no row linking to `prompts/<slug>/`.
+
+**One skill per PR** (the check's name; it covers every kind of item) fails when the changed files span more than one `skills/<slug>/`, `prompts/<slug>/` or `agent-instructions/<slug>/` folder.
+
+Run all three validators locally with `npm test`, or pass a slug to any of the scripts to check one item.
 
 ## Pre-submission checklist
 
 - [ ] Folder name and `SKILL.md` `name` match and are kebab-case
 - [ ] `description` is one line, trigger-focused, with an out-of-scope clause
-- [ ] `SKILL.md` follows [SKILL-SCHEMA.md](./SKILL-SCHEMA.md) and is under 500 lines
+- [ ] `SKILL.md` follows [SKILL-SCHEMA.md](./SKILL-SCHEMA.md) and is under 500 lines; a prompt's `PROMPT.md` follows [PROMPT-SCHEMA.md](./PROMPT-SCHEMA.md) (no frontmatter, 8,000 characters or less, self-contained)
 - [ ] `metadata.json` is complete and valid
 - [ ] `README.md` has trigger phrases, prerequisites, limitations, attribution, version history and disclaimer
 - [ ] Any Microsoft feature described is labelled with its release state (preview, GA) and the documentation date relied on

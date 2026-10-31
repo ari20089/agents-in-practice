@@ -124,7 +124,7 @@
     sync();
   }
 
-  // ---------- copy instructions ----------
+  // ---------- copy instructions or prompt ----------
 
   const copy = $("copy-instructions");
   if (copy) {
@@ -136,7 +136,7 @@
       } catch {
         copy.textContent = "Select the text and copy it";
       }
-      setTimeout(() => (copy.textContent = "Copy instructions"), 2000);
+      setTimeout(() => (copy.textContent = copy.dataset.label || "Copy instructions"), 2000);
     });
   }
 
