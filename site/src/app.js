@@ -17,9 +17,7 @@
     const empty = $("empty");
     const count = $("count");
     const clearBtn = $("clear");
-    // "skill" while the catalog holds one type, "item" once it mixes them.
-    const label = new Set(data.map((s) => s.typeLabel)).size === 1 ? data[0].typeLabel : "item";
-    const word = (n) => `${label}${n === 1 ? "" : "s"}`;
+    const word = (n) => `item${n === 1 ? "" : "s"}`;
 
     function readState() {
       const p = new URLSearchParams(location.search);

@@ -45,8 +45,6 @@ const SUB_HUES = [280, 175, 20, 38, 340, 140];
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const plural = (n, word) => `${n} ${word}${n === 1 ? "" : "s"}`;
-// "skill" while the list holds one type, "item" once it mixes them.
-const countWord = (list) => (new Set(list.map((i) => i.typeLabel)).size === 1 ? list[0].typeLabel : "item");
 
 function frontmatter(text) {
   const m = text.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/);
@@ -286,7 +284,7 @@ function indexPage(items, catalog) {
     <div class="intro-text">
       <h1>${esc(SITE.title)}</h1>
       <p class="subtitle">Ready-to-use building blocks for your own agents</p>
-      <p class="lead">${esc(SITE.tagline)} Skills use the open <a href="${REPO}/blob/main/SKILL-SCHEMA.md">Agent Skills</a> format, so they run in any host that supports&nbsp;it.</p>
+      <p class="lead">${esc(SITE.tagline)}</p>
     </div>
   </div>
 </section>
@@ -311,7 +309,7 @@ function indexPage(items, catalog) {
     </form>
 
     <div class="results-bar">
-      <p class="count" id="count" aria-live="polite">Showing ${plural(n, countWord(items))}</p>
+      <p class="count" id="count" aria-live="polite">Showing ${plural(n, "item")}</p>
       <button type="button" id="clear" class="link">Clear filters</button>
     </div>
 
@@ -335,8 +333,8 @@ function indexPage(items, catalog) {
     </div>
     <ol class="gs-steps">
       <li><span class="gs-num">01</span><div><h3>Find one</h3><p>Search or filter the catalog above, then open its page to read what it does and what it relies on.</p></div></li>
-      <li><span class="gs-num">02</span><div><h3>Put it in place</h3><p>Copy a skill's whole folder into your host's skills directory (<a href="${REPO}/blob/main/skills/README.md">where each host expects it</a>), paste a prompt into chat, or paste agent instructions into your agent.</p></div></li>
-      <li><span class="gs-num">03</span><div><h3>Ask your agent</h3><p>A skill loads when your request matches its description; prompts and agent instructions work as soon as they're in place.</p></div></li>
+      <li><span class="gs-num">02</span><div><h3>Copy it</h3><p>Download or copy the whole folder. Its README says where each file goes in your agent.</p></div></li>
+      <li><span class="gs-num">03</span><div><h3>Ask your agent</h3><p>Once it's in place, your agent uses it when your request calls for it.</p></div></li>
     </ol>
   </div>
 </section>
