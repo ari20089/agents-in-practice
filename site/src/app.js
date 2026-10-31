@@ -17,7 +17,7 @@
     const empty = $("empty");
     const count = $("count");
     const clearBtn = $("clear");
-    const word = (n) => `skill${n === 1 ? "" : "s"}`;
+    const word = (n) => `item${n === 1 ? "" : "s"}`;
 
     function readState() {
       const p = new URLSearchParams(location.search);
@@ -76,7 +76,7 @@
     <p class="card-desc">${esc(s.description)}</p>
     <footer class="card-foot">
       <span class="card-author">${esc(s.author)}</span>
-      <span class="card-more" aria-hidden="true">Details <svg viewBox="0 0 16 16" width="14" height="14"><path fill="currentColor" d="M4.53 4.75A.75.75 0 0 1 5.28 4h6.01a.75.75 0 0 1 .75.75v6.01a.75.75 0 0 1-1.5 0v-4.2l-5.26 5.26a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734L9.48 5.5h-4.2a.75.75 0 0 1-.75-.75Z"/></svg></span>
+      <a class="card-more" href="${esc(s.url)}" tabindex="-1" aria-hidden="true">Details <svg viewBox="0 0 16 16" width="14" height="14"><path fill="currentColor" d="M4.53 4.75A.75.75 0 0 1 5.28 4h6.01a.75.75 0 0 1 .75.75v6.01a.75.75 0 0 1-1.5 0v-4.2l-5.26 5.26a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734L9.48 5.5h-4.2a.75.75 0 0 1-.75-.75Z"/></svg></a>
     </footer>
   </div>
 </article>`;
@@ -113,7 +113,7 @@
 
   // ---------- download gate ----------
 
-  // The download stays off until the reader confirms they trust the skill.
+  // The download stays off until the reader confirms they trust the item.
   // Without JavaScript the link simply works.
   const trust = $("trust-ok");
   const download = $("download");
