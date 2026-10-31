@@ -40,7 +40,7 @@ skills/<slug>/
     └── assets/       # optional templates, data files, preview image
 ```
 
-The gallery at https://ari20089.github.io/agents-in-practice/ is generated from these files. `metadata.json` feeds the card, `README.md` becomes the overview on the skill's page, and an optional `assets/preview.png` (16:9, at least 640×360) is shown on that page. Cards use a small icon generated from the skill name. Run `npm run site:dev` to preview your skill's page locally.
+The gallery at https://ari20089.github.io/agents-in-practice/ is generated from these files. `metadata.json` feeds the card, `README.md` becomes the overview on the skill's page, and an optional `assets/preview.png` (16:9, at least 640×360, for example a screenshot of the skill in use) becomes the card cover and appears on that page. Without one, a cover is generated from the `SKILL.md` frontmatter. Run `npm run site:dev` to preview your skill's page locally.
 
 Copy [`skills/_template/`](./skills/_template/) to get started. The `<slug>` is the folder name: lowercase, hyphen-separated, no spaces or periods, matching the `name` in `SKILL.md`.
 

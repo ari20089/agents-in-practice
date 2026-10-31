@@ -65,19 +65,17 @@
 
     function card(s) {
       return `<article class="card" style="--h:${Number(s.hue) || 220}">
+  <a class="card-art" href="${esc(s.url)}" tabindex="-1" aria-hidden="true"><img src="${s.image}" alt="" loading="lazy" width="640" height="360"></a>
   <div class="card-body">
-    <div class="card-head">
-      <img class="skill-icon" src="${s.icon || s.image}" alt="" width="44" height="44" loading="lazy">
-      <div class="card-titles">
-        <p class="card-kicker kicker">${s.subcategory ? `<span class="kicker-sub">${esc(s.subcategory)}</span>` : `<span class="kicker-cat">${esc(s.category)}</span>`}</p>
-        <h3><a href="${esc(s.url)}">${esc(s.name)}</a></h3>
-      </div>
-    </div>
-    <p class="card-desc">${esc(s.description)}</p>
-    <ul class="chips">${s.platforms.map((p) => `<li class="chip chip-platform" data-value="${slug(p)}">${esc(p)}</li>`).join("")}</ul>
-    <footer class="card-foot">
-      <span class="author">${avatar(s)}<span>${esc(s.author)}</span></span>
+    <div class="card-top">
+      <p class="card-kicker kicker"><span class="kicker-type">${esc(s.typeLabel || s.category)}</span>${s.subcategory ? `<span class="kicker-sub">${esc(s.subcategory)}</span>` : ""}</p>
       <time datetime="${esc(s.updatedAt)}" title="Last updated">${esc(fmt(s.updatedAt))}</time>
+    </div>
+    <h3><a href="${esc(s.url)}">${esc(s.name)}</a></h3>
+    <p class="card-desc">${esc(s.description)}</p>
+    <footer class="card-foot">
+      <span class="card-author">${esc(s.author)}</span>
+      <span class="card-more" aria-hidden="true">Details <svg viewBox="0 0 16 16" width="16" height="16"><path fill="currentColor" d="M4.53 4.75A.75.75 0 0 1 5.28 4h6.01a.75.75 0 0 1 .75.75v6.01a.75.75 0 0 1-1.5 0v-4.2l-5.26 5.26a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734L9.48 5.5h-4.2a.75.75 0 0 1-.75-.75Z"/></svg></span>
     </footer>
   </div>
 </article>`;

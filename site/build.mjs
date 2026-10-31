@@ -84,10 +84,39 @@ function hue(slug) {
   return h;
 }
 
-function monogram(slug, name) {
-  const initials = name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join("");
-  const h = 205 + (hue(slug) % 16); // blue, varied slightly per skill, matching the site palette
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="hsl(${h},70%,45%)"/><stop offset="1" stop-color="hsl(${(h + 15) % 360},75%,28%)"/></linearGradient></defs><rect width="640" height="360" fill="url(#g)"/><circle cx="560" cy="60" r="140" fill="rgba(255,255,255,.07)"/><circle cx="90" cy="330" r="110" fill="rgba(255,255,255,.06)"/><text x="320" y="202" font-family="system-ui,Segoe UI,sans-serif" font-size="124" font-weight="700" fill="rgba(255,255,255,.94)" text-anchor="middle" letter-spacing="-4">${esc(initials)}</text></svg>`;
+// Generated cover for skills without assets/preview.png: an editor window showing the
+// skill's own SKILL.md frontmatter, the closest thing to a screenshot of a skill.
+function wrap(text, first, rest, maxLines) {
+  const words = String(text).split(/\s+/).filter(Boolean);
+  const lines = [];
+  let line = "";
+  let limit = first;
+  for (const w of words) {
+    if ((line + " " + w).trim().length > limit) {
+      lines.push(line.trim());
+      line = w;
+      limit = rest;
+      if (lines.length === maxLines) break;
+    } else line = `${line} ${w}`;
+  }
+  if (lines.length < maxLines && line.trim()) lines.push(line.trim());
+  if (lines.length === maxLines && words.join(" ").length > lines.join(" ").length) lines[maxLines - 1] = lines[maxLines - 1].replace(/\s*\S*$/, "") + " …";
+  return lines;
+}
+
+function cover(slug, name, description) {
+  const mono = "ui-monospace,SFMono-Regular,Menlo,Consolas,monospace";
+  const desc = wrap(description || "", 40, 52, 5);
+  const rows = [
+    `<tspan fill="#64748b">---</tspan>`,
+    `<tspan fill="#93c5fd">name:</tspan><tspan fill="#e2e8f0"> ${esc(slug.length > 46 ? slug.slice(0, 45) + "…" : slug)}</tspan>`,
+    `<tspan fill="#93c5fd">description:</tspan><tspan fill="#cbd5e1"> ${esc(desc[0] ?? "")}</tspan>`,
+    ...desc.slice(1).map((l) => `<tspan fill="#cbd5e1">  ${esc(l)}</tspan>`),
+    `<tspan fill="#64748b">---</tspan>`,
+  ];
+  const text = rows.map((r, i) => `<text x="62" y="${106 + i * 23}" font-family="${mono}" font-size="15" xml:space="preserve">${r}</text>`).join("");
+  const heading = `<text x="62" y="${106 + rows.length * 23 + 12}" font-family="${mono}" font-size="16.5" font-weight="700" fill="#ffffff" xml:space="preserve"><tspan fill="#fbbf24"># </tspan>${esc(name)}</text>`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360"><defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0a1428"/><stop offset="1" stop-color="#132a5c"/></linearGradient><radialGradient id="glow" cx=".85" cy=".1" r=".7"><stop offset="0" stop-color="#2563eb" stop-opacity=".55"/><stop offset="1" stop-color="#2563eb" stop-opacity="0"/></radialGradient></defs><rect width="640" height="360" fill="url(#bg)"/><rect width="640" height="360" fill="url(#glow)"/><rect x="36" y="34" width="568" height="300" rx="12" fill="#0b1222" stroke="#ffffff" stroke-opacity=".1"/><path d="M36 46a12 12 0 0 1 12-12h544a12 12 0 0 1 12 12v24H36z" fill="#111b31"/><circle cx="58" cy="52" r="5" fill="#ff5f57"/><circle cx="76" cy="52" r="5" fill="#febc2e"/><circle cx="94" cy="52" r="5" fill="#28c840"/><rect x="116" y="40" width="104" height="30" rx="6" fill="#0b1222"/><text x="130" y="60" font-family="${mono}" font-size="13.5" fill="#cbd5e1">SKILL.md</text><rect x="36" y="70" width="568" height="1" fill="#ffffff" fill-opacity=".08"/>${text}${heading}</svg>`;
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 }
 
@@ -140,6 +169,7 @@ function readItems() {
         slug,
         type: type.dir,
         category: type.label,
+        typeLabel: type.singular,
         subcategory: meta.subcategory ?? "",
         hue: SUB_HUES[hue(meta.subcategory ?? slug) % SUB_HUES.length],
         name: meta.name,
@@ -158,7 +188,7 @@ function readItems() {
         readme,
         files: listFiles(dir).filter((f) => f.path !== "metadata.json" && f.path !== "README.md"),
         hasPreview,
-        image: hasPreview ? `${type.dir}/${slug}/assets/preview.png` : monogram(slug, meta.name),
+        image: hasPreview ? `${type.dir}/${slug}/assets/preview.png` : cover(slug, meta.name, skill?.fields.description ?? meta.description),
         icon: iconMark(slug, meta.name),
         url: `${type.dir}/${slug}/`,
         sourceUrl: `${REPO}/tree/main/${type.dir}/${slug}`,
