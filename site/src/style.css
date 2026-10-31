@@ -177,7 +177,7 @@ button.link { font: inherit; color: var(--blue); background: none; border: 0; pa
 
 /* ---------- intro ---------- */
 
-.intro { position: relative; padding: 60px 0 56px; background: var(--intro-wash); border-bottom: 1px solid var(--intro-line); }
+.intro { position: relative; padding: 56px 0 96px; background: var(--intro-wash); border-bottom: 1px solid var(--intro-line); }
 .intro::before { content: ""; position: absolute; inset: 0; pointer-events: none; background-image: linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px); background-size: 32px 32px; }
 .intro .container { position: relative; }
 .intro h1 { font-size: clamp(2.4rem, 5.4vw, 3.6rem); font-weight: 800; letter-spacing: -0.035em; margin: 0; }
@@ -193,16 +193,20 @@ button.link { font: inherit; color: var(--blue); background: none; border: 0; pa
 
 /* ---------- gallery ---------- */
 
-.gallery { padding: 48px 0 64px; scroll-margin-top: 72px; }
+.gallery { padding: 0 0 64px; scroll-margin-top: 72px; }
+.intro .intro-counts { margin-top: 24px; }
+.intro-note { display: flex; align-items: flex-start; gap: 10px; margin: 16px 0 0; max-width: 72ch; font-size: 0.93rem; color: var(--ink-2); }
+.intro-note svg { flex: none; margin-top: 2px; color: var(--blue); }
+.intro-note a { font-weight: 700; white-space: nowrap; }
 .gallery-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px 24px; flex-wrap: wrap; margin-bottom: 20px; }
 .gallery-head h2 { margin: 0; font-size: clamp(1.7rem, 3.2vw, 2.25rem); font-weight: 800; }
 .count-pills { display: flex; gap: 8px; flex-wrap: wrap; list-style: none; margin: 0; padding: 0; }
 .count-pills li { background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 5px 13px; font-size: 0.88rem; font-weight: 600; color: var(--ink-2); }
 
-.toolbar { display: grid; grid-template-columns: minmax(220px, 1.6fr) repeat(4, minmax(0, 1fr)); gap: 12px; background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius); padding: 14px; box-shadow: var(--shadow); }
+.toolbar { position: relative; z-index: 2; margin-top: -48px; display: grid; grid-template-columns: minmax(220px, 1.6fr) repeat(4, minmax(0, 1fr)); gap: 14px; background: var(--surface); border: 1px solid var(--border-soft); border-radius: 12px; padding: 18px; box-shadow: 0 14px 34px rgba(20, 24, 31, 0.12); }
 .search { position: relative; display: block; min-width: 0; }
 .search svg { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
-.search input, .control select { width: 100%; height: 44px; font: inherit; font-size: 0.97rem; color: var(--ink); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); }
+.search input, .control select { width: 100%; height: 48px; font: inherit; font-size: 0.97rem; color: var(--ink); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); }
 .search input { padding: 0 12px 0 40px; }
 .control { display: block; min-width: 0; }
 .control select { padding: 0 30px 0 12px; appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='%235b616b' d='M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z'/></svg>"); background-repeat: no-repeat; background-position: right 10px center; background-size: 16px; text-overflow: ellipsis; }

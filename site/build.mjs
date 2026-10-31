@@ -312,27 +312,16 @@ function indexPage(items, catalog) {
       <h1>${esc(SITE.title)}</h1>
       <p class="subtitle">Agent skills you can copy into your own agent</p>
       <p class="lead">${esc(SITE.tagline)} Each one is a folder in the open <a href="${REPO}/blob/main/SKILL-SCHEMA.md">Agent Skills</a> format, so it runs in any host that supports&nbsp;it.</p>
+      <ul class="count-pills intro-counts" aria-label="Catalog counts">${pills.map((t) => `<li>${esc(t)}</li>`).join("")}</ul>
+      <p class="intro-note"><svg viewBox="0 0 16 16" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"/></svg><span>Skills that cover preview features state the documentation date they rely on. <a href="#getting-started">How to install a skill <span aria-hidden="true">→</span></a></span></p>
     </div>
   </div>
 </section>
 
-<aside class="notice" aria-label="Note">
-  <div class="container notice-row">
-    <svg viewBox="0 0 16 16" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"/></svg>
-    <p>Skills that cover preview features state the documentation date they rely on. Check it before you use one.</p>
-    <a href="#getting-started">How to install a skill <span aria-hidden="true">→</span></a>
-  </div>
-</aside>
 
 <section id="gallery" class="gallery">
   <div class="container">
-    <div class="gallery-head">
-      <div>
-        <p class="eyebrow">Skill catalog</p>
-        <h2>Browse the skills</h2>
-      </div>
-      <ul class="count-pills" aria-label="Catalog counts">${pills.map((t) => `<li>${esc(t)}</li>`).join("")}</ul>
-    </div>
+    <h2 class="visually-hidden">Browse the skills</h2>
 
     <form class="toolbar" id="filters" role="search" aria-label="Filter skills" onsubmit="return false">
       <label class="search">
