@@ -10,6 +10,7 @@
 import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join, posix } from "node:path";
 import { fileURLToPath } from "node:url";
+import { crc32, deflateRawSync } from "node:zlib";
 import { marked } from "marked";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -265,11 +266,6 @@ ${body}
 const slugify = (s) => String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 const chips = (xs, cls = "") => xs.map((x) => `<li class="chip ${cls}" data-value="${slugify(x)}">${esc(x)}</li>`).join("");
 
-function authorLine(item, rel = "") {
-  const img = item.avatar ? `<img class="avatar" src="${item.avatar}" alt="" width="24" height="24" loading="lazy">` : `<span class="avatar avatar-text" aria-hidden="true">${esc(item.author[0] ?? "?")}</span>`;
-  return `<span class="author">${img}<span>${esc(item.author)}</span></span>`;
-}
-
 function select(id, label, allLabel, values, counts) {
   const opts = values.map((v) => `<option value="${esc(v)}">${esc(v)} (${counts.get(v) ?? 0})</option>`).join("");
   return `<label class="control"><span class="visually-hidden">${esc(label)}</span><select id="${id}"><option value="">${esc(allLabel)}</option>${opts}</select></label>`;
@@ -378,7 +374,14 @@ function detailPage(s) {
       <p class="eyebrow kicker"><a class="kicker-cat" href="${rel}index.html?category=${encodeURIComponent(s.category)}#gallery">${esc(s.category)}</a>${s.subcategory ? `<a class="kicker-sub" href="${rel}index.html?subcategory=${encodeURIComponent(s.subcategory)}#gallery">${esc(s.subcategory)}</a>` : ""}</p>
       <div class="detail-title"><img class="skill-icon skill-icon-lg" src="${s.icon}" alt="" width="56" height="56"><h1>${esc(s.name)}</h1></div>
       <p class="lead">${esc(s.description)}</p>
-      <ul class="chips">${chips(s.platforms, "chip-platform")}</ul>
+      <div class="byline">
+        ${s.avatar ? `<img class="avatar avatar-lg" src="${s.avatar}" alt="" width="48" height="48">` : `<span class="avatar avatar-lg avatar-text" aria-hidden="true">${esc(s.author[0] ?? "?")}</span>`}
+        <div>
+          <p class="byline-name">by <strong>${esc(s.author)}</strong></p>
+          <p class="byline-links">${[s.authorGithub ? `<a href="https://github.com/${esc(s.authorGithub)}">@${esc(s.authorGithub)}</a>` : "", s.authorUrl && !/github\.com/i.test(s.authorUrl) ? `<a href="${esc(s.authorUrl)}">${/linkedin/i.test(s.authorUrl) ? "LinkedIn" : "Profile"}</a>` : ""].filter(Boolean).join(" · ")}</p>
+        </div>
+      </div>
+      <ul class="chips tag-pills">${chips(s.tags)}</ul>
       <div class="actions">
         <a class="btn btn-primary" href="${s.sourceUrl}">View on GitHub</a>
         ${s.skillFileUrl ? `<a class="btn" href="${s.skillFileUrl}">Open SKILL.md</a>` : ""}
@@ -420,27 +423,73 @@ function detailPage(s) {
     </div>
 
     <aside class="meta">
-      <dl>
-        <div class="meta-sec meta-author"><dt>Author</dt><dd>${authorLine(s)}<div class="meta-links">${s.authorGithub ? `<a href="https://github.com/${esc(s.authorGithub)}">@${esc(s.authorGithub)}</a>` : ""}${s.authorUrl && !/github\.com/i.test(s.authorUrl) ? ` · <a href="${esc(s.authorUrl)}">${/linkedin/i.test(s.authorUrl) ? "LinkedIn" : "Profile"}</a>` : ""}</div></dd></div>
-        <div class="meta-sec">
-          <dt>Category</dt><dd><span class="kicker"><a class="kicker-cat" href="${rel}index.html?category=${encodeURIComponent(s.category)}#gallery">${esc(s.category)}</a></span></dd>
-          ${s.subcategory ? `<dt>Sub-category</dt><dd><span class="kicker"><a class="kicker-sub" href="${rel}index.html?subcategory=${encodeURIComponent(s.subcategory)}#gallery">${esc(s.subcategory)}</a></span></dd>` : ""}
+      <section class="meta-sec">
+        <h2 class="meta-label">Works with</h2>
+        <ul class="works">${s.platforms.map((p) => `<li data-value="${slugify(p)}">${esc(p)}</li>`).join("")}</ul>
+      </section>
+      <section class="meta-sec">
+        <h2 class="meta-h">Add this ${esc(s.typeLabel)}</h2>
+        <p class="meta-p">Download the folder and unzip it into your host's skills directory${s.install ? `, such as <code>${esc(s.install.replace(`${s.slug}/`, ""))}</code>` : ""}.</p>
+        <div class="trust">
+          <svg class="trust-icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 2.5 4 5.5v6c0 5 3.4 8.9 8 10 4.6-1.1 8-5 8-10v-6Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 7.5v5.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="16.3" r="1.1" fill="currentColor"/></svg>
+          <div>
+            <p class="trust-title">Add only what you trust</p>
+            <label class="trust-check"><input type="checkbox" id="trust-ok"> <span>I understand that this is a community-provided skill. It runs with my agent's permissions, so I should review it carefully and add it only if I trust the source.</span></label>
+          </div>
         </div>
-        <div class="meta-sec"><dt>Platforms</dt><dd><ul class="chips">${chips(s.platforms, "chip-platform")}</ul></dd></div>
-        <div class="meta-sec meta-facts">
+        <a class="btn btn-primary btn-block" id="download" href="${esc(s.slug)}.zip" download><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 1.75a.75.75 0 0 1 .75.75v6.19l2.22-2.22a.75.75 0 1 1 1.06 1.06l-3.5 3.5a.75.75 0 0 1-1.06 0l-3.5-3.5a.75.75 0 0 1 1.06-1.06l2.22 2.22V2.5A.75.75 0 0 1 8 1.75ZM2.75 12.5a.75.75 0 0 0 0 1.5h10.5a.75.75 0 0 0 0-1.5Z"/></svg>Download ${esc(s.typeLabel)} (.zip)</a>
+      </section>
+      <section class="meta-sec">
+        <dl class="meta-facts">
           <div><dt>Version</dt><dd>${esc(s.version)}</dd></div>
-          <div><dt>Created</dt><dd><time datetime="${esc(s.createdAt)}">${esc(fmtDate(s.createdAt))}</time></dd></div>
+          <div><dt>Added</dt><dd><time datetime="${esc(s.createdAt)}">${esc(fmtDate(s.createdAt))}</time></dd></div>
           <div><dt>Updated</dt><dd><time datetime="${esc(s.updatedAt)}">${esc(fmtDate(s.updatedAt))}</time></dd></div>
-        </div>
-        ${s.install ? `<div class="meta-sec"><dt>Install path</dt><dd><code class="meta-path">${esc(s.install)}</code></dd></div>` : ""}
-        <div class="meta-sec"><dt>Tags</dt><dd><ul class="chips">${chips(s.tags, "chip-tag")}</ul></dd></div>
-      </dl>
+        </dl>
+      </section>
+      <section class="meta-sec">
+        <p class="meta-note">This ${esc(s.typeLabel)} is provided as-is and is not a Microsoft product. See <a href="${REPO}/blob/main/SUPPORT.md">Support</a> for how to get help.</p>
+      </section>
     </aside>
   </div>
 </article>
 </div>
 `;
   return layout({ title: `${s.name} · ${SITE.title}`, description: s.description, rel, body, bodyClass: "page-detail" });
+}
+
+// ---------- zip ----------
+
+// Minimal zip writer (deflate), so each skill page can offer its folder as one download.
+// Timestamps come from updatedAt so the archive only changes when the skill does.
+function zip(entries, iso) {
+  const d = iso ? new Date(iso + "T00:00:00Z") : new Date(Date.UTC(1980, 0, 1));
+  const time = 0;
+  const date = ((d.getUTCFullYear() - 1980) << 9) | ((d.getUTCMonth() + 1) << 5) | d.getUTCDate();
+  const local = [];
+  const central = [];
+  let offset = 0;
+  for (const { name, data } of entries) {
+    const nameBuf = Buffer.from(name, "utf8");
+    const body = deflateRawSync(data);
+    const crc = crc32(data);
+    const head = Buffer.alloc(30);
+    head.writeUInt32LE(0x04034b50, 0); head.writeUInt16LE(20, 4); head.writeUInt16LE(0x0800, 6); head.writeUInt16LE(8, 8);
+    head.writeUInt16LE(time, 10); head.writeUInt16LE(date, 12); head.writeUInt32LE(crc, 14);
+    head.writeUInt32LE(body.length, 18); head.writeUInt32LE(data.length, 22); head.writeUInt16LE(nameBuf.length, 26);
+    const dir = Buffer.alloc(46);
+    dir.writeUInt32LE(0x02014b50, 0); dir.writeUInt16LE(20, 4); dir.writeUInt16LE(20, 6); dir.writeUInt16LE(0x0800, 8); dir.writeUInt16LE(8, 10);
+    dir.writeUInt16LE(time, 12); dir.writeUInt16LE(date, 14); dir.writeUInt32LE(crc, 16);
+    dir.writeUInt32LE(body.length, 20); dir.writeUInt32LE(data.length, 24); dir.writeUInt16LE(nameBuf.length, 28);
+    dir.writeUInt32LE(offset, 42);
+    local.push(head, nameBuf, body);
+    central.push(dir, nameBuf);
+    offset += head.length + nameBuf.length + body.length;
+  }
+  const cd = Buffer.concat(central);
+  const end = Buffer.alloc(22);
+  end.writeUInt32LE(0x06054b50, 0); end.writeUInt16LE(entries.length, 8); end.writeUInt16LE(entries.length, 10);
+  end.writeUInt32LE(cd.length, 12); end.writeUInt32LE(offset, 16);
+  return Buffer.concat([...local, cd, end]);
 }
 
 // ---------- build ----------
@@ -459,6 +508,9 @@ for (const s of items) {
   const dir = join(OUT, s.type, s.slug);
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, "index.html"), detailPage(s));
+  // The download holds what the agent loads, inside a folder named after the slug.
+  const src = join(ROOT, s.type, s.slug);
+  writeFileSync(join(dir, `${s.slug}.zip`), zip(s.files.map((f) => ({ name: `${s.slug}/${f.path}`, data: readFileSync(join(src, f.path)) })), s.updatedAt));
   const assets = join(ROOT, s.type, s.slug, "assets");
   if (existsSync(assets)) cpSync(assets, join(dir, "assets"), { recursive: true });
 }

@@ -111,6 +111,19 @@
     render();
   }
 
+  // ---------- download gate ----------
+
+  // The download stays off until the reader confirms they trust the skill.
+  // Without JavaScript the link simply works.
+  const trust = $("trust-ok");
+  const download = $("download");
+  if (trust && download) {
+    const sync = () => download.setAttribute("aria-disabled", trust.checked ? "false" : "true");
+    download.addEventListener("click", (e) => { if (!trust.checked) { e.preventDefault(); trust.focus(); } });
+    trust.addEventListener("change", sync);
+    sync();
+  }
+
   // ---------- detail tabs ----------
 
   const tablist = document.querySelector(".tabs[role=tablist]");
