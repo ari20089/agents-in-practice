@@ -37,7 +37,13 @@ Each skill folder is self-contained: copy the whole folder, not just `SKILL.md`,
 
 ## Skill catalog
 
-> 1 skill
+> 2 skills
+
+### Architecture & design
+
+| Skill | Platforms | Description |
+| --- | --- | --- |
+| [connected-agent-handoff-boundaries](./skills/connected-agent-handoff-boundaries/) | GitHub Copilot, Microsoft 365 Copilot, Copilot Studio | Decision boundaries for Copilot Studio multi-agent designs: who may delegate which actions to child, connected, external and live agents, what context crosses each handoff and what comes back, with instruction blocks, a handoff contract, open questions and a tenant test plan. |
 
 ### Governance & compliance
 
