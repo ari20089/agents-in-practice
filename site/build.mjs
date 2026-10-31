@@ -266,9 +266,12 @@ function indexPage(items, catalog) {
   const body = `
 <section class="hero">
   <div class="container hero-inner">
+    <div class="hero-text">
     <h1>${esc(SITE.title)}</h1>
     <p class="lead">${esc(SITE.tagline)} Each one is a folder in the open <a href="${REPO}/blob/main/SKILL-SCHEMA.md">Agent Skills</a> format, so it runs in any host that supports&nbsp;it.</p>
     <ul class="hero-stats" aria-label="Catalog at a glance">${stats.map((t) => `<li>${t.replace(/^(\d+)/, "<strong>$1</strong>")}</li>`).join("")}</ul>
+    </div>
+    <figure class="hero-figure" aria-hidden="true"><img src="assets/hero.svg" alt="" width="560" height="420"></figure>
   </div>
 </section>
 

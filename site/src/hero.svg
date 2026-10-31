@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 420" fill="none">
+  <!-- Original illustration for the Agents in Practice gallery: a person at a laptop while skill cards load. -->
+  <defs>
+    <linearGradient id="card" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#eef3fb"/></linearGradient>
+    <linearGradient id="blazer" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3b82f6"/><stop offset="1" stop-color="#1d4ed8"/></linearGradient>
+    <linearGradient id="glow" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#60a5fa" stop-opacity=".35"/><stop offset="1" stop-color="#60a5fa" stop-opacity="0"/></linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#020617" flood-opacity=".35"/></filter>
+  </defs>
+
+  <!-- backdrop -->
+  <circle cx="300" cy="215" r="190" fill="#ffffff" fill-opacity=".05"/>
+  <circle cx="300" cy="215" r="135" fill="#ffffff" fill-opacity=".05"/>
+  <ellipse cx="290" cy="392" rx="230" ry="14" fill="#020617" fill-opacity=".35"/>
+
+  <!-- sparkles near the cards -->
+  <path d="M320 112 l3 8 l8 3 l-8 3 l-3 8 l-3 -8 l-8 -3 l8 -3 z" fill="#fbbf24"/>
+  <path d="M548 112 l2 5 l5 2 l-5 2 l-2 5 l-2 -5 l-5 -2 l5 -2 z" fill="#93c5fd"/>
+  <circle cx="356" cy="192" r="3" fill="#93c5fd"/>
+  <circle cx="300" cy="30" r="2.5" fill="#93c5fd"/>
+
+  <!-- floating skill cards -->
+  <g filter="url(#shadow)">
+    <rect x="330" y="30" width="210" height="72" rx="14" fill="url(#card)"/>
+    <rect x="346" y="46" width="40" height="40" rx="10" fill="#2563eb"/>
+    <text x="366" y="72" text-anchor="middle" font-family="system-ui,Segoe UI,sans-serif" font-size="15" font-weight="700" fill="#fff">SA</text>
+    <rect x="398" y="50" width="104" height="10" rx="5" fill="#0f172a" fill-opacity=".8"/>
+    <rect x="398" y="68" width="78" height="8" rx="4" fill="#94a3b8"/>
+    <rect x="482" y="66" width="44" height="14" rx="7" fill="#dbeafe"/>
+    <circle cx="530" cy="34" r="13" fill="#14b8a6"/>
+    <path d="M524 34 l4 4 l8 -8" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="370" y="118" width="170" height="60" rx="14" fill="url(#card)"/>
+    <rect x="384" y="132" width="32" height="32" rx="9" fill="#f59e0b"/>
+    <rect x="426" y="137" width="88" height="9" rx="4.5" fill="#0f172a" fill-opacity=".8"/>
+    <rect x="426" y="153" width="60" height="7" rx="3.5" fill="#94a3b8"/>
+  </g>
+  <g filter="url(#shadow)" transform="rotate(-8 268 96)">
+    <path d="M232 62 h56 l16 16 v62 a8 8 0 0 1 -8 8 h-64 a8 8 0 0 1 -8 -8 v-70 a8 8 0 0 1 8 -8 z" fill="url(#card)"/>
+    <path d="M288 62 v12 a4 4 0 0 0 4 4 h12" fill="#cbd5e1"/>
+    <rect x="236" y="88" width="50" height="7" rx="3.5" fill="#2563eb"/>
+    <rect x="236" y="102" width="58" height="6" rx="3" fill="#cbd5e1"/>
+    <rect x="236" y="114" width="44" height="6" rx="3" fill="#cbd5e1"/>
+    <rect x="236" y="126" width="52" height="6" rx="3" fill="#cbd5e1"/>
+  </g>
+
+  <!-- chair -->
+  <rect x="104" y="196" width="14" height="100" rx="7" fill="#334155"/>
+  <rect x="104" y="284" width="112" height="14" rx="7" fill="#475569"/>
+  <rect x="155" y="298" width="10" height="70" fill="#334155"/>
+  <rect x="118" y="366" width="86" height="8" rx="4" fill="#334155"/>
+  <circle cx="122" cy="380" r="7" fill="#1e293b"/>
+  <circle cx="200" cy="380" r="7" fill="#1e293b"/>
+
+  <!-- desk -->
+  <rect x="244" y="248" width="270" height="12" rx="6" fill="#e2e8f0"/>
+  <rect x="262" y="260" width="10" height="126" rx="3" fill="#cbd5e1"/>
+  <rect x="486" y="260" width="10" height="126" rx="3" fill="#cbd5e1"/>
+
+  <!-- plant -->
+  <path d="M476 248 l5 -26 h22 l5 26 z" fill="#f59e0b"/>
+  <path d="M492 222 C 478 206, 478 192, 482 186 C 494 198, 496 212, 492 222 Z" fill="#14b8a6"/>
+  <path d="M492 222 C 504 208, 514 204, 522 204 C 518 218, 506 222, 492 222 Z" fill="#0d9488"/>
+  <path d="M492 222 C 490 208, 498 196, 504 192 C 508 206, 502 216, 492 222 Z" fill="#2dd4bf"/>
+
+  <!-- laptop (side view: keyboard toward the person, screen tilted away) -->
+  <rect x="298" y="240" width="118" height="8" rx="4" fill="#cbd5e1"/>
+  <path d="M404 246 L 424 158 L 434 160 L 414 247 Z" fill="#e2e8f0"/>
+  <path d="M406 238 L 424 164" stroke="#60a5fa" stroke-width="3" stroke-linecap="round"/>
+  <ellipse cx="402" cy="200" rx="30" ry="46" fill="#60a5fa" fill-opacity=".12"/>
+
+  <!-- person: legs -->
+  <rect x="140" y="262" width="118" height="26" rx="13" fill="#1e293b"/>
+  <rect x="234" y="270" width="24" height="98" rx="12" fill="#1e293b"/>
+  <path d="M228 364 h34 a14 14 0 0 1 14 14 v2 h-48 z" fill="#0f172a"/>
+
+  <!-- person: torso -->
+  <path d="M150 178 C 132 210, 136 252, 146 280 L 206 280 C 214 246, 214 206, 202 182 C 186 170, 166 170, 150 178 Z" fill="url(#blazer)"/>
+  <path d="M184 176 L 196 206 L 188 210 L 178 180 Z" fill="#e2e8f0"/>
+
+  <!-- person: neck and head -->
+  <rect x="176" y="152" width="16" height="26" rx="7" fill="#c68863"/>
+  <circle cx="186" cy="134" r="28" fill="#c68863"/>
+  <path d="M159 136 C 154 108, 176 94, 196 98 C 214 102, 220 116, 214 126 C 204 116, 190 116, 182 124 C 176 130, 174 142, 168 150 C 163 148, 160 143, 159 136 Z" fill="#1f2937"/>
+  <ellipse cx="178" cy="140" rx="5" ry="7" fill="#b57752"/>
+  <circle cx="204" cy="136" r="2.6" fill="#1f2937"/>
+  <path d="M204 150 q 6 2 10 -2" stroke="#7c4a2d" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- person: arm reaching the keyboard -->
+  <path d="M190 196 C 200 222, 214 234, 236 238" stroke="#1d4ed8" stroke-width="20" stroke-linecap="round"/>
+  <path d="M236 238 L 306 238" stroke="#2563eb" stroke-width="16" stroke-linecap="round"/>
+  <circle cx="314" cy="238" r="8" fill="#c68863"/>
+</svg>
