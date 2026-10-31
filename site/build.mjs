@@ -361,7 +361,7 @@ function detailPage(s) {
 <nav class="breadcrumb" aria-label="Breadcrumb"><a href="${rel}index.html">Gallery</a> <span aria-hidden="true">›</span> <a href="${rel}index.html?category=${encodeURIComponent(s.category)}#gallery">${esc(s.category)}</a> <span aria-hidden="true">›</span> <span aria-current="page">${esc(s.name)}</span></nav>
   <header class="detail-hero${s.hasPreview ? " has-preview" : ""}">
     <div class="detail-hero-text">
-      <p class="eyebrow kicker"><a class="kicker-cat" href="${rel}index.html?category=${encodeURIComponent(s.category)}#gallery">${esc(s.category)}</a>${s.subcategory ? `<a class="kicker-sub" href="${rel}index.html?subcategory=${encodeURIComponent(s.subcategory)}#gallery">${esc(s.subcategory)}</a>` : ""}</p>
+      <p class="eyebrow kicker"><a class="kicker-cat type-${esc(s.type)}" href="${rel}index.html?category=${encodeURIComponent(s.category)}#gallery">${esc(s.category)}</a>${s.subcategory ? `<a class="kicker-sub" href="${rel}index.html?subcategory=${encodeURIComponent(s.subcategory)}#gallery">${esc(s.subcategory)}</a>` : ""}</p>
       <h1>${esc(s.name)}</h1>
       <p class="lead">${esc(s.description)}</p>
       <div class="byline">

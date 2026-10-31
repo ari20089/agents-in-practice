@@ -150,7 +150,7 @@ button.link { font: inherit; color: var(--blue); background: none; border: 0; pa
 .card, .detail { --sub-bg: hsl(var(--h, 230) var(--sub-bg-sl)); --sub-fg: hsl(var(--h, 230) var(--sub-fg-sl)); --sub-line: hsl(var(--h, 230) var(--sub-line-sl)); }
 .kicker { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin: 0; }
 .kicker > .kicker-cat, .kicker > .kicker-sub { display: inline-block; font-size: 0.74rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 3px 10px; border-radius: 5px; text-decoration: none; }
-.kicker > .kicker-cat { background: var(--blue-soft); color: var(--blue-strong); }
+.kicker > .kicker-cat { background: color-mix(in srgb, var(--type-light, var(--blue)) 20%, transparent); color: var(--type-light, var(--blue-strong)); }
 .kicker > .kicker-sub { background: var(--sub-bg); color: var(--sub-fg); }
 
 .author { display: inline-flex; align-items: center; gap: 10px; min-width: 0; }
@@ -242,7 +242,11 @@ button.link { font: inherit; color: var(--blue); background: none; border: 0; pa
 .card-top { display: flex; align-items: center; gap: 8px; min-width: 0; }
 .card-top time { margin-left: auto; flex: none; color: var(--muted); font-size: 0.8rem; }
 .type-pill { flex: none; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; padding: 3px 10px; border-radius: 5px; background: var(--blue-soft); color: var(--blue-strong); }
-.card-type { position: absolute; top: 12px; right: 12px; z-index: 1; background: var(--surface); color: var(--blue-strong); border: 1px solid var(--border); box-shadow: 0 2px 6px rgb(15 23 42 / 0.12); pointer-events: none; }
+/* One colour per item type, shared by the card badge and the item page kicker. */
+.type-skills { --type: #db2777; --type-light: #f9a8d4; }
+.type-prompts { --type: #c2410c; --type-light: #fdba74; }
+.type-agent-instructions { --type: #7c3aed; --type-light: #c4b5fd; }
+.card-type { position: absolute; top: 12px; right: 12px; z-index: 1; background: var(--type, var(--blue)); color: #fff; border: 1px solid rgb(255 255 255 / 0.55); box-shadow: 0 2px 8px rgb(15 23 42 / 0.25); pointer-events: none; }
 .card-sub { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.78rem; font-weight: 700; padding: 4px 10px; border-radius: 6px; background: var(--sub-bg); color: var(--sub-fg); border: 1px solid color-mix(in srgb, var(--sub-line) 35%, transparent); }
 .card h3 { margin: 4px 0 0; font-size: 1.32rem; font-weight: 800; line-height: 1.22; }
 .card h3 a { color: var(--ink); text-decoration: underline 2px transparent; text-underline-offset: 4px; transition: color 0.15s ease, text-decoration-color 0.15s ease; }
