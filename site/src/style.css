@@ -247,11 +247,11 @@ button.link { font: inherit; color: var(--blue); background: none; border: 0; pa
 .card h3 { margin: 4px 0 0; font-size: 1.32rem; font-weight: 800; line-height: 1.22; }
 .card h3 a { color: var(--ink); text-decoration: underline 2px transparent; text-underline-offset: 4px; transition: color 0.15s ease, text-decoration-color 0.15s ease; }
 .card:hover h3 a, .card h3 a:focus-visible { color: var(--blue-strong); text-decoration-color: currentColor; }
-.card h3 a::after { content: ""; position: absolute; inset: 0; }
 .card-desc { margin: 0; color: var(--ink-2); font-size: 0.98rem; line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .card-foot { margin-top: auto; padding-top: 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 0.9rem; }
 .card-author { color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.card-more { display: inline-flex; align-items: center; gap: 5px; color: var(--blue); font-weight: 700; white-space: nowrap; }
+.card-more { display: inline-flex; align-items: center; gap: 5px; color: var(--blue); font-weight: 700; white-space: nowrap; text-decoration: none; }
+.card-more:hover { color: var(--blue-strong); text-decoration: underline 2px; text-underline-offset: 4px; }
 .empty { text-align: center; padding: 56px 0; margin-top: 12px; color: var(--muted); border: 1px dashed var(--border); border-radius: var(--radius); background: var(--surface); }
 .plain-list li { margin-bottom: 12px; }
 
