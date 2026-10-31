@@ -58,13 +58,19 @@ For agent instructions, paste the item's `INSTRUCTIONS.md` into your agent's ins
 
 ## Agent instructions catalog
 
-> 1 agent instructions item
+> 2 agent instructions items
 
 ### Governance & compliance
 
 | Agent | Platforms | Description |
 | --- | --- | --- |
 | [copilot-agent-governance-reviewer](./agent-instructions/copilot-agent-governance-reviewer/) | Microsoft 365 Copilot, Copilot Studio | A reviewer agent: paste in another Copilot agent's instructions, knowledge sources and actions and it reviews them the way a tenant admin or risk team would (scope, data exposure, write actions without confirmation, licensing fit and Responsible AI gaps) with findings tied to Microsoft documentation and a ship or fix verdict. |
+
+### Developer productivity
+
+| Agent | Platforms | Description |
+| --- | --- | --- |
+| [connector-call-wrapper-generator](./agent-instructions/connector-call-wrapper-generator/) | GitHub Copilot, Copilot Studio, Microsoft 365 Copilot | Name a Dataverse table or connector operation in a Power Apps code app and it writes the typed data access layer over the generated services, with loading, error and empty states, instead of raw generated calls scattered through components. |
 
 ## Contribute
 

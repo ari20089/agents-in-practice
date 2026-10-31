@@ -335,8 +335,8 @@ html.js .panel-title { position: absolute; width: 1px; height: 1px; overflow: hi
 .callout p:last-child { margin: 0; }
 .callout-label { font-size: 0.76rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
 .callout .btn-small { margin-top: 4px; padding: 6px 12px; font-size: 0.85rem; }
-/* Agent instructions are shown exactly as pasted: wrapped, not scrolled sideways. */
-.instructions-text { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.55; max-height: 70vh; }
+/* Agent instructions are shown exactly as pasted, in full: wrapped, never scrolled. */
+.instructions-text { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.55; max-height: none; overflow: visible; }
 table.files td:first-child { font-family: var(--font-mono); font-size: 0.9em; word-break: break-all; }
 
 .meta { position: sticky; top: 84px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 4px 24px; font-size: 0.93em; box-shadow: var(--shadow); }
