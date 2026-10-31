@@ -173,7 +173,19 @@ button.link { font: inherit; color: var(--blue); background: none; border: 0; pa
 
 /* ---------- intro ---------- */
 
-.intro { padding: 56px 0 40px; }
+.intro { padding: 52px 0 48px; }
+.intro-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 420px); gap: 56px; align-items: center; }
+.feature { display: block; overflow: hidden; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); color: var(--ink); text-decoration: none; transition: box-shadow 0.15s ease, border-color 0.15s ease; }
+.feature:hover { color: var(--ink); border-color: var(--blue); box-shadow: var(--shadow-hover); }
+.feature-art { display: block; aspect-ratio: 16 / 9; background: var(--surface-2); border-bottom: 1px solid var(--border-soft); }
+.feature-art img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.feature-body { display: flex; flex-direction: column; gap: 4px; padding: 16px 20px 18px; }
+.feature-label { font-family: var(--font-display); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: var(--blue); }
+.feature-title { font-family: var(--font-display); font-size: 1.2rem; font-weight: 800; line-height: 1.25; letter-spacing: -0.015em; }
+.feature-meta { font-size: 0.88rem; color: var(--muted); }
+.feature-go { margin-top: 8px; font-weight: 700; color: var(--blue); }
+@media (max-width: 960px) { .intro-grid { grid-template-columns: 1fr; gap: 32px; } .feature { max-width: 520px; } }
+@media (max-width: 640px) { .feature { display: none; } }
 .intro h1 { font-size: clamp(2.4rem, 5.4vw, 3.6rem); font-weight: 800; letter-spacing: -0.035em; margin: 0; }
 .subtitle { margin: 8px 0 18px; font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; color: var(--teal); }
 .intro .lead { margin: 0; max-width: 64ch; font-size: 1.12rem; line-height: 1.65; color: var(--ink-2); text-wrap: pretty; }

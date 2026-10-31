@@ -69,7 +69,7 @@ function listFiles(dir, base = "") {
 
 function fmtDate(iso) {
   if (!iso) return "";
-  return new Date(iso + "T00:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
+  return new Date(iso + "T00:00:00Z").toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
 }
 
 function fmtSize(bytes) {
@@ -298,6 +298,7 @@ function indexPage(items, catalog) {
     plural(byPlatform.size, "platform"),
   ];
 
+  const newest = items.slice().sort((x, y) => (y.createdAt || "").localeCompare(x.createdAt || "") || x.name.localeCompare(y.name))[0];
   const pills = [
     ...typesPresent.map((t) => plural(byCategory.get(t.label), t.singular)),
     plural(bySub.size, "sub-category").replace("sub-categorys", "sub-categories"),
@@ -306,11 +307,22 @@ function indexPage(items, catalog) {
 
   const body = `
 <section class="intro">
-  <div class="container">
-    <p class="eyebrow">Microsoft 365 · Copilot Studio · GitHub Copilot</p>
-    <h1>${esc(SITE.title)}</h1>
-    <p class="subtitle">Agent skills you can copy into your own agent</p>
-    <p class="lead">${esc(SITE.tagline)} Each one is a folder in the open <a href="${REPO}/blob/main/SKILL-SCHEMA.md">Agent Skills</a> format, so it runs in any host that supports&nbsp;it.</p>
+  <div class="container intro-grid">
+    <div class="intro-text">
+      <p class="eyebrow">Open skills catalog</p>
+      <h1>${esc(SITE.title)}</h1>
+      <p class="subtitle">Agent skills you can copy into your own agent</p>
+      <p class="lead">${esc(SITE.tagline)} Each one is a folder in the open <a href="${REPO}/blob/main/SKILL-SCHEMA.md">Agent Skills</a> format, so it runs in any host that supports&nbsp;it.</p>
+    </div>
+    ${newest ? `<a class="feature" href="${newest.url}">
+      <span class="feature-art"><img src="${newest.image}" alt="" width="640" height="360"></span>
+      <span class="feature-body">
+        <span class="feature-label">Newest skill</span>
+        <strong class="feature-title">${esc(newest.name)}</strong>
+        <span class="feature-meta">${newest.subcategory ? `${esc(newest.subcategory)} · ` : ""}added ${esc(fmtDate(newest.createdAt))}</span>
+        <span class="feature-go">Read the skill <span aria-hidden="true">→</span></span>
+      </span>
+    </a>` : ""}
   </div>
 </section>
 
