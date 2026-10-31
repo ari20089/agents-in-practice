@@ -258,18 +258,20 @@ function indexPage(items, catalog) {
       </div>
       <p class="hero-meta">Works with ${sortedKeys(byPlatform).map((p) => `<span class="hero-chip">${esc(p)}</span>`).join("")}</p>
     </div>
-    <div class="hero-art" aria-hidden="true">
-      <div class="folder-card">
-        <div class="folder-head"><span class="dots"><i></i><i></i><i></i></span><span class="folder-path">skills/&lt;slug&gt;/</span></div>
-        <pre class="folder-tree"><span class="t-dir">skills/&lt;slug&gt;/</span>
-├── <span class="t-skill">SKILL.md</span>        <span class="t-note"># what the agent reads</span>
-├── <span class="t-file">README.md</span>       <span class="t-note"># for people</span>
-├── <span class="t-file">metadata.json</span>   <span class="t-note"># catalog card</span>
-└── <span class="t-dir">references/</span>     <span class="t-note"># loaded on demand</span>
-    └── <span class="t-file">guide.md</span></pre>
-        <div class="folder-fm"><span class="t-key">name:</span> &lt;slug&gt;<br><span class="t-key">description:</span> Use when the user asks … Do not use for …</div>
-      </div>
-    </div>
+    <ol class="steps" aria-label="How it works">
+      <li class="step">
+        <span class="step-icon"><svg viewBox="0 0 16 16" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"/></svg></span>
+        <div><p class="step-title">Find a skill</p><p class="step-text">Search by platform, sub-category or tag.</p></div>
+      </li>
+      <li class="step">
+        <span class="step-icon"><svg viewBox="0 0 16 16" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M1.75 1A1.75 1.75 0 0 0 0 2.75v10.5C0 14.216.784 15 1.75 15h12.5A1.75 1.75 0 0 0 16 13.25v-8.5A1.75 1.75 0 0 0 14.25 3H7.5a.25.25 0 0 1-.2-.1l-.9-1.2C6.07 1.26 5.55 1 5 1H1.75Z"/></svg></span>
+        <div><p class="step-title">Copy the folder</p><p class="step-text">Into your repository or your agent's skills library.</p></div>
+      </li>
+      <li class="step">
+        <span class="step-icon"><svg viewBox="0 0 16 16" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M8 0l1.8 6.2L16 8l-6.2 1.8L8 16l-1.8-6.2L0 8l6.2-1.8z"/></svg></span>
+        <div><p class="step-title">Ask your agent</p><p class="step-text">It picks up the skill when your request matches.</p></div>
+      </li>
+    </ol>
   </div>
 </section>
 
