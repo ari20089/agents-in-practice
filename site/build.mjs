@@ -217,6 +217,9 @@ function layout({ title, description, rel, body, bodyClass = "" }) {
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(description)}">
 <link rel="icon" href="${r}assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&display=swap">
 <link rel="stylesheet" href="${r}assets/style.css">
 <script>document.documentElement.classList.add("js")</script>
 </head>
@@ -226,7 +229,7 @@ function layout({ title, description, rel, body, bodyClass = "" }) {
   <div class="container header-row">
     <a class="brand" href="${r}index.html"><img class="brand-mark" src="${r}assets/favicon.svg" alt="" width="26" height="26">${esc(SITE.title)}</a>
     <nav class="nav" aria-label="Site">
-      <a href="${r}index.html#gallery">Gallery</a>
+      <a href="${r}index.html#gallery"${bodyClass === "page-index" ? ' aria-current="page"' : ""}>Gallery</a>
       <a href="${r}index.html#getting-started">Getting started</a>
       <a href="${REPO}/blob/main/CONTRIBUTING.md">Contribute</a>
       <a class="nav-gh" href="${REPO}"><svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>GitHub</a>
@@ -237,25 +240,19 @@ function layout({ title, description, rel, body, bodyClass = "" }) {
 ${body}
 </main>
 <footer class="site-footer">
-  <div class="container footer-grid">
-    <div class="footer-brand">
-      <a class="brand" href="${r}index.html"><img class="brand-mark" src="${r}assets/favicon.svg" alt="" width="26" height="26">${esc(SITE.title)}</a>
-      <p>Community work, not a Microsoft product. Provided as-is. Check the Microsoft Learn pages each skill cites before relying on it.</p>
-    </div>
-    <nav aria-label="Project">
-      <h3>Project</h3>
-      <a href="${REPO}">GitHub repository</a>
+  <div class="container">
+    <p class="footer-title">${esc(SITE.title)}</p>
+    <p class="footer-tag">Community work, not a Microsoft product. Provided as-is. Check the Microsoft Learn pages each skill cites before relying on it.</p>
+    <nav class="footer-links" aria-label="Footer">
+      <a href="${REPO}">GitHub</a>
       <a href="${REPO}/blob/main/CONTRIBUTING.md">Contribute</a>
       <a href="${r}catalog.json">Catalog JSON</a>
-    </nav>
-    <nav aria-label="Support">
-      <h3>Support</h3>
       <a href="${REPO}/issues/new/choose">Report an issue</a>
       <a href="${REPO}/blob/main/SECURITY.md">Security</a>
       <a href="${REPO}/blob/main/CODE_OF_CONDUCT.md">Code of conduct</a>
     </nav>
+    <p class="footer-meta">Maintained by <a href="${SITE.author.github}">${esc(SITE.author.name)}</a> · <a href="${SITE.author.linkedin}">LinkedIn</a></p>
   </div>
-  <div class="container"><div class="footer-bottom">Maintained by <a href="${SITE.author.github}">${esc(SITE.author.name)}</a> · <a href="${SITE.author.linkedin}">LinkedIn</a></div></div>
 </footer>
 <script src="${r}assets/app.js" defer></script>
 </body>
@@ -301,21 +298,40 @@ function indexPage(items, catalog) {
     plural(byPlatform.size, "platform"),
   ];
 
+  const pills = [
+    ...typesPresent.map((t) => plural(byCategory.get(t.label), t.singular)),
+    plural(bySub.size, "sub-category").replace("sub-categorys", "sub-categories"),
+    plural(byPlatform.size, "platform"),
+  ];
+
   const body = `
-<section class="hero">
-  <div class="container hero-inner">
-    <div class="hero-text">
+<section class="intro">
+  <div class="container">
+    <p class="eyebrow">Microsoft 365 · Copilot Studio · GitHub Copilot</p>
     <h1>${esc(SITE.title)}</h1>
+    <p class="subtitle">Agent skills you can copy into your own agent</p>
     <p class="lead">${esc(SITE.tagline)} Each one is a folder in the open <a href="${REPO}/blob/main/SKILL-SCHEMA.md">Agent Skills</a> format, so it runs in any host that supports&nbsp;it.</p>
-    <ul class="hero-stats" aria-label="Catalog at a glance">${stats.map((t) => `<li>${t.replace(/^(\d+)/, "<strong>$1</strong>")}</li>`).join("")}</ul>
-    </div>
-    <figure class="hero-figure" aria-hidden="true"><img src="assets/hero.svg" alt="" width="560" height="420"></figure>
   </div>
 </section>
 
+<aside class="notice" aria-label="Note">
+  <div class="container notice-row">
+    <svg viewBox="0 0 16 16" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"/></svg>
+    <p>Skills that cover preview features state the documentation date they rely on. Check it before you use one.</p>
+    <a href="#getting-started">How to install a skill <span aria-hidden="true">→</span></a>
+  </div>
+</aside>
+
 <section id="gallery" class="gallery">
   <div class="container">
-    <h2 class="visually-hidden">Skills</h2>
+    <div class="gallery-head">
+      <div>
+        <p class="eyebrow">Skill catalog</p>
+        <h2>Browse the skills</h2>
+      </div>
+      <ul class="count-pills" aria-label="Catalog counts">${pills.map((t) => `<li>${esc(t)}</li>`).join("")}</ul>
+    </div>
+
     <form class="toolbar" id="filters" role="search" aria-label="Filter skills" onsubmit="return false">
       <label class="search">
         <span class="visually-hidden">Search</span>
@@ -344,21 +360,18 @@ function indexPage(items, catalog) {
 </section>
 
 <section id="getting-started" class="getting-started">
-  <div class="container">
-    <p class="eyebrow">Getting started</p>
-    <h2>Use a skill in three steps</h2>
-    <ol class="steps">
-      <li><span class="step-icon"><svg viewBox="0 0 16 16" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"/></svg></span><span class="step-num">Step 1</span><strong>Find a skill</strong><span class="step-text">Search or filter the catalog above.</span></li>
-      <li><span class="step-icon"><svg viewBox="0 0 16 16" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M1.75 1A1.75 1.75 0 0 0 0 2.75v10.5C0 14.216.784 15 1.75 15h12.5A1.75 1.75 0 0 0 16 13.25v-8.5A1.75 1.75 0 0 0 14.25 3H7.5a.25.25 0 0 1-.2-.1l-.9-1.2C6.07 1.26 5.55 1 5 1H1.75Z"/></svg></span><span class="step-num">Step 2</span><strong>Copy the whole folder</strong><span class="step-text">Not just <code>SKILL.md</code>. <a href="${REPO}/blob/main/skills/README.md">Where each host expects it</a></span></li>
-      <li><span class="step-icon"><svg viewBox="0 0 16 16" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M8 0l1.8 6.2L16 8l-6.2 1.8L8 16l-1.8-6.2L0 8l6.2-1.8z"/></svg></span><span class="step-num">Step 3</span><strong>Ask your agent</strong><span class="step-text">It loads the skill when your request matches.</span></li>
-    </ol>
-    <div class="cta">
-      <div>
-        <p class="cta-title">Have a skill to share?</p>
-        <p class="cta-text">Copy <code>skills/_template/</code>, run <code>npm test</code> and open a pull request. CI checks the folder and a maintainer reviews it.</p>
-      </div>
-      <a class="btn cta-btn" href="${REPO}/blob/main/CONTRIBUTING.md">Read the contribution guide</a>
+  <div class="container gs-grid">
+    <div class="gs-intro">
+      <p class="eyebrow">Getting started</p>
+      <h2>Install a skill</h2>
+      <p>A skill is a folder: a <code>SKILL.md</code> with the instructions, plus any reference files it points to. Your agent host reads the folder; nothing needs building.</p>
+      <p><a class="text-link" href="${REPO}/blob/main/CONTRIBUTING.md">Contribute a skill <span aria-hidden="true">→</span></a></p>
     </div>
+    <ol class="gs-steps">
+      <li><span class="gs-num">01</span><div><h3>Find a skill</h3><p>Search or filter the catalog above, then open its page to read what it does and what it relies on.</p></div></li>
+      <li><span class="gs-num">02</span><div><h3>Copy the whole folder</h3><p>Not just <code>SKILL.md</code>; the agent needs the references too. <a href="${REPO}/blob/main/skills/README.md">Where each host expects it</a>.</p></div></li>
+      <li><span class="gs-num">03</span><div><h3>Ask your agent</h3><p>Once installed, the host loads the skill when your request matches its description.</p></div></li>
+    </ol>
   </div>
 </section>
 
