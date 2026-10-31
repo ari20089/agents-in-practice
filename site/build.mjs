@@ -81,8 +81,8 @@ function fmtSize(bytes) {
 }
 
 // Generated cover for items without assets/preview.png: an editor window showing the
-// item's own file (SKILL.md frontmatter, or the opening of INSTRUCTIONS.md), the closest
-// thing to a screenshot of it.
+// item's own file (SKILL.md frontmatter, or the opening of INSTRUCTIONS.md or PROMPT.md),
+// the closest thing to a screenshot of it.
 function wrap(text, first, rest, maxLines) {
   const words = String(text).split(/\s+/).filter(Boolean);
   const lines = [];
@@ -101,12 +101,11 @@ function wrap(text, first, rest, maxLines) {
   return lines;
 }
 
-function cover(slug, name, description, instructions = "") {
+function cover(slug, name, description, body = "", file = body ? "INSTRUCTIONS.md" : "SKILL.md") {
   const mono = "ui-monospace,SFMono-Regular,Menlo,Consolas,monospace";
-  const file = instructions ? "INSTRUCTIONS.md" : "SKILL.md";
   const desc = wrap(description || "", 40, 52, 5);
-  const rows = instructions
-    ? wrap(instructions.replace(/^#+\s*/gm, ""), 54, 54, 7).map((l) => `<tspan fill="#cbd5e1">${esc(l)}</tspan>`)
+  const rows = body
+    ? wrap(body.replace(/^#+\s*/gm, ""), 54, 54, 7).map((l) => `<tspan fill="#cbd5e1">${esc(l)}</tspan>`)
     : [
         `<tspan fill="#64748b">---</tspan>`,
         `<tspan fill="#93c5fd">name:</tspan><tspan fill="#e2e8f0"> ${esc(slug.length > 46 ? slug.slice(0, 45) + "…" : slug)}</tspan>`,
@@ -141,7 +140,8 @@ function rewriteLinks(html, item) {
 const stripFirstH1 = (md) => md.replace(/^\s*#\s+[^\n]+\n/, "");
 
 // The page owns <h1> and the section <h2>s; push rendered Markdown headings down one level.
-const demote = (html) => html.replace(/<(\/?)h([1-5])\b/g, (m, slash, n) => `<${slash}h${Number(n) + 1}`);
+// Tables are wrapped so a wide one scrolls on its own instead of widening the page.
+const demote = (html) => html.replace(/<(\/?)h([1-5])\b/g, (m, slash, n) => `<${slash}h${Number(n) + 1}`).replace(/<table>/g, '<div class="table-wrap"><table>').replace(/<\/table>/g, "</table></div>");
 
 // ---------- read content ----------
 
@@ -157,6 +157,7 @@ function readItems() {
       const readme = existsSync(join(dir, "README.md")) ? readFileSync(join(dir, "README.md"), "utf8") : "";
       const skill = existsSync(join(dir, "SKILL.md")) ? frontmatter(readFileSync(join(dir, "SKILL.md"), "utf8")) : null;
       const instructions = existsSync(join(dir, "INSTRUCTIONS.md")) ? readFileSync(join(dir, "INSTRUCTIONS.md"), "utf8").trim() : "";
+      const prompt = existsSync(join(dir, "PROMPT.md")) ? readFileSync(join(dir, "PROMPT.md"), "utf8").trim() : "";
       const hasPreview = existsSync(join(dir, "assets", "preview.png"));
       items.push({
         slug,
@@ -179,15 +180,18 @@ function readItems() {
         skillBody: skill?.body ?? "",
         instructions,
         instructionChars: [...instructions].length,
+        prompt,
+        promptChars: [...prompt].length,
         readme,
         // metadata.json, README.md and the gallery preview are for people, not the agent.
         files: listFiles(dir).filter((f) => !["metadata.json", "README.md", "assets/preview.png"].includes(f.path)),
         hasPreview,
-        image: hasPreview ? `${type.dir}/${slug}/assets/preview.png` : cover(slug, meta.name, skill?.fields.description ?? meta.description, instructions),
+        image: hasPreview ? `${type.dir}/${slug}/assets/preview.png` : cover(slug, meta.name, skill?.fields.description ?? meta.description, instructions || prompt, prompt ? "PROMPT.md" : undefined),
         url: `${type.dir}/${slug}/`,
         sourceUrl: `${REPO}/tree/main/${type.dir}/${slug}`,
         skillFileUrl: skill ? `${RAW}/${type.dir}/${slug}/SKILL.md` : "",
         instructionsFileUrl: instructions ? `${RAW}/${type.dir}/${slug}/INSTRUCTIONS.md` : "",
+        promptFileUrl: prompt ? `${RAW}/${type.dir}/${slug}/PROMPT.md` : "",
         issueUrl: `${REPO}/issues/new/choose`,
         install: type.install.replace("<slug>", slug),
       });
@@ -254,6 +258,7 @@ ${body}
   </div>
 </footer>
 <script src="${r}assets/app.js" defer></script>
+<script data-goatcounter="https://ari20089.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
 `;
@@ -383,6 +388,7 @@ function detailPage(s) {
         <a class="btn btn-primary" href="${s.sourceUrl}">View on GitHub</a>
         ${s.skillFileUrl ? `<a class="btn" href="${s.skillFileUrl}">Open SKILL.md</a>` : ""}
         ${s.instructionsFileUrl ? `<a class="btn" href="${s.instructionsFileUrl}">Open INSTRUCTIONS.md</a>` : ""}
+        ${s.promptFileUrl ? `<a class="btn" href="${s.promptFileUrl}">Open PROMPT.md</a>` : ""}
         <a class="btn btn-ghost" href="${s.issueUrl}">Report an issue</a>
       </div>
     </div>
@@ -398,6 +404,7 @@ function detailPage(s) {
         <button role="tab" id="tab-overview" aria-controls="overview" aria-selected="true">Overview</button>
         ${skillHtml ? `<button role="tab" id="tab-instructions" aria-controls="instructions" aria-selected="false">Skill instructions</button>` : ""}
         ${s.instructions ? `<button role="tab" id="tab-instructions" aria-controls="instructions" aria-selected="false">Instructions</button>` : ""}
+        ${s.prompt ? `<button role="tab" id="tab-instructions" aria-controls="instructions" aria-selected="false">Prompt</button>` : ""}
         <button role="tab" id="tab-files" aria-controls="files" aria-selected="false">Files <span class="tab-count">${s.files.length}</span></button>
       </div>
 
@@ -428,9 +435,20 @@ function detailPage(s) {
         <pre class="instructions-text" id="instructions-text">${esc(s.instructions)}</pre>
       </section>` : ""}
 
+      ${s.prompt ? `<section id="instructions" class="tab-panel prose" role="tabpanel" aria-labelledby="tab-instructions">
+        <h2 class="panel-title">Prompt</h2>
+        <div class="callout">
+          <p class="callout-label">Paste into chat</p>
+          <p>${s.promptChars.toLocaleString("en-US")} of 8,000 characters. The prompt is self-contained: it states the facts its checks rely on, and the README cites them.</p>
+          <button class="btn btn-small" type="button" id="copy-instructions" data-target="instructions-text" data-label="Copy prompt">Copy prompt</button>
+        </div>
+        <p class="muted small">From <a href="${REPO}/blob/main/${s.type}/${s.slug}/PROMPT.md"><code>${esc(s.type)}/${esc(s.slug)}/PROMPT.md</code></a>, shown exactly as it is pasted.</p>
+        <pre class="instructions-text" id="instructions-text">${esc(s.prompt)}</pre>
+      </section>` : ""}
+
       <section id="files" class="tab-panel" role="tabpanel" aria-labelledby="tab-files">
         <h2 class="panel-title">Files</h2>
-        <p class="muted">${s.instructions ? "Everything you add to the agent, plus any extras for people in <code>assets/</code>" : "Everything the agent loads. Copy the whole folder"}; <code>metadata.json</code>, <code>README.md</code> and the gallery preview image are for people and are not listed.</p>
+        <p class="muted">${s.instructions ? "Everything you add to the agent, plus any extras for people in <code>assets/</code>" : s.prompt ? "The prompt you paste, plus any extras for people in <code>assets/</code>" : "Everything the agent loads. Copy the whole folder"}; <code>metadata.json</code>, <code>README.md</code> and the gallery preview image are for people and are not listed.</p>
         <table class="files"><thead><tr><th>Path</th><th class="num">Size</th></tr></thead><tbody>${fileRows}</tbody></table>
       </section>
     </div>
@@ -442,7 +460,7 @@ function detailPage(s) {
       </section>
       <section class="meta-sec">
         <h2 class="meta-h">Add this ${esc(s.typeLabel)}</h2>
-        <p class="meta-p">${s.install ? `Download the folder and unzip it into your host's skills directory, such as <code>${esc(s.install.replace(`${s.slug}/`, ""))}</code>.` : "Download the folder; its README says where each file goes."}</p>
+        <p class="meta-p">${s.install ? `Download the folder and unzip it into your host's skills directory, such as <code>${esc(s.install.replace(`${s.slug}/`, ""))}</code>.` : s.prompt ? "Copy the prompt from the Prompt tab, or download it; its README says how to run it." : "Download the folder; its README says where each file goes."}</p>
         <div class="trust">
           <svg class="trust-icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 2.5 4 5.5v6c0 5 3.4 8.9 8 10 4.6-1.1 8-5 8-10v-6Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 7.5v5.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="16.3" r="1.1" fill="currentColor"/></svg>
           <div>
@@ -508,7 +526,7 @@ function zip(entries, iso) {
 // ---------- build ----------
 
 const items = readItems();
-const catalog = items.map(({ readme, skillBody, instructions, files, ...rest }) => rest);
+const catalog = items.map(({ readme, skillBody, instructions, prompt, files, ...rest }) => rest);
 
 rmSync(OUT, { recursive: true, force: true });
 mkdirSync(join(OUT, "assets"), { recursive: true });
