@@ -21,10 +21,10 @@ Microsoft's code apps plugin for GitHub Copilot CLI and other coding agents has 
 
 | File | What it's for | Where it goes |
 |---|---|---|
-| [`INSTRUCTIONS.md`](./INSTRUCTIONS.md) | The generator's behaviour: inputs, steps, the rules every call follows, and the output format. 6,086 of the 8,000 characters allowed. | The agent's instructions, pasted as is |
+| [`INSTRUCTIONS.md`](./INSTRUCTIONS.md) | The generator's behaviour: inputs, steps, the rules every call follows, and the output format. 6,289 of the 8,000 characters allowed. | The agent's instructions, pasted as is |
 | [`knowledge/code-apps-data-reference.txt`](./knowledge/code-apps-data-reference.txt) | Reference data: generated file layout, service signatures by data source type, result and option types, documented data rules, unsupported scenarios, the wrapper templates, where Learn and the packages differ, open questions and sources | The agent's knowledge, or a file in the repository |
 
-The templates in the knowledge file compile under TypeScript strict mode against `@microsoft/power-apps` 1.5.0, and their tests (success, `success: false`, a thrown error, empty results, stale responses and paging) pass.
+The templates in the knowledge file compile under TypeScript strict mode against `@microsoft/power-apps` 1.5.0, and their tests (success, `success: false`, a thrown error, empty results, formatted values, stale responses and paging) pass. Two of the rules come from reading the client library's source: it URL-encodes `filter` values itself, and it requests the annotations that carry choice and lookup labels.
 
 ## Set up
 
@@ -84,9 +84,9 @@ This is where the generator works best: it reads `src/generated/` itself and wri
 
 ## Limitations
 
-- Written against 16 Microsoft Learn pages dated 5 March 2026 to 29 October 2026, all read on 31 October 2026, and against `@microsoft/power-apps` 1.5.0 and `@microsoft/power-apps-cli` 1.3.0. Generated code changes between CLI versions; the agent follows the generated file over the reference.
+- Written against 17 Microsoft Learn pages dated 5 March 2026 to 29 October 2026, all read on 31 October 2026, and against `@microsoft/power-apps` 1.5.0 and `@microsoft/power-apps-cli` 1.3.0. Generated code changes between CLI versions; the agent follows the generated file over the reference.
 - Learn and the packages differ in places, including `getall` versus `getAll` and the generated folder names. The knowledge file lists each difference.
-- Four questions aren't answered by the documentation, including whether the client library URL-encodes `filter` values. The agent names them instead of assuming.
+- Two questions aren't answered by the documentation, including whether every failure comes back as `success: false` or some throw. The agent handles both and names the questions instead of assuming.
 - The wrapper pattern (state names, file layout, helpers) is this item's design, not Microsoft guidance.
 - Review generated code like any other pull request. Test writes against a non-production environment first.
 
