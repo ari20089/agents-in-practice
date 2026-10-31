@@ -166,7 +166,7 @@ button.link { font: inherit; color: var(--blue); background: none; border: 0; pa
 .header-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 64px; }
 .brand { display: inline-flex; align-items: center; gap: 10px; font-family: var(--font-display); font-weight: 800; font-size: 1.12rem; color: var(--ink); text-decoration: none; white-space: nowrap; letter-spacing: -0.01em; }
 .brand:hover { color: var(--ink); }
-.brand-mark { width: 28px; height: 28px; border-radius: 7px; }
+.brand-mark { width: 30px; height: 30px; }
 .nav { display: flex; gap: 4px; align-items: center; }
 .nav a { color: var(--ink-2); text-decoration: none; font-weight: 600; font-size: 0.95rem; padding: 7px 12px; border-radius: 6px; }
 .nav a:hover { background: var(--surface-2); color: var(--ink); }
