@@ -65,10 +65,10 @@
 
     function card(s) {
       return `<article class="card" style="--h:${Number(s.hue) || 220}">
-  <a class="card-art" href="${esc(s.url)}" tabindex="-1" aria-hidden="true"><img src="${s.image}" alt="" loading="lazy" width="640" height="360"></a>
+  <a class="card-art" href="${esc(s.url)}" tabindex="-1" aria-hidden="true"><img src="${s.image}" alt="" loading="lazy" width="640" height="360"><span class="card-type">${esc(s.typeLabel || s.category)}</span></a>
   <div class="card-body">
     <div class="card-top">
-      <p class="card-kicker kicker"><span class="kicker-type">${esc(s.typeLabel || s.category)}</span>${s.subcategory ? `<span class="kicker-sub">${esc(s.subcategory)}</span>` : ""}</p>
+      <p class="card-kicker kicker">${s.subcategory ? `<span class="kicker-sub">${esc(s.subcategory)}</span>` : ""}</p>
       <time datetime="${esc(s.updatedAt)}" title="Last updated">${esc(fmt(s.updatedAt))}</time>
     </div>
     <h3><a href="${esc(s.url)}">${esc(s.name)}</a></h3>
