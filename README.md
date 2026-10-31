@@ -53,13 +53,13 @@ For a prompt, paste its `PROMPT.md` into Copilot Chat. Its README says what it n
 
 | Skill | Platforms | Description |
 | --- | --- | --- |
-| [connected-agent-handoff-boundaries](./skills/connected-agent-handoff-boundaries/) | GitHub Copilot, Microsoft 365 Copilot, Copilot Studio | Decision boundaries for Copilot Studio multi-agent designs: who may delegate which actions to child, connected, external and live agents, what context crosses each handoff and what comes back, with instruction blocks, a handoff contract, open questions and a tenant test plan. |
+| [connected-agent-handoff-boundaries](./skills/connected-agent-handoff-boundaries/) | GitHub Copilot, Microsoft 365 Copilot, Copilot Studio, Any coding agent | Decision boundaries for Copilot Studio multi-agent designs: who may delegate which actions to child, connected, external and live agents, what context crosses each handoff and what comes back, with instruction blocks, a handoff contract, open questions and a tenant test plan. |
 
 ### Governance & compliance
 
 | Skill | Platforms | Description |
 | --- | --- | --- |
-| [shared-agent-memory-governance](./skills/shared-agent-memory-governance/) | GitHub Copilot, Microsoft 365 Copilot, Copilot Studio | Governance for the shared memory of Copilot Studio agents with an account (Frontier preview): what Microsoft documents, where Purview retention, eDiscovery and holds reach and where they don't, the open questions, and runbooks for holds, data subject requests, decommissioning and a tenant test plan. |
+| [shared-agent-memory-governance](./skills/shared-agent-memory-governance/) | GitHub Copilot, Microsoft 365 Copilot, Copilot Studio, Any coding agent | Governance for the shared memory of Copilot Studio agents with an account (Frontier preview): what Microsoft documents, where Purview retention, eDiscovery and holds reach and where they don't, the open questions, and runbooks for holds, data subject requests, decommissioning and a tenant test plan. |
 
 ## Prompt catalog
 
@@ -85,7 +85,7 @@ For a prompt, paste its `PROMPT.md` into Copilot Chat. Its README says what it n
 
 | Agent | Platforms | Description |
 | --- | --- | --- |
-| [connector-call-wrapper-generator](./agent-instructions/connector-call-wrapper-generator/) | GitHub Copilot, Copilot Studio, Microsoft 365 Copilot | Name a Dataverse table or connector operation in a Power Apps code app and it writes the typed data access layer over the generated services, with loading, error and empty states, instead of raw generated calls scattered through components. |
+| [connector-call-wrapper-generator](./agent-instructions/connector-call-wrapper-generator/) | GitHub Copilot, Copilot Studio, Microsoft 365 Copilot, Any coding agent | Name a Dataverse table or connector operation in a Power Apps code app and it writes the typed data access layer over the generated services, with loading, error and empty states, instead of raw generated calls scattered through components. |
 
 ## Contribute
 
