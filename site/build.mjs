@@ -290,19 +290,6 @@ function indexPage(items, catalog) {
   const categoryOrder = TYPES.map((t) => t.label).filter((l) => byCategory.has(l));
 
   const n = items.length;
-  const typesPresent = TYPES.filter((t) => byCategory.has(t.label));
-
-  const stats = [
-    ...typesPresent.map((t) => plural(byCategory.get(t.label), t.singular)),
-    plural(bySub.size, "sub-category").replace("sub-categorys", "sub-categories"),
-    plural(byPlatform.size, "platform"),
-  ];
-
-  const pills = [
-    ...typesPresent.map((t) => plural(byCategory.get(t.label), t.singular)),
-    plural(bySub.size, "sub-category").replace("sub-categorys", "sub-categories"),
-    plural(byPlatform.size, "platform"),
-  ];
 
   const body = `
 <section class="intro">
@@ -312,8 +299,6 @@ function indexPage(items, catalog) {
       <h1>${esc(SITE.title)}</h1>
       <p class="subtitle">Agent skills you can copy into your own agent</p>
       <p class="lead">${esc(SITE.tagline)} Each one is a folder in the open <a href="${REPO}/blob/main/SKILL-SCHEMA.md">Agent Skills</a> format, so it runs in any host that supports&nbsp;it.</p>
-      <ul class="count-pills intro-counts" aria-label="Catalog counts">${pills.map((t) => `<li>${esc(t)}</li>`).join("")}</ul>
-      <p class="intro-note"><svg viewBox="0 0 16 16" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"/></svg><span>Skills that cover preview features state the documentation date they rely on. <a href="#getting-started">How to install a skill <span aria-hidden="true">→</span></a></span></p>
     </div>
   </div>
 </section>
