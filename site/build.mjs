@@ -37,9 +37,11 @@ const TYPES = [
 
 marked.setOptions({ gfm: true });
 
-// Sub-category colours come from a fixed set of distinct hues so each one is easy to tell
-// apart from the blue accent: violet, teal, coral, amber, rose, green. Each keeps the same one.
-const SUB_HUES = [280, 175, 20, 38, 340, 140];
+// Sub-category colours, kept clear of the type colours (pink, orange, violet in style.css):
+// teal, gold, sky, lime, indigo, cyan, green, yellow. Ordered so neighbours differ most.
+// Each sub-category takes the next free hue in the order it first appeared, so adding
+// a new one never changes the colour of an existing one.
+const SUB_HUES = [165, 45, 205, 100, 245, 185, 130, 60];
 
 // ---------- helpers ----------
 
@@ -76,13 +78,6 @@ function fmtDate(iso) {
 function fmtSize(bytes) {
   if (bytes < 1024) return `${bytes} B`;
   return `${(bytes / 1024).toFixed(bytes < 10240 ? 1 : 0)} KB`;
-}
-
-// Deterministic colour from the slug, for the placeholder card art.
-function hue(slug) {
-  let h = 0;
-  for (const c of slug) h = (h * 31 + c.charCodeAt(0)) % 360;
-  return h;
 }
 
 // Generated cover for skills without assets/preview.png: an editor window showing the
@@ -164,7 +159,6 @@ function readItems() {
         category: type.label,
         typeLabel: type.singular,
         subcategory: meta.subcategory ?? "",
-        hue: SUB_HUES[hue(meta.subcategory ?? slug) % SUB_HUES.length],
         name: meta.name,
         description: meta.description,
         platforms: meta.platforms ?? [],
@@ -191,6 +185,11 @@ function readItems() {
       });
     }
   }
+  const subHue = new Map();
+  for (const i of [...items].sort((a, b) => a.createdAt.localeCompare(b.createdAt) || a.subcategory.localeCompare(b.subcategory))) {
+    if (!subHue.has(i.subcategory)) subHue.set(i.subcategory, SUB_HUES[subHue.size % SUB_HUES.length]);
+  }
+  for (const i of items) i.hue = subHue.get(i.subcategory);
   return items.sort((a, b) => (b.updatedAt ?? "").localeCompare(a.updatedAt ?? "") || a.name.localeCompare(b.name));
 }
 
@@ -361,7 +360,7 @@ function detailPage(s) {
 <nav class="breadcrumb" aria-label="Breadcrumb"><a href="${rel}index.html">Gallery</a> <span aria-hidden="true">›</span> <a href="${rel}index.html?category=${encodeURIComponent(s.category)}#gallery">${esc(s.category)}</a> <span aria-hidden="true">›</span> <span aria-current="page">${esc(s.name)}</span></nav>
   <header class="detail-hero${s.hasPreview ? " has-preview" : ""}">
     <div class="detail-hero-text">
-      <p class="eyebrow kicker"><a class="kicker-cat" href="${rel}index.html?category=${encodeURIComponent(s.category)}#gallery">${esc(s.category)}</a>${s.subcategory ? `<a class="kicker-sub" href="${rel}index.html?subcategory=${encodeURIComponent(s.subcategory)}#gallery">${esc(s.subcategory)}</a>` : ""}</p>
+      <p class="eyebrow kicker"><a class="kicker-cat type-${esc(s.type)}" href="${rel}index.html?category=${encodeURIComponent(s.category)}#gallery">${esc(s.category)}</a>${s.subcategory ? `<a class="kicker-sub" href="${rel}index.html?subcategory=${encodeURIComponent(s.subcategory)}#gallery">${esc(s.subcategory)}</a>` : ""}</p>
       <h1>${esc(s.name)}</h1>
       <p class="lead">${esc(s.description)}</p>
       <div class="byline">

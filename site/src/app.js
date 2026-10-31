@@ -66,7 +66,7 @@
     function card(s) {
       return `<article class="card" style="--h:${Number(s.hue) || 220}">
   <a class="card-art" href="${esc(s.url)}" tabindex="-1" aria-hidden="true"><img src="${s.image}" alt="" loading="lazy" width="640" height="360"></a>
-  <span class="type-pill card-type">${esc(s.typeLabel || s.category)}</span>
+  <span class="type-pill card-type type-${esc(s.type)}">${esc(s.typeLabel || s.category)}</span>
   <div class="card-body">
     <div class="card-top">
       ${s.subcategory ? `<span class="card-sub">${esc(s.subcategory)}</span>` : ""}

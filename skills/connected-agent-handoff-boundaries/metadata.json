@@ -1,0 +1,13 @@
+{
+  "name": "Connected-Agent Handoff Boundaries",
+  "description": "Who may delegate what to whom in a Copilot Studio multi-agent design, and what survives the handoff: the documented mechanics for child, connected, external and live agents across harnesses, a decision-boundary pattern per action type, instruction blocks, a handoff contract and a tenant test plan.",
+  "platforms": ["GitHub Copilot", "Microsoft 365 Copilot", "Copilot Studio"],
+  "tags": ["copilot-studio", "connected-agents", "child-agents", "multi-agent", "handoff", "a2a", "foundry", "live-agent", "employee-self-service", "security", "governance"],
+  "subcategory": "Architecture & design",
+  "author": "Arindam Choudhury",
+  "authorGithub": "ari20089",
+  "authorUrl": "https://www.linkedin.com/in/arindam-choudhury/",
+  "version": "1.0",
+  "createdAt": "2026-10-30",
+  "updatedAt": "2026-10-30"
+}
