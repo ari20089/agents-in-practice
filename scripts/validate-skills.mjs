@@ -17,7 +17,8 @@ const MAX_LINES = 500;
 const ALLOWED_TOP_LEVEL_FILES = new Set(["SKILL.md", "README.md", "metadata.json"]);
 const ALLOWED_TOP_LEVEL_DIRS = new Set(["references", "scripts", "assets"]);
 const REQUIRED_SECTIONS = ["## Before Starting", "## Output Structure", "## Step 1", "## Rules"];
-const REQUIRED_METADATA = ["name", "description", "platforms", "tags", "category", "author"];
+// "category" is not a metadata field: the gallery derives it from the top-level folder (skills/ → Skills).
+const REQUIRED_METADATA = ["name", "description", "platforms", "tags", "subcategory", "author"];
 const KNOWN_PLATFORMS = new Set(["GitHub Copilot", "Copilot Studio", "Microsoft 365 Copilot", "Other"]);
 
 const errors = [];
@@ -111,6 +112,7 @@ function validateSkill(slug) {
       for (const key of REQUIRED_METADATA) {
         if (meta[key] === undefined || meta[key] === "" || (Array.isArray(meta[key]) && meta[key].length === 0)) fail(`metadata.json is missing "${key}"`);
       }
+      if (meta.category !== undefined) fail('metadata.json has "category"; the category comes from the folder (skills/ → Skills). Use "subcategory" instead');
       if (Array.isArray(meta.platforms)) {
         for (const p of meta.platforms) if (!KNOWN_PLATFORMS.has(p)) fail(`metadata.json platform "${p}" is not one of ${[...KNOWN_PLATFORMS].join(", ")}`);
       } else if (meta.platforms !== undefined) fail("metadata.json platforms must be an array");

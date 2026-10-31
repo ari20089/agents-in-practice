@@ -5,7 +5,7 @@
 
 **[Browse the gallery → ari20089.github.io/agents-in-practice](https://ari20089.github.io/agents-in-practice/)**
 
-Hands-on **skills** for AI agents working in the Microsoft 365, Copilot Studio and GitHub Copilot ecosystem: reusable instruction packages (a `SKILL.md` plus optional `references/`, `scripts/` and `assets/`) that give an agent a focused, repeatable capability. Skills follow the [Agent Skills specification](https://agentskills.io/specification) and install into any host that reads it.
+Hands-on **skills** for AI agents working with Microsoft 365, Copilot Studio and GitHub Copilot: reusable instruction packages (a `SKILL.md` plus optional `references/`, `scripts/` and `assets/`) that give an agent a focused, repeatable capability. Skills follow the [Agent Skills specification](https://agentskills.io/specification) and install into any host that reads it.
 
 > [!IMPORTANT]
 > Skills here are provided as-is, are not Microsoft products, and include no official Microsoft support or service-level agreement. Several describe **preview** features that change without notice. Validate every skill against the Microsoft Learn pages it cites and against your own security, privacy, compliance and governance requirements before relying on it. See [SUPPORT.md](./SUPPORT.md).
@@ -28,7 +28,7 @@ Each skill folder is self-contained: copy the whole folder, not just `SKILL.md`,
 | Resource | Description |
 | --- | --- |
 | **[Gallery](https://ari20089.github.io/agents-in-practice/)** | Searchable site generated from the skill folders ([how it works](./site/README.md)) |
-| **[Skill catalog](#skill-catalog)** | Every published skill, by category |
+| **[Skill catalog](#skill-catalog)** | Every published skill, by sub-category |
 | **[skills/](./skills/)** | Source folders, one per skill, with a `_template/` to copy |
 | **[SKILL-SCHEMA.md](./SKILL-SCHEMA.md)** | Authoring spec: frontmatter, required sections, limits |
 | **[AGENTS.md](./AGENTS.md)** | Guidance for coding agents working inside this repo |

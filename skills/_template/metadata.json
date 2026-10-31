@@ -3,7 +3,7 @@
   "description": "One friendly sentence for the catalog card.",
   "platforms": ["GitHub Copilot"],
   "tags": ["tag-one", "tag-two"],
-  "category": "Productivity",
+  "subcategory": "Productivity",
   "author": "Your Name",
   "authorGithub": "your-handle",
   "authorUrl": "https://www.linkedin.com/in/your-handle/",

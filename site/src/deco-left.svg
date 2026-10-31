@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 1100" fill="none">
+  <!-- Original decoration for the gallery's left edge: glass tiles in an arc. -->
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#86efac"/><stop offset="1" stop-color="#15803d"/></linearGradient>
+    <linearGradient id="g2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#bbf7d0"/><stop offset="1" stop-color="#16a34a"/></linearGradient>
+    <linearGradient id="g3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fdba74"/><stop offset="1" stop-color="#ea580c"/></linearGradient>
+    <linearGradient id="g4" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fecaca"/><stop offset="1" stop-color="#f97316"/></linearGradient>
+    <linearGradient id="g5" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#0ea5e9"/><stop offset="1" stop-color="#1d4ed8"/></linearGradient>
+    <linearGradient id="g6" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#bae6fd"/><stop offset="1" stop-color="#0284c7"/></linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".75"/><stop offset=".5" stop-color="#fff" stop-opacity=".15"/><stop offset="1" stop-color="#fff" stop-opacity=".5"/></linearGradient>
+    <pattern id="dots" width="9" height="9" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.1" fill="#fff" fill-opacity=".55"/></pattern>
+    <pattern id="grid" width="14" height="14" patternUnits="userSpaceOnUse"><path d="M14 0H0v14" stroke="#fff" stroke-opacity=".45" fill="none"/></pattern>
+    <filter id="sh" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="14" stdDeviation="14" flood-color="#0f172a" flood-opacity=".16"/></filter>
+    <filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="22"/></filter>
+  </defs>
+
+  <!-- soft glow -->
+  <ellipse cx="150" cy="300" rx="190" ry="220" fill="#86efac" opacity=".18" filter="url(#soft)"/>
+  <ellipse cx="110" cy="860" rx="170" ry="190" fill="#7dd3fc" opacity=".2" filter="url(#soft)"/>
+
+  <!-- upper arc: greens and coral -->
+  <g filter="url(#sh)">
+    <g transform="translate(70 40) rotate(-14) skewX(-8)"><rect width="190" height="118" rx="16" fill="url(#g1)" opacity=".9"/><rect width="190" height="118" rx="16" fill="url(#glass)"/></g>
+    <g transform="translate(250 120) rotate(-22) skewX(-6)"><rect width="110" height="150" rx="18" fill="url(#g2)" opacity=".75"/><rect width="110" height="150" rx="18" fill="url(#dots)"/><rect width="110" height="150" rx="18" fill="url(#glass)"/></g>
+    <g transform="translate(20 150) rotate(-10) skewX(-14)"><rect width="170" height="112" rx="16" fill="url(#g4)" opacity=".8"/><rect width="170" height="112" rx="16" fill="url(#dots)"/><rect width="170" height="112" rx="16" fill="url(#glass)"/></g>
+    <g transform="translate(-60 250) rotate(-8) skewX(-18)"><rect width="200" height="150" rx="18" fill="url(#g3)" opacity=".85"/><rect width="200" height="150" rx="18" fill="url(#glass)"/></g>
+    <g transform="translate(150 230) rotate(-12) skewX(-6)"><rect width="160" height="210" rx="20" fill="url(#g2)" opacity=".7"/><rect x="26" y="40" width="108" height="120" rx="14" fill="#fff" fill-opacity=".35" stroke="#fff" stroke-opacity=".8"/><rect width="160" height="210" rx="20" fill="url(#glass)"/></g>
+    <g transform="translate(300 300) rotate(-18) skewX(-6)"><rect width="90" height="130" rx="14" fill="url(#g1)" opacity=".9"/><rect width="90" height="130" rx="14" fill="url(#glass)"/></g>
+    <g transform="translate(260 420) rotate(-26) skewX(-4)"><rect width="110" height="150" rx="14" fill="url(#g1)"/><rect width="110" height="150" rx="14" fill="url(#grid)"/><rect width="110" height="150" rx="14" fill="url(#glass)"/></g>
+  </g>
+
+  <!-- thin arc line joining the two groups -->
+  <path d="M330 560 C 240 640, 130 660, 60 720" stroke="#0f172a" stroke-opacity=".08" stroke-width="2" stroke-dasharray="3 8" stroke-linecap="round"/>
+
+  <!-- lower cluster: blues -->
+  <g filter="url(#sh)">
+    <g transform="translate(20 720) rotate(6) skewX(-10)"><rect width="52" height="40" rx="8" fill="url(#g5)" opacity=".85"/><rect width="52" height="40" rx="8" fill="url(#glass)"/></g>
+    <g transform="translate(20 780) rotate(6) skewX(-10)"><rect width="52" height="40" rx="8" fill="url(#g6)" opacity=".85"/><rect width="52" height="40" rx="8" fill="url(#glass)"/></g>
+    <g transform="translate(90 760) rotate(8) skewX(-8)"><rect width="62" height="54" rx="10" fill="url(#g6)" opacity=".9"/><rect width="62" height="54" rx="10" fill="url(#dots)"/><rect width="62" height="54" rx="10" fill="url(#glass)"/></g>
+    <g transform="translate(20 840) rotate(6) skewX(-10)"><rect width="52" height="40" rx="8" fill="url(#g5)" opacity=".7"/><rect width="52" height="40" rx="8" fill="url(#glass)"/></g>
+    <g transform="translate(190 860) rotate(-4) skewX(-40)"><rect width="200" height="22" rx="8" fill="url(#g5)" opacity=".8"/><rect width="200" height="22" rx="8" fill="url(#glass)"/></g>
+    <g transform="translate(220 900) rotate(-4) skewX(-40)"><rect width="150" height="20" rx="8" fill="url(#g6)" opacity=".8"/><rect width="150" height="20" rx="8" fill="url(#glass)"/></g>
+    <g transform="translate(250 940) rotate(-4) skewX(-40)"><rect width="110" height="18" rx="8" fill="url(#g5)" opacity=".7"/><rect width="110" height="18" rx="8" fill="url(#glass)"/></g>
+    <path d="M10 960 C 60 920, 160 930, 260 985 C 200 1010, 90 1020, 20 990 Z" fill="url(#g6)" opacity=".85"/>
+    <path d="M10 960 C 60 920, 160 930, 260 985 C 200 1010, 90 1020, 20 990 Z" fill="url(#glass)"/>
+    <path d="M30 1000 C 90 965, 190 980, 280 1030 C 210 1050, 110 1052, 40 1025 Z" fill="url(#g5)" opacity=".75"/>
+    <path d="M30 1000 C 90 965, 190 980, 280 1030 C 210 1050, 110 1052, 40 1025 Z" fill="url(#glass)"/>
+  </g>
+</svg>

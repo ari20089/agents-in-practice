@@ -40,7 +40,7 @@ Read [references/governance-guide.md](references/governance-guide.md) section 1.
 | User is talking about | Treatment |
 | --- | --- |
 | A Copilot Studio agent **with an account** (Frontier), "business process memory", shared across a team | This skill. Memory is per-agent, shared, undocumented in Purview. |
-| A Copilot Studio agent **without an account** on the GitHub Copilot harness | Per-user memory in Microsoft-managed storage, 28-day inactivity expiry, maker cannot see it. Also undocumented in Purview. Answer from the guide's section 1 and say shared-memory specifics do not apply. If the user hears "GitHub Copilot" and worries about data going to GitHub, give them the harness statement in section 1: it is a Copilot Studio runtime, not the GitHub Copilot service. |
+| A Copilot Studio agent **without an account** on the GitHub Copilot harness | Per-user memory in Microsoft-managed storage, off in group chats and Teams channels, 28-day inactivity expiry, maker cannot see it. Also undocumented in Purview. Answer from the guide's section 1 and say shared-memory specifics do not apply. If the user hears "GitHub Copilot" and worries about data going to GitHub, give them the harness statement in section 1: it is a Copilot Studio runtime, not the GitHub Copilot service. |
 | Customer Conversation harness memory | Structured schema, 30-day window, per customer. Out of scope; point to its own documentation. |
 | **Microsoft 365 Copilot** memory (saved memories, custom instructions, `CopilotMemory` mailbox folder) | Different product with different coverage (eDiscovery via `IPM.Contact`, retention added by MC1478965). Explain the difference; do not let the user assume parity. |
 
@@ -56,7 +56,7 @@ Take the facts from the guide's section 2 verbatim or near-verbatim, each with i
 - anyone who interacts with the agent can view or delete its memories, by asking it in chat; the FAQ names no other surface;
 - auto-deletion after 28 days with no interaction;
 - no user opt-out; no admin switch except disabling agent accounts (Microsoft 365 admin center template activation, Power Platform admin center environment setting);
-- the exclusion list is model guidance, not a technical filter;
+- Microsoft lists what shared memory "excludes" but does not say how that is enforced; the page's only enforcement word is "guided";
 - deleting the agent deletes the Entra Agent ID, per a page scoped to the standard harness, so inferred for agents with accounts; memory is not mentioned anywhere.
 
 Label the material as Frontier preview and give the date you rely on.
@@ -103,11 +103,11 @@ End with a clear recommendation and the conditions in the guide's section 7 unde
 
 - **Never** invent a storage location, item class, audit event or retention behaviour for shared memory. If asked directly, answer "not documented as of <date>" and point to the test that would establish it.
 - **Never** present Microsoft 365 Copilot memory behaviour (mailbox folder, `IPM.Contact`, MC1478965 retention) as applying to Copilot Studio shared memory.
-- **Never** describe the exclusion list as enforcement.
+- **Never** describe the exclusion list as enforcement or as a filter. Microsoft states what shared memory excludes and does not document how; say so.
 - **Never** tell the user a hold preserves shared memory, a retention policy deletes it, or an eDiscovery search returns it. Nothing in the documentation supports those claims.
 - **Always** quote Microsoft wording from the reference guide or a live fetch of the cited page, not from memory.
 - **Always** keep the three classes of fact apart in the output: *documented* (cited page and date), *observed in tenant* (the user's own test, which tenant, when), and *not documented*. Never let a tenant observation be restated as if Microsoft documented it.
-- Use current Purview names: **Data Security Posture Management** (not "DSPM for AI", which is the classic version and does not cover Agent 365), **eDiscovery** with cases and data sources (not "eDiscovery Premium/Standard" or "custodians" as portal terms), and the **Agent Registry** in the Microsoft 365 admin center (not "Agent 365 registry").
+- Use current names: **Data Security Posture Management** (not "DSPM for AI", which is the classic version and, per Microsoft, does not support Agent 365); **eDiscovery** organised around cases and data sources, with "premium eDiscovery features" for what needs E5 (not "eDiscovery (Premium)" or "(Standard)" as product names, and "custodian" only as the legal term); and the **Agent Registry** (Microsoft 365 admin center > Agents > All agents > Registry; Microsoft's overview also calls it the Agent 365 registry).
 - **Always** keep tenant names, agent names, user names and case details the user shares out of any example you generate for reuse.
 - If the question is really about Microsoft 365 Copilot memory alone, say this skill is the wrong tool and summarise the relevant difference instead.
 

@@ -1,14 +1,19 @@
 #!/usr/bin/env node
-// Builds the static gallery into site/dist from skills/*/{metadata.json,README.md,SKILL.md}.
+// Builds the static gallery into site/dist.
+//
+// The category of every item is the top-level folder it lives in (skills/ → "Skills").
+// Only folders listed in TYPES are read, and only when they exist, so new content types
+// can be added later without touching this file beyond the table below.
+//
 // One dependency (marked) for Markdown. Run from the repo root: npm run site:build
 
 import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join, posix } from "node:path";
 import { fileURLToPath } from "node:url";
+import { crc32, deflateRawSync } from "node:zlib";
 import { marked } from "marked";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
-const SKILLS_DIR = join(ROOT, "skills");
 const SRC = join(ROOT, "site", "src");
 const OUT = join(ROOT, "site", "dist");
 
@@ -16,17 +21,30 @@ const pkg = JSON.parse(readFileSync(join(ROOT, "package.json"), "utf8"));
 const REPO = pkg.repository.url.replace(/\.git$/, "");
 const [OWNER, REPO_NAME] = REPO.split("/").slice(-2);
 const RAW = `https://raw.githubusercontent.com/${OWNER}/${REPO_NAME}/main`;
+
 const SITE = {
   title: "Agents in Practice",
-  tagline: "Skills for AI agents in Microsoft 365, Copilot Studio and GitHub Copilot",
+  tagline: "Hands-on skills for AI agents working with Microsoft 365, Copilot Studio and GitHub Copilot.",
   author: { name: "Arindam Choudhury", github: "https://github.com/ari20089", linkedin: "https://www.linkedin.com/in/arindam-choudhury/" },
 };
 
+// Top-level folder → gallery category. Order here is the order in the filter rail.
+const TYPES = [
+  { dir: "skills", label: "Skills", singular: "skill", install: ".github/skills/<slug>/", blurb: "Reusable instruction packages: a SKILL.md plus the references it needs, for any Agent Skills host." },
+  { dir: "prompts", label: "Prompts", singular: "prompt", install: "", blurb: "Single instructions for a focused task or outcome." },
+  { dir: "agent-instructions", label: "Agent instructions", singular: "agent instruction set", install: "", blurb: "System prompts that define an agent's role." },
+];
+
 marked.setOptions({ gfm: true });
+
+// Sub-category colours come from a fixed set of distinct hues so each one is easy to tell
+// apart from the blue accent: violet, teal, coral, amber, rose, green. Each keeps the same one.
+const SUB_HUES = [280, 175, 20, 38, 340, 140];
 
 // ---------- helpers ----------
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const plural = (n, word) => `${n} ${word}${n === 1 ? "" : "s"}`;
 
 function frontmatter(text) {
   const m = text.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/);
@@ -45,15 +63,19 @@ function listFiles(dir, base = "") {
     const full = join(dir, entry);
     const rel = base ? `${base}/${entry}` : entry;
     if (statSync(full).isDirectory()) out.push(...listFiles(full, rel));
-    else out.push(rel);
+    else out.push({ path: rel, size: statSync(full).size });
   }
   return out;
 }
 
 function fmtDate(iso) {
   if (!iso) return "";
-  const d = new Date(iso + "T00:00:00Z");
-  return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
+  return new Date(iso + "T00:00:00Z").toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
+}
+
+function fmtSize(bytes) {
+  if (bytes < 1024) return `${bytes} B`;
+  return `${(bytes / 1024).toFixed(bytes < 10240 ? 1 : 0)} KB`;
 }
 
 // Deterministic colour from the slug, for the placeholder card art.
@@ -63,22 +85,50 @@ function hue(slug) {
   return h;
 }
 
-function monogram(slug, name) {
-  const initials = name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join("");
-  const h = hue(slug);
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="hsl(${h},55%,45%)"/><stop offset="1" stop-color="hsl(${(h + 40) % 360},60%,30%)"/></linearGradient></defs><rect width="640" height="360" fill="url(#g)"/><text x="320" y="200" font-family="system-ui,Segoe UI,sans-serif" font-size="120" font-weight="700" fill="rgba(255,255,255,.92)" text-anchor="middle">${esc(initials)}</text></svg>`;
+// Generated cover for skills without assets/preview.png: an editor window showing the
+// skill's own SKILL.md frontmatter, the closest thing to a screenshot of a skill.
+function wrap(text, first, rest, maxLines) {
+  const words = String(text).split(/\s+/).filter(Boolean);
+  const lines = [];
+  let line = "";
+  let limit = first;
+  for (const w of words) {
+    if ((line + " " + w).trim().length > limit) {
+      lines.push(line.trim());
+      line = w;
+      limit = rest;
+      if (lines.length === maxLines) break;
+    } else line = `${line} ${w}`;
+  }
+  if (lines.length < maxLines && line.trim()) lines.push(line.trim());
+  if (lines.length === maxLines && words.join(" ").length > lines.join(" ").length) lines[maxLines - 1] = lines[maxLines - 1].replace(/\s*\S*$/, "") + " …";
+  return lines;
+}
+
+function cover(slug, name, description) {
+  const mono = "ui-monospace,SFMono-Regular,Menlo,Consolas,monospace";
+  const desc = wrap(description || "", 40, 52, 5);
+  const rows = [
+    `<tspan fill="#64748b">---</tspan>`,
+    `<tspan fill="#93c5fd">name:</tspan><tspan fill="#e2e8f0"> ${esc(slug.length > 46 ? slug.slice(0, 45) + "…" : slug)}</tspan>`,
+    `<tspan fill="#93c5fd">description:</tspan><tspan fill="#cbd5e1"> ${esc(desc[0] ?? "")}</tspan>`,
+    ...desc.slice(1).map((l) => `<tspan fill="#cbd5e1">  ${esc(l)}</tspan>`),
+    `<tspan fill="#64748b">---</tspan>`,
+  ];
+  const text = rows.map((r, i) => `<text x="62" y="${106 + i * 23}" font-family="${mono}" font-size="15" xml:space="preserve">${r}</text>`).join("");
+  const heading = `<text x="62" y="${106 + rows.length * 23 + 12}" font-family="${mono}" font-size="16.5" font-weight="700" fill="#ffffff" xml:space="preserve"><tspan fill="#fbbf24"># </tspan>${esc(name)}</text>`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360"><defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0a1428"/><stop offset="1" stop-color="#132a5c"/></linearGradient><radialGradient id="glow" cx=".85" cy=".1" r=".7"><stop offset="0" stop-color="#2563eb" stop-opacity=".55"/><stop offset="1" stop-color="#2563eb" stop-opacity="0"/></radialGradient></defs><rect width="640" height="360" fill="url(#bg)"/><rect width="640" height="360" fill="url(#glow)"/><rect x="36" y="34" width="568" height="300" rx="12" fill="#0b1222" stroke="#ffffff" stroke-opacity=".1"/><path d="M36 46a12 12 0 0 1 12-12h544a12 12 0 0 1 12 12v24H36z" fill="#111b31"/><circle cx="58" cy="52" r="5" fill="#ff5f57"/><circle cx="76" cy="52" r="5" fill="#febc2e"/><circle cx="94" cy="52" r="5" fill="#28c840"/><rect x="116" y="40" width="104" height="30" rx="6" fill="#0b1222"/><text x="130" y="60" font-family="${mono}" font-size="13.5" fill="#cbd5e1">SKILL.md</text><rect x="36" y="70" width="568" height="1" fill="#ffffff" fill-opacity=".08"/>${text}${heading}</svg>`;
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 }
 
 // Rewrite links in rendered Markdown so relative paths point at GitHub, and keep
-// images relative (the skill's assets/ folder is copied next to the page).
-function rewriteLinks(html, slug) {
-  const base = `skills/${slug}`;
+// images relative (the item's assets/ folder is copied next to the page).
+function rewriteLinks(html, item) {
+  const base = `${item.type}/${item.slug}`;
   const resolve = (href) => posix.normalize(posix.join(base, href));
   html = html.replace(/href="([^"]+)"/g, (m, href) => {
     if (/^(https?:|mailto:|#|\/)/i.test(href)) return m;
-    const target = resolve(href.replace(/^\.\//, ""));
-    return `href="${REPO}/blob/main/${target}"`;
+    return `href="${REPO}/blob/main/${resolve(href.replace(/^\.\//, ""))}"`;
   });
   html = html.replace(/src="([^"]+)"/g, (m, src) => {
     if (/^(https?:|data:|\/)/i.test(src)) return m;
@@ -89,51 +139,65 @@ function rewriteLinks(html, slug) {
   return html;
 }
 
-function stripFirstH1(md) {
-  return md.replace(/^\s*#\s+[^\n]+\n/, "");
-}
+const stripFirstH1 = (md) => md.replace(/^\s*#\s+[^\n]+\n/, "");
 
 // The page owns <h1> and the section <h2>s; push rendered Markdown headings down one level.
-function demote(html) {
-  return html.replace(/<(\/?)h([1-5])\b/g, (m, slash, n) => `<${slash}h${Number(n) + 1}`);
-}
+const demote = (html) => html.replace(/<(\/?)h([1-5])\b/g, (m, slash, n) => `<${slash}h${Number(n) + 1}`);
 
-// ---------- read skills ----------
+// ---------- read content ----------
 
-function readSkills() {
-  return readdirSync(SKILLS_DIR)
-    .filter((n) => !n.startsWith("_") && statSync(join(SKILLS_DIR, n)).isDirectory())
-    .map((slug) => {
-      const dir = join(SKILLS_DIR, slug);
+function readItems() {
+  const items = [];
+  for (const type of TYPES) {
+    const typeDir = join(ROOT, type.dir);
+    if (!existsSync(typeDir)) continue;
+    for (const slug of readdirSync(typeDir).sort()) {
+      const dir = join(typeDir, slug);
+      if (slug.startsWith("_") || !statSync(dir).isDirectory() || !existsSync(join(dir, "metadata.json"))) continue;
       const meta = JSON.parse(readFileSync(join(dir, "metadata.json"), "utf8"));
-      const readme = readFileSync(join(dir, "README.md"), "utf8");
-      const skill = frontmatter(readFileSync(join(dir, "SKILL.md"), "utf8"));
-      const files = listFiles(dir).filter((f) => f !== "metadata.json" && f !== "README.md");
+      const readme = existsSync(join(dir, "README.md")) ? readFileSync(join(dir, "README.md"), "utf8") : "";
+      const skill = existsSync(join(dir, "SKILL.md")) ? frontmatter(readFileSync(join(dir, "SKILL.md"), "utf8")) : null;
       const hasPreview = existsSync(join(dir, "assets", "preview.png"));
-      return {
+      items.push({
         slug,
-        ...meta,
+        type: type.dir,
+        category: type.label,
+        typeLabel: type.singular,
+        subcategory: meta.subcategory ?? "",
+        hue: SUB_HUES[hue(meta.subcategory ?? slug) % SUB_HUES.length],
+        name: meta.name,
+        description: meta.description,
         platforms: meta.platforms ?? [],
         tags: meta.tags ?? [],
-        agentDescription: skill.fields.description ?? "",
-        skillBody: skill.body,
+        author: meta.author,
+        authorGithub: meta.authorGithub ?? "",
+        authorUrl: meta.authorUrl ?? "",
+        avatar: meta.authorGithub ? `https://github.com/${meta.authorGithub}.png?size=80` : "",
+        version: meta.version ?? "1.0",
+        createdAt: meta.createdAt ?? "",
+        updatedAt: meta.updatedAt ?? "",
+        agentDescription: skill?.fields.description ?? "",
+        skillBody: skill?.body ?? "",
         readme,
-        files,
-        image: hasPreview ? `skills/${slug}/assets/preview.png` : monogram(slug, meta.name),
+        // metadata.json, README.md and the gallery preview are for people, not the agent.
+        files: listFiles(dir).filter((f) => !["metadata.json", "README.md", "assets/preview.png"].includes(f.path)),
         hasPreview,
-        url: `skills/${slug}/`,
-        sourceUrl: `${REPO}/tree/main/skills/${slug}`,
-        skillFileUrl: `${RAW}/skills/${slug}/SKILL.md`,
+        image: hasPreview ? `${type.dir}/${slug}/assets/preview.png` : cover(slug, meta.name, skill?.fields.description ?? meta.description),
+        url: `${type.dir}/${slug}/`,
+        sourceUrl: `${REPO}/tree/main/${type.dir}/${slug}`,
+        skillFileUrl: skill ? `${RAW}/${type.dir}/${slug}/SKILL.md` : "",
         issueUrl: `${REPO}/issues/new/choose`,
-      };
-    })
-    .sort((a, b) => (b.updatedAt ?? "").localeCompare(a.updatedAt ?? "") || a.name.localeCompare(b.name));
+        install: type.install.replace("<slug>", slug),
+      });
+    }
+  }
+  return items.sort((a, b) => (b.updatedAt ?? "").localeCompare(a.updatedAt ?? "") || a.name.localeCompare(b.name));
 }
 
 // ---------- page shell ----------
 
-function layout({ title, description, rel, body, extraHead = "" }) {
-  const r = rel; // relative path prefix to site root, "" or "../../"
+function layout({ title, description, rel, body, bodyClass = "" }) {
+  const r = rel; // relative path prefix to site root: "" or "../../"
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -142,184 +206,307 @@ function layout({ title, description, rel, body, extraHead = "" }) {
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}">
 <meta name="color-scheme" content="light dark">
+<meta property="og:title" content="${esc(title)}">
+<meta property="og:description" content="${esc(description)}">
 <link rel="icon" href="${r}assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&display=swap">
 <link rel="stylesheet" href="${r}assets/style.css">
-${extraHead}
+<script>document.documentElement.classList.add("js")</script>
 </head>
-<body>
+<body class="${bodyClass}">
 <a class="skip" href="#main">Skip to content</a>
 <header class="site-header">
   <div class="container header-row">
-    <a class="brand" href="${r}index.html"><span class="brand-mark" aria-hidden="true"></span>${esc(SITE.title)}</a>
+    <a class="brand" href="${r}index.html"><img class="brand-mark" src="${r}assets/favicon.svg" alt="" width="26" height="26">${esc(SITE.title)}</a>
     <nav class="nav" aria-label="Site">
-      <a href="${r}index.html#gallery">Gallery</a>
+      <a href="${r}index.html#gallery"${bodyClass === "page-index" ? ' aria-current="page"' : ""}>Gallery</a>
       <a href="${r}index.html#getting-started">Getting started</a>
-      <a href="${REPO}/blob/main/CONTRIBUTING.md">Contributing</a>
-      <a href="${REPO}">GitHub</a>
+      <a href="${REPO}/blob/main/CONTRIBUTING.md">Contribute</a>
+      <a class="nav-gh" href="${REPO}"><svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>GitHub</a>
     </nav>
   </div>
 </header>
-<main id="main" class="container">
+<main id="main">
 ${body}
 </main>
 <footer class="site-footer">
-  <div class="container footer-row">
-    <div>
-      <strong>${esc(SITE.title)}</strong> · built by <a href="${SITE.author.github}">${esc(SITE.author.name)}</a> (<a href="${SITE.author.linkedin}">LinkedIn</a>)
-      <div class="muted">Community work, not a Microsoft product. Provided as-is. Check the Microsoft Learn pages each skill cites before relying on it.</div>
-    </div>
-    <nav aria-label="Footer">
+  <div class="container">
+    <p class="footer-title">${esc(SITE.title)}</p>
+    <p class="footer-tag">Community work, not a Microsoft product. Provided as-is. Check the Microsoft Learn pages each skill cites before relying on it.</p>
+    <nav class="footer-links" aria-label="Footer">
+      <a href="${REPO}">GitHub</a>
+      <a href="${REPO}/blob/main/CONTRIBUTING.md">Contribute</a>
       <a href="${r}catalog.json">Catalog JSON</a>
       <a href="${REPO}/issues/new/choose">Report an issue</a>
       <a href="${REPO}/blob/main/SECURITY.md">Security</a>
       <a href="${REPO}/blob/main/CODE_OF_CONDUCT.md">Code of conduct</a>
     </nav>
+    <p class="footer-meta">Maintained by <a href="${SITE.author.github}">${esc(SITE.author.name)}</a> · <a href="${SITE.author.linkedin}">LinkedIn</a></p>
   </div>
 </footer>
+<script src="${r}assets/app.js" defer></script>
 </body>
 </html>
 `;
 }
 
+// ---------- shared fragments ----------
+
+const slugify = (s) => String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+const chips = (xs, cls = "") => xs.map((x) => `<li class="chip ${cls}" data-value="${slugify(x)}">${esc(x)}</li>`).join("");
+
+function select(id, label, allLabel, values, counts) {
+  const opts = values.map((v) => `<option value="${esc(v)}">${esc(v)} (${counts.get(v) ?? 0})</option>`).join("");
+  return `<label class="control"><span class="visually-hidden">${esc(label)}</span><select id="${id}"><option value="">${esc(allLabel)}</option>${opts}</select></label>`;
+}
+
 // ---------- index ----------
 
-function indexPage(skills, catalog) {
-  const categories = [...new Set(skills.map((s) => s.category))].sort();
-  const platforms = [...new Set(skills.flatMap((s) => s.platforms))].sort();
-  const authors = [...new Set(skills.map((s) => s.author))].sort();
-  const opts = (xs) => xs.map((x) => `<option value="${esc(x)}">${esc(x)}</option>`).join("");
-  const n = skills.length;
+function indexPage(items, catalog) {
+  const count = (fn) => {
+    const m = new Map();
+    for (const it of items) for (const v of [].concat(fn(it))) if (v) m.set(v, (m.get(v) ?? 0) + 1);
+    return m;
+  };
+  const byCategory = count((i) => i.category);
+  const bySub = count((i) => i.subcategory);
+  const byPlatform = count((i) => i.platforms);
+  const sortedKeys = (m) => [...m.keys()].sort((a, b) => a.localeCompare(b));
+  const categoryOrder = TYPES.map((t) => t.label).filter((l) => byCategory.has(l));
+
+  const n = items.length;
 
   const body = `
-<section class="hero">
-  <h1>${esc(SITE.title)}</h1>
-  <p class="lead">${esc(SITE.tagline)}. Each skill is a folder with a <code>SKILL.md</code> and the reference material it needs, following the <a href="https://agentskills.io/specification">Agent Skills</a> layout.</p>
-  <p class="muted"><strong>${n} skill${n === 1 ? "" : "s"}</strong> · community work, not a Microsoft product · several cover preview features that change without notice</p>
+<section class="intro">
+  <div class="container">
+    <div class="intro-text">
+      <h1>${esc(SITE.title)}</h1>
+      <p class="subtitle">Agent skills you can copy into your own agent</p>
+      <p class="lead">${esc(SITE.tagline)} Each one is a folder in the open <a href="${REPO}/blob/main/SKILL-SCHEMA.md">Agent Skills</a> format, so it runs in any host that supports&nbsp;it.</p>
+    </div>
+  </div>
 </section>
 
+
 <section id="gallery" class="gallery">
-  <h2>Explore skills</h2>
-  <form class="toolbar" role="search" aria-label="Filter skills" onsubmit="return false">
-    <label class="search"><span class="visually-hidden">Search skills</span><input id="q" type="search" placeholder="Search skills…" autocomplete="off"></label>
-    <label>Category <select id="category"><option value="">All</option>${opts(categories)}</select></label>
-    <label>Platform <select id="platform"><option value="">All</option>${opts(platforms)}</select></label>
-    <label>Author <select id="author"><option value="">All</option>${opts(authors)}</select></label>
-    <label>Sort <select id="sort"><option value="updated">Recently updated</option><option value="newest">Newest</option><option value="title">Title</option></select></label>
-    <button type="button" id="clear" class="btn btn-ghost">Clear filters</button>
-  </form>
-  <p class="muted" id="count" aria-live="polite">Showing ${n} skill${n === 1 ? "" : "s"}</p>
-  <div id="grid" class="grid"></div>
-  <div id="empty" class="empty" hidden>
-    <p>No skills match. Try a broader search or <button type="button" class="link" data-clear>clear the filters</button>.</p>
+  <img class="deco deco-left" src="assets/deco-left.svg" alt="" aria-hidden="true" width="420" height="1100">
+  <img class="deco deco-right" src="assets/deco-right.svg" alt="" aria-hidden="true" width="420" height="1100">
+  <div class="container">
+    <h2 class="visually-hidden">Browse the skills</h2>
+
+    <form class="toolbar" id="filters" role="search" aria-label="Filter skills" onsubmit="return false">
+      <label class="search">
+        <span class="visually-hidden">Search</span>
+        <svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"/></svg>
+        <input id="q" type="search" placeholder="Search skills" autocomplete="off">
+      </label>
+      ${select("category", "Category", "All categories", categoryOrder, byCategory)}
+      ${select("subcategory", "Sub-category", "All sub-categories", sortedKeys(bySub), bySub)}
+      ${select("platform", "Platform", "All platforms", sortedKeys(byPlatform), byPlatform)}
+      <label class="control"><span class="visually-hidden">Sort</span><select id="sort"><option value="updated">Recently updated</option><option value="newest">Newest</option><option value="title">Title A–Z</option></select></label>
+    </form>
+
+    <div class="results-bar">
+      <p class="count" id="count" aria-live="polite">Showing ${plural(n, "skill")}</p>
+      <button type="button" id="clear" class="link">Clear filters</button>
+    </div>
+
+    <div id="grid" class="grid"></div>
+    <div id="empty" class="empty" hidden>
+      <p><strong>Nothing matches.</strong> Try a broader search or <button type="button" class="link" data-clear>clear the filters</button>.</p>
+    </div>
+    <noscript>
+      <ul class="plain-list">${items.map((s) => `<li><a href="${s.url}">${esc(s.name)}</a> <span class="muted">· ${esc(s.category)} / ${esc(s.subcategory)}</span><br>${esc(s.description)}</li>`).join("")}</ul>
+    </noscript>
   </div>
-  <noscript>
-    <ul>${skills.map((s) => `<li><a href="${s.url}">${esc(s.name)}</a> — ${esc(s.description)}</li>`).join("")}</ul>
-  </noscript>
 </section>
 
 <section id="getting-started" class="getting-started">
-  <h2>Getting started</h2>
-  <p>Copy the whole skill folder, not just <code>SKILL.md</code>; the agent needs the <code>references/</code> folder the instructions point to. The host discovers the skill by the <code>name</code> field in its frontmatter.</p>
-  <table>
-    <thead><tr><th>Host</th><th>Where to put it</th></tr></thead>
-    <tbody>
-      <tr><td>GitHub Copilot (VS Code, CLI)</td><td><code>.github/skills/&lt;slug&gt;/</code> in your repository</td></tr>
-      <tr><td>Copilot Studio (GitHub Copilot harness)</td><td>Add as a skill to the agent, per the Copilot Studio documentation</td></tr>
-      <tr><td>Microsoft 365 Copilot / Copilot in SharePoint</td><td>Upload the folder to the site's <strong>Agent Assets</strong> library, <strong>Skills</strong> folder</td></tr>
-      <tr><td>Any other Agent Skills host</td><td>Per the host's documentation; the layout is the standard one</td></tr>
-    </tbody>
-  </table>
-  <p>Use skills selectively. Loading many at once dilutes the agent's attention. Want to add one? Read the <a href="${REPO}/blob/main/CONTRIBUTING.md">contribution guide</a>; CI validates the folder and a code owner reviews it.</p>
+  <div class="container gs-grid">
+    <div class="gs-intro">
+      <p class="eyebrow">Getting started</p>
+      <h2>Install a skill</h2>
+      <p>A skill is a folder: a <code>SKILL.md</code> with the instructions, plus any reference files it points to. Your agent host reads the folder; nothing needs building.</p>
+      <p><a class="text-link" href="${REPO}/blob/main/CONTRIBUTING.md">Contribute a skill <span aria-hidden="true">→</span></a></p>
+    </div>
+    <ol class="gs-steps">
+      <li><span class="gs-num">01</span><div><h3>Find a skill</h3><p>Search or filter the catalog above, then open its page to read what it does and what it relies on.</p></div></li>
+      <li><span class="gs-num">02</span><div><h3>Copy the whole folder</h3><p>Not just <code>SKILL.md</code>; the agent needs the references too. <a href="${REPO}/blob/main/skills/README.md">Where each host expects it</a>.</p></div></li>
+      <li><span class="gs-num">03</span><div><h3>Ask your agent</h3><p>Once installed, the host loads the skill when your request matches its description.</p></div></li>
+    </ol>
+  </div>
 </section>
 
 <script id="catalog" type="application/json">${JSON.stringify(catalog).replace(/</g, "\\u003c")}</script>
-<script src="assets/app.js" defer></script>
 `;
-  return layout({ title: `${SITE.title} · skills gallery`, description: SITE.tagline, rel: "", body });
+  return layout({ title: `${SITE.title} · skills gallery`, description: SITE.tagline, rel: "", body, bodyClass: "page-index" });
 }
 
 // ---------- detail page ----------
 
 function detailPage(s) {
   const rel = "../../";
-  const readmeHtml = demote(rewriteLinks(marked.parse(stripFirstH1(s.readme)), s.slug));
-  const skillHtml = demote(rewriteLinks(marked.parse(stripFirstH1(s.skillBody)), s.slug));
-  const fileList = s.files
-    .map((f) => `<li><a href="${REPO}/blob/main/skills/${s.slug}/${f}">${esc(f)}</a></li>`)
+  const readmeHtml = demote(rewriteLinks(marked.parse(stripFirstH1(s.readme)), s));
+  const skillHtml = s.skillBody ? demote(rewriteLinks(marked.parse(stripFirstH1(s.skillBody)), s)) : "";
+  const fileRows = s.files
+    .map((f) => `<tr><td><a href="${REPO}/blob/main/${s.type}/${s.slug}/${f.path}">${esc(f.path)}</a></td><td class="num">${fmtSize(f.size)}</td></tr>`)
     .join("");
-  const chips = (xs, cls) => xs.map((x) => `<span class="chip ${cls}">${esc(x)}</span>`).join("");
 
   const body = `
-<nav class="breadcrumb" aria-label="Breadcrumb"><a href="${rel}index.html">Gallery</a> <span aria-hidden="true">/</span> <span>${esc(s.name)}</span></nav>
-
-<article class="detail">
-  <header class="detail-header">
-    <div class="detail-art"><img src="${s.hasPreview ? "assets/preview.png" : s.image}" alt="" width="640" height="360"></div>
-    <div>
-      <p class="eyebrow">${esc(s.category)} · v${esc(s.version ?? "1.0")} · updated ${esc(fmtDate(s.updatedAt))}</p>
+<article class="detail" style="--h:${s.hue}">
+<div class="detail-band">
+<div class="container">
+<nav class="breadcrumb" aria-label="Breadcrumb"><a href="${rel}index.html">Gallery</a> <span aria-hidden="true">›</span> <a href="${rel}index.html?category=${encodeURIComponent(s.category)}#gallery">${esc(s.category)}</a> <span aria-hidden="true">›</span> <span aria-current="page">${esc(s.name)}</span></nav>
+  <header class="detail-hero${s.hasPreview ? " has-preview" : ""}">
+    <div class="detail-hero-text">
+      <p class="eyebrow kicker"><a class="kicker-cat" href="${rel}index.html?category=${encodeURIComponent(s.category)}#gallery">${esc(s.category)}</a>${s.subcategory ? `<a class="kicker-sub" href="${rel}index.html?subcategory=${encodeURIComponent(s.subcategory)}#gallery">${esc(s.subcategory)}</a>` : ""}</p>
       <h1>${esc(s.name)}</h1>
       <p class="lead">${esc(s.description)}</p>
-      <p class="chips">${chips(s.platforms, "chip-platform")}</p>
-      <p class="actions">
+      <div class="byline">
+        ${s.avatar ? `<img class="avatar avatar-lg" src="${s.avatar}" alt="" width="48" height="48">` : `<span class="avatar avatar-lg avatar-text" aria-hidden="true">${esc(s.author[0] ?? "?")}</span>`}
+        <div>
+          <p class="byline-name">by <strong>${esc(s.author)}</strong></p>
+          <p class="byline-links">${[s.authorGithub ? `<a href="https://github.com/${esc(s.authorGithub)}">@${esc(s.authorGithub)}</a>` : "", s.authorUrl && !/github\.com/i.test(s.authorUrl) ? `<a href="${esc(s.authorUrl)}">${/linkedin/i.test(s.authorUrl) ? "LinkedIn" : "Profile"}</a>` : ""].filter(Boolean).join(" · ")}</p>
+        </div>
+      </div>
+      <ul class="chips tag-pills">${chips(s.tags)}</ul>
+      <div class="actions">
         <a class="btn btn-primary" href="${s.sourceUrl}">View on GitHub</a>
-        <a class="btn" href="${s.skillFileUrl}">Open SKILL.md</a>
+        ${s.skillFileUrl ? `<a class="btn" href="${s.skillFileUrl}">Open SKILL.md</a>` : ""}
         <a class="btn btn-ghost" href="${s.issueUrl}">Report an issue</a>
-      </p>
+      </div>
     </div>
+    ${s.hasPreview ? `<a class="detail-art" href="assets/preview.png" title="Open the full-size image"><img src="assets/preview.png" alt="Example: ${esc(s.name)} answering a question in an agent chat" width="640" height="360"></a>` : ""}
   </header>
+</div>
+</div>
 
+<div class="container">
   <div class="detail-grid">
-    <div class="prose">
-      <h2 id="overview">Overview</h2>
-      ${readmeHtml}
+    <div class="detail-main">
+      <div class="tabs" role="tablist" aria-label="Sections">
+        <button role="tab" id="tab-overview" aria-controls="overview" aria-selected="true">Overview</button>
+        ${skillHtml ? `<button role="tab" id="tab-instructions" aria-controls="instructions" aria-selected="false">Skill instructions</button>` : ""}
+        <button role="tab" id="tab-files" aria-controls="files" aria-selected="false">Files <span class="tab-count">${s.files.length}</span></button>
+      </div>
 
-      <h2 id="agent-description">What triggers it</h2>
-      <p class="muted">The <code>description</code> an agent host matches against the user's request:</p>
-      <blockquote>${esc(s.agentDescription)}</blockquote>
+      <section id="overview" class="tab-panel prose" role="tabpanel" aria-labelledby="tab-overview">
+        <h2 class="panel-title">Overview</h2>
+        ${readmeHtml}
+      </section>
 
-      <details class="skill-source">
-        <summary><h2 id="instructions">Skill instructions (SKILL.md)</h2></summary>
-        <div class="prose-inner">${skillHtml}</div>
-      </details>
+      ${skillHtml ? `<section id="instructions" class="tab-panel prose" role="tabpanel" aria-labelledby="tab-instructions">
+        <h2 class="panel-title">Skill instructions</h2>
+        <div class="callout">
+          <p class="callout-label">What triggers it</p>
+          <p>${esc(s.agentDescription)}</p>
+          <p class="muted small">This is the <code>description</code> in the <code>SKILL.md</code> frontmatter. An agent host matches it against the user's request to decide when to load the skill.</p>
+        </div>
+        <p class="muted small">Rendered from <a href="${REPO}/blob/main/${s.type}/${s.slug}/SKILL.md"><code>${esc(s.type)}/${esc(s.slug)}/SKILL.md</code></a>. The agent reads this file, not this page.</p>
+        ${skillHtml}
+      </section>` : ""}
+
+      <section id="files" class="tab-panel" role="tabpanel" aria-labelledby="tab-files">
+        <h2 class="panel-title">Files</h2>
+        <p class="muted">Everything the agent loads. Copy the whole folder; <code>metadata.json</code>, <code>README.md</code> and the gallery preview image are for people and are not listed.</p>
+        <table class="files"><thead><tr><th>Path</th><th class="num">Size</th></tr></thead><tbody>${fileRows}</tbody></table>
+      </section>
     </div>
 
     <aside class="meta">
-      <dl>
-        <dt>Author</dt><dd>${s.authorUrl ? `<a href="${esc(s.authorUrl)}">${esc(s.author)}</a>` : esc(s.author)}${s.authorGithub ? ` · <a href="https://github.com/${esc(s.authorGithub)}">@${esc(s.authorGithub)}</a>` : ""}</dd>
-        <dt>Category</dt><dd>${esc(s.category)}</dd>
-        <dt>Platforms</dt><dd>${esc(s.platforms.join(", "))}</dd>
-        <dt>Version</dt><dd>${esc(s.version ?? "1.0")}</dd>
-        <dt>Created</dt><dd>${esc(fmtDate(s.createdAt))}</dd>
-        <dt>Updated</dt><dd>${esc(fmtDate(s.updatedAt))}</dd>
-        <dt>Tags</dt><dd class="chips">${chips(s.tags, "chip-tag")}</dd>
-        <dt>Install</dt><dd><code>skills/${esc(s.slug)}/</code> → your host's skills folder</dd>
-        <dt>Files</dt><dd><ul class="files">${fileList}</ul></dd>
-      </dl>
+      <section class="meta-sec">
+        <h2 class="meta-label">Works with</h2>
+        <ul class="works">${s.platforms.map((p) => `<li data-value="${slugify(p)}">${esc(p)}</li>`).join("")}</ul>
+      </section>
+      <section class="meta-sec">
+        <h2 class="meta-h">Add this ${esc(s.typeLabel)}</h2>
+        <p class="meta-p">Download the folder and unzip it into your host's skills directory${s.install ? `, such as <code>${esc(s.install.replace(`${s.slug}/`, ""))}</code>` : ""}.</p>
+        <div class="trust">
+          <svg class="trust-icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 2.5 4 5.5v6c0 5 3.4 8.9 8 10 4.6-1.1 8-5 8-10v-6Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 7.5v5.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="16.3" r="1.1" fill="currentColor"/></svg>
+          <div>
+            <p class="trust-title">Add only what you trust</p>
+            <label class="trust-check"><input type="checkbox" id="trust-ok"> <span>I understand that this is a community-provided skill. It runs with my agent's permissions, so I should review it carefully and add it only if I trust the source.</span></label>
+          </div>
+        </div>
+        <a class="btn btn-primary btn-block" id="download" href="${esc(s.slug)}.zip" download><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 1.75a.75.75 0 0 1 .75.75v6.19l2.22-2.22a.75.75 0 1 1 1.06 1.06l-3.5 3.5a.75.75 0 0 1-1.06 0l-3.5-3.5a.75.75 0 0 1 1.06-1.06l2.22 2.22V2.5A.75.75 0 0 1 8 1.75ZM2.75 12.5a.75.75 0 0 0 0 1.5h10.5a.75.75 0 0 0 0-1.5Z"/></svg>Download ${esc(s.typeLabel)} (.zip)</a>
+      </section>
+      <section class="meta-sec">
+        <dl class="meta-facts">
+          <div><dt>Version</dt><dd>${esc(s.version)}</dd></div>
+          <div><dt>Added</dt><dd><time datetime="${esc(s.createdAt)}">${esc(fmtDate(s.createdAt))}</time></dd></div>
+          <div><dt>Updated</dt><dd><time datetime="${esc(s.updatedAt)}">${esc(fmtDate(s.updatedAt))}</time></dd></div>
+        </dl>
+      </section>
+      <section class="meta-sec">
+        <p class="meta-note">This ${esc(s.typeLabel)} is provided as-is and is not a Microsoft product. See <a href="${REPO}/blob/main/SUPPORT.md">Support</a> for how to get help.</p>
+      </section>
     </aside>
   </div>
+</div>
 </article>
 `;
-  return layout({ title: `${s.name} · ${SITE.title}`, description: s.description, rel, body });
+  return layout({ title: `${s.name} · ${SITE.title}`, description: s.description, rel, body, bodyClass: "page-detail" });
+}
+
+// ---------- zip ----------
+
+// Minimal zip writer (deflate), so each skill page can offer its folder as one download.
+// Timestamps come from updatedAt so the archive only changes when the skill does.
+function zip(entries, iso) {
+  const d = iso ? new Date(iso + "T00:00:00Z") : new Date(Date.UTC(1980, 0, 1));
+  const time = 0;
+  const date = ((d.getUTCFullYear() - 1980) << 9) | ((d.getUTCMonth() + 1) << 5) | d.getUTCDate();
+  const local = [];
+  const central = [];
+  let offset = 0;
+  for (const { name, data } of entries) {
+    const nameBuf = Buffer.from(name, "utf8");
+    const body = deflateRawSync(data);
+    const crc = crc32(data);
+    const head = Buffer.alloc(30);
+    head.writeUInt32LE(0x04034b50, 0); head.writeUInt16LE(20, 4); head.writeUInt16LE(0x0800, 6); head.writeUInt16LE(8, 8);
+    head.writeUInt16LE(time, 10); head.writeUInt16LE(date, 12); head.writeUInt32LE(crc, 14);
+    head.writeUInt32LE(body.length, 18); head.writeUInt32LE(data.length, 22); head.writeUInt16LE(nameBuf.length, 26);
+    const dir = Buffer.alloc(46);
+    dir.writeUInt32LE(0x02014b50, 0); dir.writeUInt16LE(20, 4); dir.writeUInt16LE(20, 6); dir.writeUInt16LE(0x0800, 8); dir.writeUInt16LE(8, 10);
+    dir.writeUInt16LE(time, 12); dir.writeUInt16LE(date, 14); dir.writeUInt32LE(crc, 16);
+    dir.writeUInt32LE(body.length, 20); dir.writeUInt32LE(data.length, 24); dir.writeUInt16LE(nameBuf.length, 28);
+    dir.writeUInt32LE(offset, 42);
+    local.push(head, nameBuf, body);
+    central.push(dir, nameBuf);
+    offset += head.length + nameBuf.length + body.length;
+  }
+  const cd = Buffer.concat(central);
+  const end = Buffer.alloc(22);
+  end.writeUInt32LE(0x06054b50, 0); end.writeUInt16LE(entries.length, 8); end.writeUInt16LE(entries.length, 10);
+  end.writeUInt32LE(cd.length, 12); end.writeUInt32LE(offset, 16);
+  return Buffer.concat([...local, cd, end]);
 }
 
 // ---------- build ----------
 
-const skills = readSkills();
-const catalog = skills.map(({ readme, skillBody, files, ...rest }) => rest);
+const items = readItems();
+const catalog = items.map(({ readme, skillBody, files, ...rest }) => rest);
 
 rmSync(OUT, { recursive: true, force: true });
 mkdirSync(join(OUT, "assets"), { recursive: true });
 cpSync(SRC, join(OUT, "assets"), { recursive: true });
 writeFileSync(join(OUT, ".nojekyll"), "");
-writeFileSync(join(OUT, "catalog.json"), JSON.stringify({ generatedAt: new Date().toISOString(), repository: REPO, skills: catalog }, null, 2));
-writeFileSync(join(OUT, "index.html"), indexPage(skills, catalog));
+writeFileSync(join(OUT, "catalog.json"), JSON.stringify({ generatedAt: new Date().toISOString(), repository: REPO, categories: TYPES.filter((t) => items.some((i) => i.type === t.dir)).map((t) => ({ folder: t.dir, label: t.label })), items: catalog }, null, 2));
+writeFileSync(join(OUT, "index.html"), indexPage(items, catalog));
 
-for (const s of skills) {
-  const dir = join(OUT, "skills", s.slug);
+for (const s of items) {
+  const dir = join(OUT, s.type, s.slug);
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, "index.html"), detailPage(s));
-  const assets = join(SKILLS_DIR, s.slug, "assets");
+  // The download holds what the agent loads, inside a folder named after the slug.
+  const src = join(ROOT, s.type, s.slug);
+  writeFileSync(join(dir, `${s.slug}.zip`), zip(s.files.map((f) => ({ name: `${s.slug}/${f.path}`, data: readFileSync(join(src, f.path)) })), s.updatedAt));
+  const assets = join(ROOT, s.type, s.slug, "assets");
   if (existsSync(assets)) cpSync(assets, join(dir, "assets"), { recursive: true });
 }
 
-console.log(`Built ${skills.length} skill page(s) into site/dist`);
+const summary = TYPES.map((t) => [t, items.filter((i) => i.type === t.dir).length]).filter(([, n]) => n > 0).map(([t, n]) => plural(n, t.singular)).join(", ");
+console.log(`Built ${summary || "0 items"} into site/dist`);

@@ -2,7 +2,7 @@
 
 **Retention, eDiscovery and deletion for the memory that agent accounts share**
 
-> **Status:** Written 30 October 2026 against Frontier preview documentation. Agent accounts and shared memory are prerelease features and Microsoft's pages carry the "subject to change" banner. Treat every statement below as "true of the docs on that date" and re-check the sources in the last section before you rely on it.
+> **Status:** Written 30 October 2026 against Frontier preview documentation, with every source re-read on that date. Agent accounts and shared memory are prerelease features and Microsoft's pages carry the "subject to change" banner. Treat every statement below as "true of the docs on that date" and re-check the sources in the last section before you rely on it.
 
 ## Who this is for
 
@@ -24,12 +24,14 @@ The word "memory" now covers four distinct features in the Microsoft 365 and Cop
 
 | Feature | Scope | Where it lives (documented?) | Lifecycle | Purview coverage (documented?) |
 |---|---|---|---|---|
-| **Microsoft 365 Copilot memory** (saved memories, inferred details, custom instructions) | Per user | Yes: hidden `CopilotMemory` folder in the user's Exchange mailbox, item class `IPM.Contact` | Until the user deletes it; turning memory off does not delete | Partly. eDiscovery search and Graph purge documented. MC1478965 adds Data Lifecycle Management retention and inactive-version preservation; the admin doc page still says retention does not apply. No audit log entries for memory actions. |
-| **Copilot Studio memory, GitHub Copilot harness** | Per user, per agent | Partly: "a dedicated folder in Microsoft-managed storage", saved as files. Not Dataverse, not a mailbox. | Deleted after 28 days with no interaction from that user; user can delete in chat or portal; maker cannot see it; turning memory off does not delete | Not mentioned anywhere in Purview documentation |
+| **Microsoft 365 Copilot memory** (saved memories, inferred details, custom instructions; itself in preview) | Per user | Yes: hidden `CopilotMemory` folder in the user's Exchange mailbox, item class `IPM.Contact` | Until the user deletes it; turning memory off does not delete | Partly. eDiscovery search and Graph purge documented. MC1478965 adds Data Lifecycle Management retention and inactive-version preservation; the admin doc page still says retention does not apply. No audit log entries for memory actions. |
+| **Copilot Studio memory, GitHub Copilot harness** | Per user, per agent; off in group chats and Teams channels | Partly: "a dedicated folder in Microsoft-managed storage", saved as files. The page does not name the service. | Deleted after 28 days with no interaction from that user; user can delete in chat or portal; maker cannot see it; turning memory off does not delete | Not mentioned anywhere in Purview documentation |
 | **Copilot Studio memory, Customer Conversation harness** | Per customer, per agent | Not stated | Structured schema, 30-day retention window | Not mentioned anywhere in Purview documentation |
 | **Shared memory, agents with an account (Frontier)** | **One memory per agent, shared by every user** | **Not stated** | Deleted after 28 days with no interaction from anyone; any user can view or delete; no opt-out; cannot be disabled without disabling agent accounts | **Not mentioned anywhere in Purview documentation** |
 
 The first row is the one Microsoft has been actively closing gaps on. The last row is the subject of this guide.
+
+The two Copilot Studio rows also sit in different preview classes. Per-user memory on the GitHub Copilot harness is labelled "a production-ready preview feature" under supplemental terms of use; shared memory is a Frontier preview, "subject to the existing preview terms of your customer agreements." Quote the right one when a reviewer asks what terms apply.
 
 A naming point that compliance reviewers raise every time: the **GitHub Copilot harness** is the Copilot Studio runtime that powers agents with accounts (and per-user memory). Microsoft's harness documentation states it "is a Microsoft Copilot Studio authoring and orchestration framework, not the GitHub Copilot service," and that "customer data isn't sent to or processed by the GitHub Copilot service when agents run in Copilot Studio." Existing Copilot Studio data residency and compliance commitments apply. Memory on this harness is a Copilot Studio feature, not GitHub Copilot's memory feature, which is a separate product with its own controls.
 
@@ -41,7 +43,7 @@ All quotations are from the Copilot Studio agent-account pages dated 14 and 15 O
 
 **Who can see it.** "Anyone who works with the agent. A record about one person can be used in later conversations with other people. The agent is guided not to bring up one person's details with someone else, but shared memory has no privacy boundary between users."
 
-**Permission and label bypass.** The agent's People card says: "Any files or chats you share can be summarized and included in the agent's responses to any user, even users without permissions to the files or chats and regardless of sensitivity label." The one documented hard stop: "Agents with an account can't read protected documents. For example, they can't access documents protected with Confidential or Internal Only sensitivity labels, or the equivalent for your organization." Microsoft's word is *protected*; in Purview terms a label protects content when it applies encryption, and a label that only classifies does not. Read the two statements together as: labels that encrypt keep content out of the agent entirely; labels that only classify do not stop content entering memory or surfacing to other users.
+**Permission and label bypass.** The agent's People card says: "Any files or chats you share can be summarized and included in the agent's responses to any user, even users without permissions to the files or chats and regardless of sensitivity label." The one documented hard stop: "Agents with an account can't read protected documents. For example, they can't access documents protected with Confidential or Internal Only sensitivity labels, or the equivalent for your organization." Microsoft's word is *protected*; in Purview terms a label protects content when it applies encryption, and a label that only classifies does not. The same page suggests testing with "**General** or **Confidential / Any User (No Protection)**" labels, where "No Protection" is the standard name for a label without encryption, which supports that reading. Read the two statements together as: labels that encrypt keep content out of the agent entirely; labels that only classify do not stop content entering memory or surfacing to other users.
 
 **Who can view or delete it, and where.** "Everyone who interacts with the agent can view or delete its saved shared memories." The FAQ does not say through which surface. The per-user memory documentation describes asking the agent in chat and a memory portal link the agent shows; whether both exist for shared memory is not written down. Treat "ask the agent in chat" as the one path the FAQ supports.
 
@@ -49,7 +51,7 @@ All quotations are from the Copilot Studio agent-account pages dated 14 and 15 O
 
 **Opt-out.** "End users can't opt out of shared memory in this preview. By using the agent, you consent to its use of shared memory." And for admins: "shared memory can't be turned off independently of agent accounts. To turn off shared memory, an admin must turn off agent accounts altogether."
 
-**Exclusions.** Microsoft lists categories the agent is guided to exclude: ID numbers and similar personal identifiers, credentials and secrets, anything a person asks it not to remember, judgments about performance or conduct, health information, protected characteristics, content already in instructions or knowledge, and single-remark inferences. These are model instructions, not a technical filter. Microsoft 365 Copilot's admin page is explicit for its own memory that "admins can't restrict what type of information is added to Copilot memory," and nothing in the Copilot Studio pages suggests a stronger control exists for shared memory.
+**Exclusions.** The FAQ states that "shared memory excludes" a list of categories: personal details such as ID numbers, birth dates, account or card numbers, personal phone numbers and home addresses; passwords, credentials, secrets and tokens; anything someone asks it not to remember; judgments about anyone's performance or conduct; health information; protected characteristics; information already in the agent's instructions or knowledge sources; and conclusions it inferred or generalisations from a single remark. The page does not say how the exclusion is enforced. The only enforcement language on it is "guided": the agent "is guided not to bring up one person's details with someone else" and, when a memory conflicts with its instructions, "it's guided to follow the instructions and correct the memory." No admin control over the list is documented. Microsoft 365 Copilot's admin page is explicit for its own memory that "admins can't restrict what type of information is added to Copilot memory," and nothing in the Copilot Studio pages suggests a stronger control exists for shared memory. Treat the list as a statement of intended behaviour, not as a filter you can rely on or audit.
 
 **Deletion of the agent.** "When you delete an agent in Copilot Studio, Copilot Studio also deletes the associated Microsoft Entra Agent ID." Two caveats. First, nothing is said about the agent account, its mailbox, or its shared memory. Second, that sentence is on the *Manage Entra Agent IDs* page, whose header note says it "describes features used in agents or agent flows powered by the standard harness"; agents with accounts run on the GitHub Copilot harness. The agent-account page links to that page for Entra Agent IDs, so the behaviour is implied to carry over, but it is not stated for this harness.
 
@@ -57,7 +59,7 @@ All quotations are from the Copilot Studio agent-account pages dated 14 and 15 O
 
 ## 3. Where Purview reaches, and where it does not
 
-Microsoft's Purview pages for Copilot Studio (May 2026) and for Agent 365 (May 2026) both show a table of ticks: audit, classification, sensitivity labels, DLP, Insider Risk, Communication Compliance, eDiscovery and Data Lifecycle Management are all "supported for AI interactions." Read the fine print and every one of those ticks is about **interactions**, meaning prompts and responses, or about the agent's **mailbox and Teams traffic** when it is treated as a user.
+Microsoft's Purview pages for Copilot Studio (May 2026) and for Agent 365 (May 2026) both show a table of ticks: audit, classification, sensitivity labels, DLP, Insider Risk, Communication Compliance, eDiscovery and Data Lifecycle Management are all "supported for AI interactions." Read the fine print and every one of those ticks is about **interactions**, meaning prompts and responses, or about the agent's **mailbox and Teams traffic** when it is treated as a user. The Agent 365 page applies to agents with an account because the agent-account page says "Microsoft Agent 365 provisions and governs agent accounts, giving admins user-grade visibility and control over agents that are configured with an account."
 
 | Data | Retention (DLM) | eDiscovery search | Hold preserves it | Search-and-purge | Audit log | Classification / DLP |
 |---|---|---|---|---|---|---|
@@ -67,7 +69,7 @@ Microsoft's Purview pages for Copilot Studio (May 2026) and for Agent 365 (May 2
 
 Two details make this worse than "undocumented":
 
-- **The mechanism Purview relies on does not obviously apply.** Everything Purview does for AI data hangs off a copy in an Exchange mailbox. Per-user Copilot Studio memory is documented as files in Microsoft-managed storage, not a mailbox item. If shared memory works the same way, there is nothing for a retention policy or a hold to attach to. If instead it lives in the agent account's own mailbox (the agent now has one), it might be discoverable by treating the agent as a custodian. Nobody outside Microsoft knows which, and the guide's test plan is designed to find out.
+- **The mechanism Purview relies on does not obviously apply.** Everything Purview does for AI data hangs off a copy in an Exchange mailbox. Per-user Copilot Studio memory is documented as files in Microsoft-managed storage, not a mailbox item. If shared memory works the same way, there is nothing for a retention policy or a hold to attach to. If instead it lives in the agent account's own mailbox (the agent now has one), it might be discoverable by adding the agent's mailbox to a case as a data source. Nobody outside Microsoft knows which, and the guide's test plan is designed to find out.
 - **Any user can delete memory, and no audit trail is documented.** A custodian under a legal hold can ask the agent to forget something, or clear everything through whatever delete surface the agent offers, and the documentation gives you no record that it happened and no hold that stops it. For Microsoft 365 Copilot memory, Microsoft states outright that "memory and personalization actions don't generate audit log entries in Purview." Assume the same for shared memory until you observe otherwise.
 
 ## 4. The open questions, stated precisely
@@ -97,14 +99,14 @@ Agent accounts cannot appear by accident. The documented prerequisites are: the 
 
 Beyond that, agent accounts need two admin actions, and both are your gate:
 
-- In the Microsoft 365 admin center, the **Copilot Studio (Frontier)** agent template activation wizard lets you pick the users or groups allowed to create agents with accounts. Use a named security group, not "everyone," and keep the template inactive until that group exists and has been reviewed.
-- In the Power Platform admin center, **Agent accounts** is an environment-level setting. Enable it in one pilot environment on the early release cycle. Do not enable it in default or production environments until the test plan in section 6 has been completed.
+- In the Microsoft 365 admin center (**All Agents**, filtered to **Agent template: Yes**), the **Copilot Studio (Frontier)** agent template activation wizard lets you pick the users or groups allowed to create agents with accounts; Microsoft states that "only the users you select at this step and members of the selected groups can create agents with accounts." Use a named security group, not "everyone," and keep the template inactive until that group exists and has been reviewed.
+- In the Power Platform admin center (**Copilot** > **Settings** > **Copilot Studio**), **Agent accounts** is an environment-level setting. Enable it in one pilot environment on the early release cycle. Do not enable it in default or production environments until the test plan in section 6 has been completed.
 
 Because shared memory cannot be switched off independently, these two settings are the only off switch you have. Record who owns them.
 
 ### 5.2 Design: write the memory rules into the agent's instructions
 
-Microsoft's design guidance is that makers "control how retained context is used through instructions and by designating authoritative business records and policies." Make that mandatory. Every agent with an account should ship with an instruction block that:
+Microsoft's launch post says: "Makers guide how retained context informs the agent through instructions, in conjunction with deeming which business records and policies are authoritative." Make that mandatory. Every agent with an account should ship with an instruction block that:
 
 - names the authoritative records (the tracker, the policy document, the system of record) and says they win over anything in memory;
 - states which categories must never be remembered, restating Microsoft's exclusion list in your own terms and adding anything specific to your regulated data;
@@ -135,9 +137,10 @@ Microsoft shows a notice on the agent's People card and in the first conversatio
 
 Purview classification and DLP act on the prompt and response text and on the agent's mail and Teams traffic. They do not act on memory. So:
 
-- keep encrypted sensitivity labels on anything the agent must never summarize, since encryption is the only documented hard stop;
+- keep encrypted sensitivity labels on anything the agent must never summarize, since encryption is the only hard stop documented for agents with an account;
+- consider a DLP policy for the **Microsoft 365 Copilot** location that blocks agents from processing content with chosen sensitivity labels. The Copilot Studio Purview page documents it for agents with a SharePoint knowledge source in Teams, SharePoint and Microsoft 365 Copilot; it predates agent accounts and says nothing about the GitHub Copilot harness, so test it (T1 is the place) before you rely on it;
 - apply a DLP policy that includes the agent instance as a user, so sensitive content sent to it by email or Teams is blocked or audited before it becomes a prompt;
-- use **Data Security Posture Management** in the Purview portal, the current version, not **DSPM for AI (classic)**, which Microsoft says does not support Agent 365. Its **AI observability** page lists agent instances with their risk level and activities, and its one-click policies ("Detect unethical behavior in AI", "Detect risky interactions in AI apps") run on Copilot Studio prompts and responses. That is the best proxy you have for what memory might contain, because it shows what is being fed in.
+- use **Data Security Posture Management** in the Purview portal, the current version, not **DSPM for AI (classic)**, which Microsoft says does not support Agent 365. Its **AI observability** page lists agent instances with their risk level and activities, and the one-click policies Microsoft lists for Copilot Studio ("Detect unethical behavior in AI apps", "Detect risky interactions in AI apps") run on prompts and responses. That is the best proxy you have for what memory might contain, because it shows what is being fed in.
 
 ### 5.5 Retention: set it where it works, document where it does not
 
@@ -160,7 +163,7 @@ When a hold notice lands that touches a process the agent runs:
 For a request to access or erase what the agent holds about a person:
 
 - **Access:** ask the agent what it remembers about the person and capture the answer; if the agent offers a memory portal link, check that too. Also run the documented eDiscovery workflow on the prompt/response copies, because that is where the raw inputs live.
-- **Erasure:** ask the agent to forget the specific memory and confirm it is gone by asking again. For the interaction records, use the documented search-and-purge workflow (eDiscovery search plus Graph `purgeData`, up to 10 items per mailbox per run, holds removed first then reapplied). Microsoft's own eDiscovery page warns that "deleting a conversation or message from Microsoft Purview or eDiscovery doesn't delete the associated Copilot memory," so do both.
+- **Erasure:** ask the agent to forget the specific memory and confirm it is gone by asking again. For the interaction records, use the documented search-and-purge workflow (eDiscovery search plus Graph `purgeData`, up to 10 items per mailbox per run, holds removed first then reapplied). Microsoft's eDiscovery page warns, for Microsoft 365 Copilot memory, that "deleting a conversation or message from Microsoft Purview or eDiscovery doesn't delete the associated Copilot memory." Nothing says shared memory behaves differently, so do both.
 - **Evidence:** because no audit record is documented, screenshot or export the before and after state and file it with the request.
 
 ### 5.8 Decommissioning
@@ -203,7 +206,7 @@ Given the state of the documentation, decline agent accounts for a process if an
 - the team using the agent does not already share uniform access to the data the agent will see;
 - you cannot name an owner who will run the DSR and decommission runbooks above.
 
-Microsoft's own guidance for the preview is to "start with one recurring shared process that has clear decision points." Reporting roll-ups, status collection and internal document triage fit. HR, legal matters, customer complaints and anything touching health or financial identifiers do not.
+Microsoft's launch post heads its rollout advice "Start with one shared business process," and the agent-account page's worked example is an execution review run from "an approved workstream tracker and a small internal reviewer group." Reporting roll-ups, status collection and internal document triage fit. HR, legal matters, customer complaints and anything touching health or financial identifiers do not.
 
 ## 8. What to watch
 
