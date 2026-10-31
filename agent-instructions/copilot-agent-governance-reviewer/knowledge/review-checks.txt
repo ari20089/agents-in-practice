@@ -1,0 +1,194 @@
+# Review checks for Copilot agents
+
+**Reference data for the Copilot Agent Governance Reviewer: checks, documented basis, default severities, fixes, licensing tables, tenant controls and open questions**
+
+> **Status:** Compiled 30 October 2026 from the Microsoft Learn pages listed under Sources, each re-read that day. Agents, their settings and their billing change often; each statement is true of the documentation on that date. Check IDs and default severities are this reviewer's rubric, not Microsoft guidance.
+
+## The short version
+
+1. An agent is three things: **instructions**, **knowledge** and **actions**. Each one has its own failure mode. Instructions over-promise or try to act as access control. Knowledge exposes content to everyone who can use the agent. Actions change other systems, sometimes without asking.
+2. The biggest data exposure is usually not SharePoint. SharePoint and connector content is permission-trimmed for the person asking. **Uploaded files are not:** "any user who has access to the agent also has access to the information in the file" (Agent Builder). Copilot Studio lists uploaded documents with authentication "None".
+3. Write actions are confirmed by default in Microsoft 365 Copilot, but one flag turns that off. In Copilot Studio, **Ask the end user before running** "is set to No by default."
+4. Licensing fit depends on who the users are and what the agent grounds on. Agents grounded in shared tenant data are metered for users without a Microsoft 365 Copilot licence, and "Agents utilizing metered consumption are off by default for users in Microsoft Copilot Chat." The Copilot Studio inclusion for licensed users applies only when "the agent operates using the authenticated Microsoft Copilot USL user's identity."
+5. Responsible AI checks exist on the platform, but Microsoft says they "don't replace evaluation of your agent's instructions, knowledge, actions, and intended scenarios." The reviewer has to look for the gaps.
+
+## 1. What is being reviewed
+
+| Agent type | Built with | Runs on | Notes for the reviewer |
+|---|---|---|---|
+| **Declarative agent** | Agent Builder in Microsoft 365 Copilot, Microsoft 365 Agents Toolkit | Microsoft 365 Copilot's orchestrator and models | Knowledge and capabilities in the manifest; actions are API or MCP plugins. "Hosted by Microsoft 365 Copilot". |
+| **Copilot Studio agent** | Copilot Studio (standard or GitHub Copilot harness) | Copilot Studio | Knowledge, tools, topics, authentication and sharing are settings in Copilot Studio and the Power Platform admin center |
+| **Custom engine agent** | Copilot Studio, Microsoft Foundry (older pages still say Azure AI Foundry), Microsoft 365 Agents SDK | Your own orchestrator or models | Custom engine agents "are hosted outside of Microsoft 365 Copilot"; licensing differs (section 3) |
+
+How an agent reaches people also matters:
+
+- **Shared by creator.** Owners share the agent directly. Admins "can view shared agents" in the Agent Registry and can block them. In Agent Builder, the org-wide sharing setting defaults to "All users (default): Everyone can share agents with the organization."
+- **Published by your organization.** These agents "go through an admin approval to ensure compliance and readiness" before members get them.
+- In Copilot Studio, sharing limits are a Managed Environments control, and "Sharing limits only apply to agents that require authentication."
+
+## 2. Checks
+
+Each check has an ID, what to look for, the documented basis, a default severity in this reviewer's rubric, and the fix.
+
+### 2.1 Scope (SC)
+
+| ID | Look for | Documented basis | Default severity | Fix |
+|---|---|---|---|---|
+| SC1 | Purpose, audience and intended outcome stated in the instructions or description | "Define the intended outcome, boundaries, and human-review requirements." (Declarative agents FAQ) | Must fix | Add a one-paragraph purpose: who, what task, what outcome |
+| SC2 | Boundaries: what the agent does not do, and what it says when asked | Same FAQ: "Communicate the agent's scope and limitations, and design appropriate safeguards" | Must fix | Add an out-of-scope rule with a fallback message and where to go instead |
+| SC3 | Sources and tools named per task; asks for missing inputs | "Make source and tool use explicit. Identify which configured source, capability, or action applies to each task. Ask for missing inputs instead of guessing." (Best practices) | Should fix | Map each task to its source or action in the instructions |
+| SC4 | Instructions that try to override guidelines, reveal the instructions, encourage harm, provoke arguments, or reproduce copyrighted material | RAI validation fails agents that "Encourage harmful actions", "Provoke arguments", "Attempt to bypass guidelines or manipulate the model - Leaks base prompts or ignores or supersedes guidelines" or "Violate copyrights" | Blocker | Remove the instruction. For declarative agents it also blocks publishing: "you can't publish it until the failures are addressed." |
+| SC5 | Human review for consequential outputs (HR, legal, finance, health, safety, customer commitments) | "Evaluate them against source material and require human review where the consequences warrant it." | Must fix in those domains | State in the instructions and the description that outputs are drafts for review |
+| SC6 | Instructions used as access control ("only show salaries to managers") | "Instructions aren't a substitute for service-side authorization, input validation, or business rules." / "Instructions and confirmation prompts don't replace those checks." | Must fix | Enforce access in the data source or the API; remove the instruction's implied promise |
+| SC7 | Secrets, credentials, personal data or real customer data in instructions or conversation starters | This reviewer's rule (not from Microsoft) | Blocker for secrets; Must fix for personal data | Remove; move secrets to the connection or key vault |
+| SC8 | Conversation starters representative and within scope | "Provide representative prompts that demonstrate supported tasks." Store listing requires at least three working starters. | Should fix | Replace out-of-scope starters |
+| SC9 | Named owner, a second owner, and a support route | "Confirm who owns the agent instructions, knowledge, connections, and support." "Multiple owners reduce reliance on a single person" | Should fix; Must fix for org-wide agents | Add a second owner (Agent Builder supports several) and a support contact in the description |
+
+### 2.2 Data exposure (DE)
+
+| ID | Look for | Documented basis | Default severity | Fix |
+|---|---|---|---|---|
+| DE1 | **Uploaded or embedded files** as knowledge | Agent Builder: "When you upload files as knowledge sources for your agent, any user who has access to the agent also has access to the information in the file." Copilot Studio lists uploaded "Documents" with authentication "None". | Blocker if any file holds content not every agent user may see; Must fix if contents are unknown | Move the content to SharePoint, where answers are permission-trimmed, or narrow the audience to people allowed to see every file |
+| DE2 | SharePoint, OneDrive, connectors, Dataverse | Permission-trimmed: "the agent surfaces only content that the user has permission to access" (Copilot Studio SharePoint); "The agent respects existing permissions and sensitivity labels" (Agent Builder). The exposure is existing oversharing. | Should fix; Must fix if a source site is known to be overshared | Run an oversharing review of the source sites; apply Restricted Content Discovery or Restricted Access Control while remediating. Don't recommend Restricted SharePoint Search: "Restricted SharePoint Search is retiring. Starting July 31, 2026, new enablement is blocked", and where it's on, SharePoint can't be an Agent Builder knowledge source. |
+| DE3 | Agent Builder sharing that also shares SharePoint files | "You can share SharePoint knowledge sources with others when you add them as chat users or owners." "When a user's access to the agent is removed, it doesn't affect their access to the shared file or folders." | Must fix for broad audiences | Grant file access through SharePoint groups, not agent sharing; record who received access |
+| DE4 | Copilot Studio **No authentication** | "Selecting the No authentication option allows anyone who has the link to chat and interact with your bot or agent." "An unauthenticated configuration means your agent can only access public information and resources." Sharing limits don't apply to it. | Blocker if the agent has internal knowledge, actions or an internal audience | Switch to Authenticate with Microsoft (Teams, SharePoint, Power Apps, Microsoft Copilot) or Authenticate manually; admins can block it with the data policy connector **Chat without Microsoft Entra ID authentication in Copilot Studio** |
+| DE5 | **Web search** on (Search all websites, Use information from the web, Web Search) | Microsoft 365 Copilot: the DPA "doesn't apply to the use of generated web search queries", and "HIPAA compliance and the EU Data Boundary don't apply to generated search queries." Copilot Studio: for users who aren't Entra ID authenticated, "the content of the query is logged to Bing's systems"; Bing grounding calls "introduce cross-geo data flows." | Must fix for agents handling regulated, personal or confidential data; Note otherwise | Turn web search off for the agent, or configure Purview DLP to block web search for sensitive information types (see Q1 on agent coverage) |
+| DE6 | Ungrounded answers allowed | Copilot Studio: with **Allow ungrounded responses** on, "your agent can respond by using the model's general knowledge". Agent Builder: "Agent Builder doesn't support blocking general AI knowledge from your agent's responses." | Must fix for policy, HR, legal or compliance answer agents | In Copilot Studio turn it off; in Agent Builder turn on **Only use specified sources** (it prioritizes your sources and doesn't block general knowledge), or build in Copilot Studio |
+| DE7 | Sensitivity-labelled or encrypted content | Copilot Studio "can't extract or ground on content whose protection encrypts the file". Agent Builder: files with user-defined permissions or without extract rights make agent creation fail; only users with extract rights to the embedded content's label can use the agent. | Note (explains gaps and access failures) | Expect these files to be missing from answers; say so in the description |
+| DE8 | Residency of embedded files | "Embedded files are stored in the default geography of the tenant, not in the user's preferred data location (PDL)." | Must fix where multi-geo residency is a requirement; Note otherwise | Keep resident data in SharePoint in the right geography instead of uploading it |
+| DE9 | Actions that send data to external services | "Review what data the agent can access, what it sends to external services, and the applicable permissions, privacy statements, and terms of use." | Must fix if the data flows aren't documented | Document each action's outbound data, destination, retention and terms |
+
+### 2.3 Write actions without confirmation (WA)
+
+| ID | Look for | Documented basis | Default severity | Fix |
+|---|---|---|---|---|
+| WA1 | API plugin operation with side effects marked `x-openai-isConsequential: false` | Microsoft 365 Copilot prompts for non-GET operations by default; "Setting this property to `false` disables the confirmation prompt". "any action with side effects in the external system should be marked with `true`" | Blocker | Set it to `true` |
+| WA2 | MCP tool that writes, with `readOnlyHint: true` | `readOnlyHint` controls the prompt; "use `readOnlyHint` only for tools that are read-only" | Blocker | Remove the hint |
+| WA3 | GET operation with side effects | GETs run without confirmation after first use; add `x-openai-isConsequential: true` to change that | Must fix | Mark it consequential, or make it a non-GET |
+| WA4 | Copilot Studio tool that creates, changes, sends or deletes, with **Ask the end user before running** off | "This option is set to No by default." | Must fix; Blocker if irreversible | Turn it on, or wrap the tool in a topic with a confirmation node |
+| WA5 | Write tool using **Maker-provided** credentials in a shared agent | "an end user might retrieve information or perform actions that only the maker's account is permitted to do." "By default, both End-user and Maker-provided credentials are enabled." | Blocker | Use End user credentials; admins can restrict maker credentials per environment |
+| WA6 | Event or scheduled triggers that lead to write actions | "agents with event triggers use only the maker's credentials for authentication" | Must fix | Add offline approval before the write, or keep triggered work read-only |
+| WA7 | Irreversible or bulk actions reachable by the AI planner | Deterministic layer "for mission-critical or irreversible actions", and "you might either not expose such actions to the AI planner or always wrap them in a topic that requires user confirmation." Store guidance: "Highly consequential tasks such as bulk delete mustn't be supported." | Blocker | Remove from generative routing; deterministic topic with confirmation, or an approval flow |
+| WA8 | Authorization, retries and failure handling in the target service | "Enforce access in the service." "For operations that change data, ensure that retries don't unintentionally repeat the change." | Should fix | Confirm with the API owner; test denied confirmations and retries |
+| WA9 | Confirmation text that doesn't say what will happen | Custom text comes from the confirmation `body`; otherwise the function `description` is shown. MCP tools found at runtime use the server's description. | Should fix | Write a body or description that names the action and its target |
+
+### 2.4 Licensing fit (LI)
+
+| ID | Look for | Documented basis | Default severity | Fix |
+|---|---|---|---|---|
+| LI1 | Audience includes users without a Microsoft 365 Copilot licence, and the agent grounds on shared tenant data | "Agents that access shared tenant data (such as SharePoint or Copilot connectors) generate usage-based billing charges (metered in Copilot Credits)". "Agents utilizing metered consumption are off by default for users in Microsoft Copilot Chat." | Must fix (the agent fails for them, or costs money no one approved) | Decide: license the users, set up pay-as-you-go with a budget owner, or narrow the audience |
+| LI2 | Cost assumption "it's free for licensed users" on a Copilot Studio agent | The inclusion applies "when the user of the agent is licensed with Microsoft Copilot, and the agent operates using the authenticated Microsoft Copilot USL user's identity." | Must fix if the agent uses maker credentials, triggers, or no authentication | Re-estimate with the billing rates (section 3) |
+| LI3 | Agent flows | "No charge" applies only to runs started by the **When an agent calls the flow** trigger for a licensed user; "Agent flows using other triggers consume Copilot Credits at the standard rate." | Should fix | Re-estimate or change the trigger |
+| LI4 | Computer-using agents | "Computer-Using Agents (CUA) usage is not included in the Microsoft Copilot USL." | Must fix if the estimate assumed inclusion | Budget it separately |
+| LI5 | Maker licensing | A Copilot Studio trial licence lets you test, "However, you can't publish the agent." | Note | Confirm the maker's licence before the release date |
+| LI6 | Custom engine agents | "Users don't need a Copilot license to access custom engine agents in Microsoft 365 Copilot Chat", but unlicensed users "might incur usage-based billing charges if the agent interacts with shared tenant data" | Note | Include hosting costs in the estimate |
+
+### 2.5 Responsible AI (RA)
+
+| ID | Look for | Documented basis | Default severity | Fix |
+|---|---|---|---|---|
+| RA1 | Copilot Studio content moderation lowered | "The lowest level generates the most answers, but they might contain harmful content." "The default moderation level is High." | Must fix if lowered without a written reason | Restore High, or record the reason and an owner |
+| RA2 | Reliance on the platform for accuracy | "The system doesn't perform an accuracy check" and its filters "aren't foolproof." Microsoft's RAI testing results "don't guarantee that every response is correct, current, or appropriate." | Must fix if there is no evaluation evidence | Run an evaluation (RA5) and add human review (SC5) |
+| RA3 | Untrusted content reaching an agent with write actions: external email, web, uploaded third-party files, tool results | "Retrieved information and tool results can contain instructions that influence the agent. Platform protections don't replace permission checks or careful human oversight for sensitive operations." | Must fix when combined with any WA finding | Confirm writes (WA1 to WA4); tell the agent to treat retrieved content as data, not instructions |
+| RA4 | Transparency: users can tell it's AI, see sources, and know the limits | Store guidance (must fix for store apps): an AI label and citations; FAQ: "Communicate the agent's scope and limitations" | Should fix for internal agents; Must fix for store submissions | State AI use and limits in the description; keep citations on |
+| RA5 | Evaluation before release | Test cases should "Include missing information, restricted access, unsupported requests, canceled actions, and service failures." "Compare results across versions and rerun tests when instructions, sources, tools, or platform behavior change." | Must fix for org-wide or published agents; Should fix otherwise | Build a test set with those cases; rerun on each change |
+| RA6 | Copilot Studio protection status | Protection status is "Protected", "Needs review" or "Unknown"; "Needs review" means "either the agent's policies are violated or authentication is inadequate." | Must fix if Needs review | Resolve the Authentication or Policies item shown in the summary |
+
+### 2.6 Tenant controls behind the fixes (AD)
+
+Controls an admin uses to apply a fix. They are not findings on their own.
+
+| Control | Where | What it does (documented) |
+|---|---|---|
+| Agent approval | Microsoft 365 admin center > Agents | Agents published by your organization "go through an admin approval" |
+| Block | Microsoft 365 admin center > Agents > All agents | Blocking Agent Builder and Copilot Studio agents affects Copilot and other hosts; blocking SharePoint or Foundry agents "only impacts its availability in Microsoft Copilot Chat" |
+| Org-wide sharing (Agent Builder) | Microsoft 365 admin center | "All users (default)", "Specific users or groups", "No users"; changes don't revoke existing access |
+| Sharing limits (Copilot Studio) | Power Platform admin center, Managed Environments | Editor and Viewer rules, individuals only, viewer cap; authenticated agents only |
+| Data policies (Copilot Studio) | Power Platform admin center | Block unauthenticated chat, HTTP (with endpoint filtering), channels, connectors as tools, event triggers |
+| Maker credentials | Power Platform admin center | Allow end-user credentials, maker-provided credentials, or both |
+| Web search | Cloud Policy service: **Allow web search in Copilot** | Unconfigured, web search stays available in Copilot and Copilot Chat unless optional connected experiences are disabled (outside GCC and DoD, where it's off by default) |
+| Oversharing | SharePoint Advanced Management, Purview | Restricted Content Discovery hides sites from Copilot and agents without changing permissions; Restricted Access Control limits who can open a site |
+| Monitoring | Purview Data Security Posture Management for AI, Insider Risk Management | Activity explorer shows prompts, responses, web queries and referenced files; Insider Risk can alert on "an attempted prompt injection attack" |
+| Owners | Microsoft 365 admin center | Assign a new owner; add owners to Agent Builder agents |
+| Control plane and agent identity | Microsoft 365 admin center, Microsoft Entra | "Microsoft Agent 365 is the control plane for AI agents" for agents "regardless of where these agents are built or acquired". Copilot Studio "automatically provisions Entra Agent IDs for new agents", and Entra ID Governance "Governs Microsoft Entra Agent IDs at scale with lifecycle policies" |
+
+## 3. Licensing fit
+
+From the extensibility cost page (30 Sep 2026), the agents admin guide (7 Apr 2026) and the Copilot Studio billing rates (30 Oct 2026):
+
+| User has | Instructions and public websites only | Shared tenant data (SharePoint, Copilot connectors) |
+|---|---|---|
+| Microsoft 365 Copilot licence | "No extra charges" | "No extra charges" |
+| Copilot Chat, no pay-as-you-go | "No charges for lightweight extensibility (instruction-based agents or public site grounding)." | Not available: metered agents "are off by default for users in Microsoft Copilot Chat" |
+| Copilot Chat with pay-as-you-go | No charge | "Usage-based billing charges apply for shared tenant data (SharePoint, Copilot connectors), metered in Copilot Credits via Copilot Studio." |
+
+Copilot Studio billing rates (pay-as-you-go meter or Copilot Credit packs):
+
+| Agent feature | Copilot Credits | Microsoft 365 Copilot licensed user |
+|---|---|---|
+| Classic answer | 1 | No charge |
+| Generative answer | 2 | No charge |
+| Agent action | 5 | No charge |
+| Tenant graph grounding for messages | 10 | No charge |
+| Agent flow actions, per 100 actions | 13 | No charge |
+
+The "No charge" column applies only under footnote 1: "the agent operates using the authenticated Microsoft Copilot USL user's identity." Microsoft's own example: one tenant-grounded answer can cost "12 Copilot Credits (10 Copilot Credits for tenant graph grounding, and 2 Copilot Credits for generative answers)". Generative answers aren't charged when "the agent is created in Agent Builder in Microsoft 365 and the response doesn't leverage tenant graph grounding."
+
+## 4. Open questions
+
+| # | Question | What the documentation says |
+|---|---|---|
+| Q1 | Do Purview DLP policies for Microsoft 365 Copilot apply inside declarative agents and Copilot Studio agents? | The Copilot controls page (25 Feb 2026) points to "Microsoft Purview Data Loss Prevention for Microsoft Copilot and agents". The DLP page itself (16 Oct 2026) names "Microsoft 365 Copilot, Copilot Chat, and Cowork" and doesn't mention agents. Test it before relying on it. |
+| Q2 | Does the **Allow web search in Copilot** policy govern an agent's own web search setting? | The web search page covers Copilot and Copilot Chat and doesn't mention agents. Copilot Studio has its own Bing setting in the Power Platform admin center. |
+| Q3 | Do Copilot Studio chat users need a Copilot Studio licence? | The sharing page says "You can only share an agent with users who have a Microsoft Copilot Studio per user license", and the same page lets you share with "everyone in your organization." Confirm with the Copilot Studio licensing guide. |
+| Q4 | Which flag name is current for API plugins? | Best practices (23 Oct 2026): "use the OpenAPI extension `x-openai-isConsequential`, not `isConsequential`". The store guidance (13 Aug 2026) still says "`isConsequential` flag". Follow the newer page. |
+| Q5 | Is there a maker-adjustable content moderation level for declarative agents? | None of the pages reviewed documents one. Declarative agents rely on RAI validation at publish and runtime checks. |
+
+## 5. Sources
+
+Microsoft documentation, with each page's `ms.date` when it was retrieved on 30 October 2026:
+
+**Declarative agents and Microsoft 365 Copilot**
+
+- [Declarative agents for Microsoft 365 Copilot](https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/overview-declarative-agent), 30 Sep 2026
+- [Compare declarative and custom engine agents](https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/agents-overview), 30 Sep 2026
+- [Best practices for building declarative agents in Microsoft 365 Copilot](https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/declarative-agent-best-practices), 23 Oct 2026
+- [Write effective instructions for declarative agents](https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/declarative-agent-instructions), 11 Aug 2026
+- [Transparency FAQ for declarative agents in Microsoft 365 Copilot](https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/transparency-faq-declarative-agent), 23 Oct 2026
+- [Responsible AI validation](https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/rai-validation), 5 Aug 2026
+- [Confirmation prompts for MCP and API plugins for Microsoft 365 Copilot](https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/plugin-confirmation-prompts), 14 Jul 2026
+- [Add knowledge sources to an agent in Agent Builder](https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/agent-builder-add-knowledge), 30 Sep 2026
+- [Share and manage agents built in Agent Builder](https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/agent-builder-share-manage-agents), 30 Sep 2026
+- [Plan licensing and cost for Microsoft 365 Copilot extensibility](https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/cost-considerations), 30 Sep 2026
+- [Guidelines to validate agents (Teams)](https://learn.microsoft.com/en-us/microsoftteams/platform/concepts/deploy-and-publish/appsource/prepare/review-copilot-validation-guidelines), 13 Aug 2026
+- [Data, privacy, and security for web search in Microsoft Copilot and Microsoft Copilot Chat](https://learn.microsoft.com/en-us/microsoft-365/copilot/manage-public-web-access), 29 Oct 2026
+
+**Microsoft 365 admin**
+
+- [Agents admin guide for Microsoft 365](https://learn.microsoft.com/en-us/microsoft-365/copilot/agent-essentials/m365-agents-admin-guide), 7 Apr 2026
+- [Manage agents in the Microsoft 365 admin center](https://learn.microsoft.com/en-us/microsoft-365/admin/manage/manage-copilot-agents-integrated-apps), 9 Jul 2026
+- [Governance and lifecycle actions for agents in the Microsoft 365 admin center](https://learn.microsoft.com/en-us/microsoft-365/admin/manage/agent-actions), 23 Sep 2026
+- [Copilot controls security and governance](https://learn.microsoft.com/en-us/microsoft-365/copilot/copilot-controls/security-governance), 25 Feb 2026
+- [Restrict discovery of SharePoint sites and content](https://learn.microsoft.com/en-us/sharepoint/restricted-content-discovery), 11 Oct 2026
+- [Restricted SharePoint Search](https://learn.microsoft.com/en-us/sharepoint/restricted-sharepoint-search), 6 Jul 2026
+- [Microsoft Purview DLP for Microsoft 365 Copilot and Cowork](https://learn.microsoft.com/en-us/purview/dlp-microsoft365-copilot-location-learn-about), 16 Oct 2026
+
+**Copilot Studio**
+
+- [Configure user authentication in Copilot Studio](https://learn.microsoft.com/en-us/microsoft-copilot-studio/configuration-end-user-authentication), 21 Oct 2026
+- [Share agents with other users](https://learn.microsoft.com/en-us/microsoft-copilot-studio/admin-share-bots), 30 Jul 2026
+- [Control how agents are shared](https://learn.microsoft.com/en-us/microsoft-copilot-studio/admin-sharing-controls-limits), 20 Jul 2026
+- [Configure data policies for agents](https://learn.microsoft.com/en-us/microsoft-copilot-studio/admin-data-loss-prevention), 1 Oct 2026
+- [Control maker-provided credentials for authentication](https://learn.microsoft.com/en-us/microsoft-copilot-studio/configure-no-maker-authentication), 1 Sep 2025
+- [Add tools to custom agents](https://learn.microsoft.com/en-us/microsoft-copilot-studio/add-tools-custom-agent), 1 Oct 2026
+- [Knowledge sources summary](https://learn.microsoft.com/en-us/microsoft-copilot-studio/knowledge-copilot-studio), 21 Jul 2026
+- [Add SharePoint as a knowledge source](https://learn.microsoft.com/en-us/microsoft-copilot-studio/knowledge-add-sharepoint), 4 Aug 2026
+- [Data, privacy, and security for web search](https://learn.microsoft.com/en-us/microsoft-copilot-studio/data-privacy-security-web-search), 30 Jan 2026
+- [Add a generative answers node](https://learn.microsoft.com/en-us/microsoft-copilot-studio/nlu-boost-node), 21 Jul 2026
+- [FAQ for generative answers](https://learn.microsoft.com/en-us/microsoft-copilot-studio/faqs-generative-answers), 29 May 2026
+- [FAQ for generative orchestration](https://learn.microsoft.com/en-us/microsoft-copilot-studio/faqs-generative-orchestration), 14 Oct 2026
+- [Apply generative orchestration capabilities](https://learn.microsoft.com/en-us/microsoft-copilot-studio/guidance/generative-orchestration), 18 Sep 2026
+- [Agent runtime protection status](https://learn.microsoft.com/en-us/microsoft-copilot-studio/security-agent-runtime-view), 1 May 2026
+- [App registration, agent identities, and authentication](https://learn.microsoft.com/en-us/microsoft-copilot-studio/govern-agents-identities-overview), 21 Aug 2026
+- [Standard harness licensing](https://learn.microsoft.com/en-us/microsoft-copilot-studio/billing-licensing), 3 Aug 2026
+- [Billing rates and management](https://learn.microsoft.com/en-us/microsoft-copilot-studio/requirements-messages-management), 30 Oct 2026

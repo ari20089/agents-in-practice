@@ -1,8 +1,8 @@
-# Contributing a skill
+# Contributing
 
-Thanks for helping grow **Agents in Practice**. A *skill* is a reusable instruction set for an AI agent, published here as an unpacked folder with optional `references/`, `scripts/` and `assets/`.
+Thanks for helping grow **Agents in Practice**. A *skill* is a reusable instruction set for an AI agent, published here as an unpacked folder with optional `references/`, `scripts/` and `assets/`. An *agent instructions* item is the instructions and knowledge files that define an agent's role; see [Agent instructions](#agent-instructions) below.
 
-You contribute by adding **one folder under [`skills/`](./skills/)** and opening a pull request. CI validates the folder; nothing else is generated or edited by hand.
+You contribute by adding **one folder under [`skills/`](./skills/) or [`agent-instructions/`](./agent-instructions/)** and opening a pull request. CI validates the folder; nothing else is generated or edited by hand.
 
 > [!NOTE]
 > This is a volunteer-maintained community project, not a Microsoft product. Reviews and assistance are best-effort. See [SUPPORT.md](./SUPPORT.md).
@@ -97,9 +97,19 @@ Every skill `README.md` must:
 
 Use the exact uppercase filename `README.md`.
 
+## Agent instructions
+
+An agent instructions item lives in `agent-instructions/<slug>/`. [AGENT-INSTRUCTIONS-SCHEMA.md](./AGENT-INSTRUCTIONS-SCHEMA.md) defines its shape and limits:
+
+- `INSTRUCTIONS.md` is pasted into the agent as is: no frontmatter, 8,000 characters or less, and all of the agent's behaviour.
+- `knowledge/` holds reference data to upload, in `.txt`, `.pdf` or Office formats, 1 MB or less each, 10 files at most.
+- `README.md` and `metadata.json` follow the same rules as a skill's, with setup steps per tool in place of trigger phrases.
+
+Copy [`agent-instructions/_template/`](./agent-instructions/_template/) to get started.
+
 ## What CI checks
 
-Two jobs run on every pull request.
+These jobs run on every pull request.
 
 **Validate skills** (`scripts/validate-skills.mjs`) fails when:
 
@@ -113,9 +123,18 @@ Two jobs run on every pull request.
 - the folder contains stray top-level files beyond the allowed set;
 - the root `README.md` catalog has no row linking to `skills/<slug>/`.
 
-**One skill per PR** fails when the changed files span more than one `skills/<slug>/` folder.
+**Validate agent instructions** (`scripts/validate-agent-instructions.mjs`) fails when:
 
-Run the validator locally with `npm test`, or `node scripts/validate-skills.mjs <slug>` for a single skill.
+- the folder name is not lowercase kebab-case;
+- `INSTRUCTIONS.md`, `README.md` or `metadata.json` is missing;
+- `INSTRUCTIONS.md` is empty, starts with frontmatter, or is over 8,000 characters;
+- a `knowledge/` file has an unsupported type, is over 1 MB, or there are more than 10;
+- `README.md` links to a file that does not exist, `metadata.json` breaks the rules above, or there are stray top-level files;
+- the root `README.md` catalog has no row linking to `agent-instructions/<slug>/`.
+
+**One skill per PR** (the check's name; it covers both kinds of item) fails when the changed files span more than one `skills/<slug>/` or `agent-instructions/<slug>/` folder.
+
+Run both validators locally with `npm test`, or pass a slug to either script to check one item.
 
 ## Pre-submission checklist
 

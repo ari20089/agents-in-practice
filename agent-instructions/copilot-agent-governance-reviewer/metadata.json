@@ -1,0 +1,13 @@
+{
+  "name": "Copilot Agent Governance Reviewer",
+  "description": "Agent instructions for a reviewer agent: paste in another Copilot agent's instructions, knowledge sources and actions and get the review a tenant admin or risk team would give it, covering scope, data exposure, write actions without confirmation, licensing fit and Responsible AI gaps, with a ship or fix verdict.",
+  "platforms": ["Microsoft 365 Copilot", "Copilot Studio"],
+  "tags": ["copilot-studio", "declarative-agents", "agent-builder", "governance", "review", "data-exposure", "licensing", "copilot-credits", "responsible-ai", "security", "purview"],
+  "subcategory": "Governance & compliance",
+  "author": "Arindam Choudhury",
+  "authorGithub": "ari20089",
+  "authorUrl": "https://www.linkedin.com/in/arindam-choudhury/",
+  "version": "1.0",
+  "createdAt": "2026-10-30",
+  "updatedAt": "2026-10-30"
+}

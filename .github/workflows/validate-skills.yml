@@ -19,8 +19,11 @@ jobs:
           node-version: 20
       - name: Validate skill folders
         run: node scripts/validate-skills.mjs
+      - name: Validate agent instructions folders
+        run: node scripts/validate-agent-instructions.mjs
 
   scope:
+    # The job name is a required check in the branch ruleset; it now covers skills and agent instructions.
     name: One skill per PR
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
@@ -28,24 +31,24 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - name: Check that changed files touch at most one skill
+      - name: Check that changed files touch at most one item
         env:
           BASE: ${{ github.event.pull_request.base.sha }}
           HEAD: ${{ github.event.pull_request.head.sha }}
         run: |
           set -euo pipefail
           touched=$(git diff --name-only "$BASE" "$HEAD" \
-            | grep -E '^skills/[^/_][^/]*/' \
-            | cut -d/ -f2 \
+            | grep -E '^(skills|agent-instructions)/[^/_][^/]*/' \
+            | cut -d/ -f1,2 \
             | sort -u || true)
           count=$(printf '%s\n' "$touched" | sed '/^$/d' | wc -l | tr -d ' ')
           if [ "$count" -gt 1 ]; then
-            echo "This pull request changes $count skill folders:"
+            echo "This pull request changes $count item folders:"
             printf '  - %s\n' $touched
-            echo "Please open one pull request per skill (see CONTRIBUTING.md)."
+            echo "Please open one pull request per item (see CONTRIBUTING.md)."
             exit 1
           fi
-          echo "OK: $count skill folder(s) changed."
+          echo "OK: $count item folder(s) changed."
 
   site:
     name: Build site

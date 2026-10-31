@@ -1,6 +1,6 @@
 # Gallery site
 
-The gallery at https://ari20089.github.io/agents-in-practice/ is generated from the skill folders. Nothing in it is written by hand: each card and detail page comes from `skills/<slug>/metadata.json`, `README.md` and `SKILL.md`.
+The gallery at https://ari20089.github.io/agents-in-practice/ is generated from the item folders. Nothing in it is written by hand: each card and detail page comes from `skills/<slug>/` (`metadata.json`, `README.md`, `SKILL.md`) or `agent-instructions/<slug>/` (`metadata.json`, `README.md`, `INSTRUCTIONS.md`).
 
 ```
 site/
@@ -26,7 +26,7 @@ npm run site:serve     # http://localhost:4321/
 ## What each page shows
 
 - **Index:** a typographic intro (title, subtitle, description) on a deep navy band, shared with the skill page header; a toolbar that overlaps the band's bottom edge (search, category, sub-category, platform and sort, each option with its count), a "Showing N" line with Clear filters, decorative glass-tile artwork beside the grid on wide screens (`src/deco-left.svg`, `src/deco-right.svg`, original SVG), cards with a cover image, a type pill in its top-right corner (one colour per type: pink for skills, orange for prompts, violet for agent instructions; the item page kicker uses the same colour), a sub-category tile (each sub-category has its own colour, assigned in the order it first appeared so existing colours never change), date, title, description, author and a Details link, a Getting started section with three numbered steps, and a `<noscript>` list. Filter state is kept in the URL so views can be shared. Headings use Plus Jakarta Sans from Google Fonts; everything else uses system fonts.
-- **Skill page:** a deep navy header band holding the breadcrumb, category and sub-category pills, the skill's name, `assets/preview.png` on the right if the skill ships one, description, an author byline, tags (each opens the gallery searched for that tag), View on GitHub / Open SKILL.md / Report an issue buttons, then three tabs: **Overview** (the README), **Skill instructions** (the agent-facing `description` and the full `SKILL.md`) and **Files** (what the agent loads, with sizes). The sidebar shows the platforms it works with, an **Add this skill** box whose download (`<slug>.zip`, the files the agent loads inside a `<slug>/` folder, built by `build.mjs`) unlocks once the reader ticks "Add only what you trust", the version and dates, and an as-is note linking to SUPPORT.md. Without JavaScript the tabs render stacked and the download works without the tick.
+- **Skill page:** a deep navy header band holding the breadcrumb, category and sub-category pills, the skill's name, `assets/preview.png` on the right if the skill ships one, description, an author byline, tags (each opens the gallery searched for that tag), View on GitHub / Open SKILL.md / Report an issue buttons, then three tabs: **Overview** (the README), **Skill instructions** (the agent-facing `description` and the full `SKILL.md`) and **Files** (what the agent loads, with sizes). An agent instructions page has the same layout, with Open INSTRUCTIONS.md and an **Instructions** tab instead: the character count against the 8,000 limit, a **Copy instructions** button, and the text exactly as it is pasted. The sidebar shows the platforms it works with, an **Add this skill** box whose download (`<slug>.zip`, the files the agent loads inside a `<slug>/` folder, built by `build.mjs`) unlocks once the reader ticks "Add only what you trust", the version and dates, and an as-is note linking to SUPPORT.md. Without JavaScript the tabs render stacked and the download works without the tick.
 - **catalog.json:** everything the index knows, for anyone who wants to consume the catalog programmatically.
 
 ## Category and sub-category
@@ -37,4 +37,4 @@ The **sub-category** comes from `subcategory` in each item's `metadata.json` (fo
 
 ## Adding a preview image
 
-Drop `assets/preview.png` into the skill folder (16:9, at least 640×360), for example a screenshot of the skill in use. The build uses it as the card cover and shows it on the skill page. Without one, the cover is generated: an editor window showing the skill's `SKILL.md` frontmatter.
+Drop `assets/preview.png` into the skill folder (16:9, at least 640×360), for example a screenshot of the skill in use. The build uses it as the card cover and shows it on the skill page. Without one, the cover is generated: an editor window showing the skill's `SKILL.md` frontmatter, or the opening of an agent instructions item's `INSTRUCTIONS.md`.
