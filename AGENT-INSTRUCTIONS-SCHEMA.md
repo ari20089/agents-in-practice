@@ -38,7 +38,7 @@ Files the maker uploads as knowledge sources. They hold **reference data the age
 | Rule | Limit | Source |
 | --- | --- | --- |
 | File types | `.txt`, `.pdf`, `.docx`, `.doc`, `.pptx`, `.ppt`, `.xlsx`, `.xls` | Accepted by Agent Builder and as declarative agent embedded knowledge. Copilot Studio also accepts `.md`, but Agent Builder doesn't, so use `.txt` for Markdown text. |
-| Size | 1 MB or less per file | Declarative agent embedded knowledge limit |
+| Size | 1 MB or less per file | Declarative agent embedded knowledge limit. Agent Builder allows up to 512 MB for these types, so the manifest limit is the binding one |
 | Count | 10 files or fewer | Declarative agent embedded knowledge limit |
 | Content | No secrets, personal data, customer data or tenant identifiers | Everyone who can use an agent can get the content of its uploaded files |
 

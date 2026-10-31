@@ -18,7 +18,7 @@ It reviews declarative agents (Agent Builder, Microsoft 365 Agents Toolkit), Cop
 
 | File | What it's for | Where it goes |
 |---|---|---|
-| [`INSTRUCTIONS.md`](./INSTRUCTIONS.md) | The reviewer's behaviour: gates, review steps, severity, verdict rule, output format and rules. 5,364 of the 8,000 characters allowed. | The agent's **Instructions** field, pasted as is |
+| [`INSTRUCTIONS.md`](./INSTRUCTIONS.md) | The reviewer's behaviour: gates, review steps, severity, verdict rule, output format and rules. 5,401 of the 8,000 characters allowed. | The agent's **Instructions** field, pasted as is |
 | [`knowledge/review-checks.txt`](./knowledge/review-checks.txt) | Reference data: the 39 checks with their documented basis and default severity, licensing tables, tenant controls, open questions and sources | Uploaded as the agent's only knowledge source |
 | [`assets/review-intake.md`](./assets/review-intake.md) | A form makers fill in before asking for a review | Share it with makers; it isn't part of the agent |
 
@@ -71,7 +71,7 @@ All behaviour is in the instructions, not the knowledge file. Microsoft says not
 
 ## Limitations
 
-- Written against 35 Microsoft Learn pages dated September 2025 to 30 October 2026, all re-read on 30 October 2026. Agent settings, admin controls and billing rates change often. Re-check the sources at the end of `review-checks.txt` and update the file when they change.
+- Written against 36 Microsoft Learn pages dated September 2025 to 30 October 2026, all re-read on 30 October 2026. Agent settings, admin controls and billing rates change often. Re-check the sources at the end of `review-checks.txt` and update the file when they change.
 - Five questions aren't answered by the documentation, including whether Purview DLP for Microsoft 365 Copilot applies inside agents. The reviewer names these instead of assuming.
 - Severity levels, check IDs and the verdict rule are this reviewer's rubric, not Microsoft's.
 - Licensing statements describe the documented rules, not your contract. Confirm with the Microsoft Copilot Studio Licensing Guide and your agreement.
