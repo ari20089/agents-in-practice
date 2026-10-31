@@ -23,7 +23,7 @@ const RAW = `https://raw.githubusercontent.com/${OWNER}/${REPO_NAME}/main`;
 
 const SITE = {
   title: "Agents in Practice",
-  tagline: "Hands-on skills for AI agents in Microsoft 365, Copilot Studio and GitHub Copilot.",
+  tagline: "Hands-on skills for AI agents working with Microsoft 365, Copilot Studio and GitHub Copilot.",
   author: { name: "Arindam Choudhury", github: "https://github.com/ari20089", linkedin: "https://www.linkedin.com/in/arindam-choudhury/" },
 };
 
@@ -251,12 +251,12 @@ function indexPage(items, catalog) {
     <div class="hero-text">
       <p class="eyebrow">Community catalog</p>
       <h1>${esc(SITE.title)}</h1>
-      <p class="lead">${esc(SITE.tagline)} Every entry is a folder you can copy into your own repository or agent, built on the <a href="${REPO}/blob/main/SKILL-SCHEMA.md">Agent Skills</a> layout.</p>
+      <p class="lead">${esc(SITE.tagline)} Each one is a folder in the open <a href="${REPO}/blob/main/SKILL-SCHEMA.md">Agent Skills</a> format, so it runs in any host that supports it.</p>
       <div class="hero-actions">
         <a class="btn btn-primary" href="#gallery">Browse the gallery</a>
         <a class="btn" href="${REPO}/blob/main/CONTRIBUTING.md">Contribute a skill</a>
       </div>
-      <p class="hero-meta">Works with ${sortedKeys(byPlatform).map((p) => `<span class="hero-chip">${esc(p)}</span>`).join("")}</p>
+      <p class="hero-meta">Tested with ${sortedKeys(byPlatform).map((p) => `<span class="hero-chip">${esc(p)}</span>`).join("")}</p>
     </div>
     <ol class="steps" aria-label="How it works">
       <li class="step">
