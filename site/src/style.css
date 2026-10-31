@@ -17,8 +17,6 @@
   --blue-strong: #08469f;
   --blue-soft: #e3edfb;
   --teal: #0d7566;
-  --intro-wash: linear-gradient(100deg, #d9e8fc 0%, #e6f0fb 45%, #d8f2e8 100%);
-  --intro-line: #c6d8ee;
   --notice: #ffffff;
   --notice-border: #dfe3e8;
 
@@ -65,8 +63,6 @@
     --blue-strong: #a4d0ff;
     --blue-soft: #13284a;
     --teal: #5fd3bf;
-    --intro-wash: linear-gradient(100deg, #0f1c31 0%, #0f1a2a 50%, #0d2421 100%);
-    --intro-line: #1f2f44;
     --notice: #111925;
     --notice-border: #1f2a38;
 
@@ -178,9 +174,24 @@ button.link { font: inherit; color: var(--blue); background: none; border: 0; pa
 
 /* ---------- intro ---------- */
 
-.intro { position: relative; padding: 56px 0 96px; background: var(--intro-wash); border-bottom: 1px solid var(--intro-line); }
-.intro::before { content: ""; position: absolute; inset: 0; pointer-events: none; background-image: linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px); background-size: 32px 32px; }
-.intro .container { position: relative; }
+/* Deep navy band behind the index intro and the skill page header, in both themes.
+   Tokens are re-pointed so everything inside reads light-on-dark. */
+.intro, .detail-band {
+  --ink: #ffffff; --ink-2: #c9d5e8; --muted: #9db0cc;
+  --border: rgba(255, 255, 255, 0.22); --surface: rgba(255, 255, 255, 0.07); --surface-2: rgba(255, 255, 255, 0.12);
+  --grid-line: rgba(255, 255, 255, 0.045);
+  --blue: #8cc2ff; --blue-strong: #c3e0ff; --blue-soft: rgba(140, 194, 255, 0.16);
+  --teal: #6ee7cf;
+  --sub-bg: hsl(var(--h, 230) 45% 22%); --sub-fg: hsl(var(--h, 230) 75% 78%);
+  position: relative; color: var(--ink);
+  background: linear-gradient(110deg, #0a1a3a 0%, #0f2a5a 55%, #0c3b4a 100%);
+}
+.intro::before, .detail-band::before { content: ""; position: absolute; inset: 0; pointer-events: none; background-image: linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px); background-size: 32px 32px; }
+.intro .container, .detail-band .container { position: relative; }
+.detail-band .btn-primary { background: #ffffff; border-color: #ffffff; color: #0a1a3a; }
+.detail-band .btn-primary:hover { background: #dce9fb; border-color: #dce9fb; color: #0a1a3a; }
+.detail-band .detail-art img { border-color: rgba(255, 255, 255, 0.25); box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35); }
+.intro { padding: 56px 0 96px; }
 .intro h1 { font-size: clamp(2.4rem, 5.4vw, 3.6rem); font-weight: 800; letter-spacing: -0.035em; margin: 0; }
 .subtitle { margin: 8px 0 18px; font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; color: var(--teal); }
 .intro .lead { margin: 0; max-width: 64ch; font-size: 1.12rem; line-height: 1.65; color: var(--ink-2); text-wrap: pretty; }
@@ -269,21 +280,7 @@ button.link { font: inherit; color: var(--blue); background: none; border: 0; pa
 /* ---------- skill page ---------- */
 
 .page-detail main { padding-bottom: 64px; }
-.detail-band {
-  /* Deep navy band in both themes; tokens are re-pointed so everything inside reads light-on-dark. */
-  --ink: #ffffff; --ink-2: #c9d5e8; --muted: #9db0cc;
-  --border: rgba(255, 255, 255, 0.22); --surface: rgba(255, 255, 255, 0.07); --surface-2: rgba(255, 255, 255, 0.12);
-  --grid-line: rgba(255, 255, 255, 0.045);
-  --blue: #8cc2ff; --blue-strong: #c3e0ff; --blue-soft: rgba(140, 194, 255, 0.16);
-  --sub-bg: hsl(var(--h, 230) 45% 22%); --sub-fg: hsl(var(--h, 230) 75% 78%);
-  position: relative; color: var(--ink); margin-bottom: 36px;
-  background: linear-gradient(110deg, #0a1a3a 0%, #0f2a5a 55%, #0c3b4a 100%);
-}
-.detail-band .btn-primary { background: #ffffff; border-color: #ffffff; color: #0a1a3a; }
-.detail-band .btn-primary:hover { background: #dce9fb; border-color: #dce9fb; color: #0a1a3a; }
-.detail-band .detail-art img { border-color: rgba(255, 255, 255, 0.25); box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35); }
-.detail-band::before { content: ""; position: absolute; inset: 0; pointer-events: none; background-image: linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px); background-size: 32px 32px; }
-.detail-band .container { position: relative; }
+.detail-band { margin-bottom: 36px; }
 .breadcrumb { margin: 0 0 16px; padding-top: 24px; color: var(--muted); font-size: 0.9em; display: flex; gap: 8px; flex-wrap: wrap; }
 .breadcrumb a { text-decoration: none; font-weight: 600; }
 .detail-hero { display: grid; grid-template-columns: minmax(0, 1fr); gap: 36px; align-items: center; padding: 4px 0 40px; }
