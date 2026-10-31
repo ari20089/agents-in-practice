@@ -32,7 +32,7 @@ const SITE = {
 const TYPES = [
   { dir: "skills", label: "Skills", singular: "skill", install: ".github/skills/<slug>/", blurb: "Reusable instruction packages: a SKILL.md plus the references it needs, for any Agent Skills host." },
   { dir: "prompts", label: "Prompts", singular: "prompt", install: "", blurb: "Single instructions for a focused task or outcome." },
-  { dir: "agent-instructions", label: "Agent instructions", singular: "agent instruction", install: "", blurb: "System prompts that define an agent's role." },
+  { dir: "agent-instructions", label: "Agent instructions", singular: "agent instruction", install: "", blurb: "Instructions and knowledge files that define an agent's role." },
 ];
 
 marked.setOptions({ gfm: true });

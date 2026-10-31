@@ -108,7 +108,7 @@ Controls an admin uses to apply a fix. They are not findings on their own.
 | Maker credentials | Power Platform admin center | Allow end-user credentials, maker-provided credentials, or both |
 | Web search | Cloud Policy service: **Allow web search in Copilot** | Unconfigured, web search stays available in Copilot and Copilot Chat unless optional connected experiences are disabled (outside GCC and DoD, where it's off by default) |
 | Oversharing | SharePoint Advanced Management, Purview | Restricted Content Discovery hides sites from Copilot and agents without changing permissions; Restricted Access Control limits who can open a site |
-| Monitoring | Purview Data Security Posture Management, Insider Risk Management | Activity explorer shows prompts, responses, web queries and referenced files; Insider Risk can alert on "an attempted prompt injection attack" |
+| Monitoring | Purview Data Security Posture Management for AI, Insider Risk Management | Activity explorer shows prompts, responses, web queries and referenced files; Insider Risk can alert on "an attempted prompt injection attack" |
 | Owners | Microsoft 365 admin center | Assign a new owner; add owners to Agent Builder agents |
 | Control plane and agent identity | Microsoft 365 admin center, Microsoft Entra | "Microsoft Agent 365 is the control plane for AI agents" for agents "regardless of where these agents are built or acquired". Copilot Studio "automatically provisions Entra Agent IDs for new agents", and Entra ID Governance "Governs Microsoft Entra Agent IDs at scale with lifecycle policies" |
 

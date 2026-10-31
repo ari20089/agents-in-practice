@@ -18,7 +18,7 @@ It reviews declarative agents (Agent Builder, Microsoft 365 Agents Toolkit), Cop
 
 | File | What it's for | Where it goes |
 |---|---|---|
-| [`INSTRUCTIONS.md`](./INSTRUCTIONS.md) | The reviewer's behaviour: gates, review steps, severity, verdict rule, output format and rules. 5,401 of the 8,000 characters allowed. | The agent's **Instructions** field, pasted as is |
+| [`INSTRUCTIONS.md`](./INSTRUCTIONS.md) | The reviewer's behaviour: gates, review steps, severity, verdict rule, output format and rules. 5,408 of the 8,000 characters allowed. | The agent's **Instructions** field, pasted as is |
 | [`knowledge/review-checks.txt`](./knowledge/review-checks.txt) | Reference data: the 39 checks with their documented basis and default severity, licensing tables, tenant controls, open questions and sources | Uploaded as the agent's only knowledge source |
 | [`assets/review-intake.md`](./assets/review-intake.md) | A form makers fill in before asking for a review | Share it with makers; it isn't part of the agent |
 
