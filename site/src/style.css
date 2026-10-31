@@ -297,7 +297,8 @@ button.link { font: inherit; color: var(--blue); background: none; border: 0; pa
 .byline-links { font-size: 0.9rem; margin-top: 2px !important; }
 .avatar-lg { width: 48px; height: 48px; border: 2px solid var(--surface); box-shadow: 0 0 0 1px var(--border); }
 ul.tag-pills { margin-bottom: 22px; gap: 8px; }
-.tag-pills .chip { font-weight: 500; font-size: 0.85rem; padding: 3px 12px; border-radius: 999px; background: var(--surface); color: var(--ink-2); border: 1px solid var(--border); }
+.tag-pills .chip { font-weight: 500; font-size: 0.85rem; padding: 3px 12px; border-radius: 999px; background: var(--surface); color: var(--ink-2); border: 1px solid var(--border); text-decoration: none; transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease; }
+.tag-pills .chip:hover, .tag-pills .chip:focus-visible { background: var(--surface-2); border-color: var(--blue); color: var(--ink); }
 .detail-art { display: block; cursor: zoom-in; }
 .detail-art img { display: block; width: 100%; border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); }
 .detail-art:hover img { box-shadow: var(--shadow-hover); }
