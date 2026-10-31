@@ -236,7 +236,8 @@ button.link { font: inherit; color: var(--blue); background: none; border: 0; pa
 .card:hover { box-shadow: var(--shadow-hover); border-color: var(--blue); }
 .card:focus-within { outline: 2px solid var(--blue); outline-offset: 2px; }
 .card-art { display: block; aspect-ratio: 16 / 9; background: var(--surface-2); border-bottom: 1px solid var(--border-soft); overflow: hidden; }
-.card-art img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.card-art img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform 0.35s ease; }
+.card:hover .card-art img, .card:focus-within .card-art img { transform: scale(1.08); }
 .card-body { padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
 .card-top { display: flex; align-items: center; gap: 8px; min-width: 0; }
 .card-top time { margin-left: auto; flex: none; color: var(--muted); font-size: 0.8rem; }
@@ -367,5 +368,6 @@ table.files td:first-child { font-family: var(--font-mono); font-size: 0.9em; wo
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .card { transition: none; }
+  .card, .card-art img { transition: none; }
+  .card:hover .card-art img, .card:focus-within .card-art img { transform: none; }
 }
