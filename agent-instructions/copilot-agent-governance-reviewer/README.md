@@ -18,7 +18,7 @@ It reviews declarative agents (Agent Builder, Microsoft 365 Agents Toolkit), Cop
 
 | File | What it's for | Where it goes |
 |---|---|---|
-| [`INSTRUCTIONS.md`](./INSTRUCTIONS.md) | The reviewer's behaviour: gates, review steps, severity, verdict rule, output format and rules. 5,408 of the 8,000 characters allowed. | The agent's **Instructions** field, pasted as is |
+| [`INSTRUCTIONS.md`](./INSTRUCTIONS.md) | The reviewer's behaviour: gates, review steps, severity, verdict rule, output format and rules. 5,487 of the 8,000 characters allowed. | The agent's **Instructions** field, pasted as is |
 | [`knowledge/review-checks.txt`](./knowledge/review-checks.txt) | Reference data: the 39 checks with their documented basis and default severity, licensing tables, tenant controls, open questions and sources | Uploaded as the agent's only knowledge source |
 | [`assets/review-intake.md`](./assets/review-intake.md) | A form makers fill in before asking for a review | Share it with makers; it isn't part of the agent |
 
@@ -71,7 +71,8 @@ All behaviour is in the instructions, not the knowledge file. Microsoft says not
 
 ## Limitations
 
-- Written against 36 Microsoft Learn pages dated September 2025 to 30 October 2026, all re-read on 30 October 2026. Agent settings, admin controls and billing rates change often. Re-check the sources at the end of `review-checks.txt` and update the file when they change.
+- Written against 38 Microsoft Learn pages dated September 2025 to 30 October 2026, re-read on 30 October and 1 November 2026. Agent settings, admin controls and billing rates change often. Re-check the sources at the end of `review-checks.txt` and update the file when they change.
+- Microsoft renamed the GitHub Copilot harness to the Microsoft Copilot harness on 28 October 2026. Learn pages still use the old name, so the reviewer uses the new one and keeps the old one in quotes. Copilot Studio's billing-rate table covers only the standard harness; the reviewer doesn't apply it to Microsoft Copilot harness agents, which a Microsoft 365 Copilot licence doesn't cover.
 - Five questions aren't answered by the documentation, including whether Purview DLP for Microsoft 365 Copilot applies inside agents. The reviewer names these instead of assuming.
 - Severity levels, check IDs and the verdict rule are this reviewer's rubric, not Microsoft's.
 - Licensing statements describe the documented rules, not your contract. Confirm with the Microsoft Copilot Studio Licensing Guide and your agreement.
@@ -105,6 +106,7 @@ Microsoft documentation, with each page's `ms.date` when it was retrieved on 30 
 - [Restrict discovery of SharePoint sites and content](https://learn.microsoft.com/en-us/sharepoint/restricted-content-discovery), 11 Oct 2026
 - [Restricted SharePoint Search](https://learn.microsoft.com/en-us/sharepoint/restricted-sharepoint-search), 6 Jul 2026
 - [Microsoft Purview DLP for Microsoft 365 Copilot and Cowork](https://learn.microsoft.com/en-us/purview/dlp-microsoft365-copilot-location-learn-about), 16 Oct 2026
+- [Learn about Microsoft Purview Data Security Posture Management (DSPM)](https://learn.microsoft.com/en-us/purview/data-security-posture-management-learn-about), 1 May 2026, read on 1 November 2026
 
 **Copilot Studio**
 
@@ -125,8 +127,13 @@ Microsoft documentation, with each page's `ms.date` when it was retrieved on 30 
 - [App registration, agent identities, and authentication](https://learn.microsoft.com/en-us/microsoft-copilot-studio/govern-agents-identities-overview), 21 Aug 2026
 - [Standard harness licensing](https://learn.microsoft.com/en-us/microsoft-copilot-studio/billing-licensing), 3 Aug 2026
 - [Billing rates and management](https://learn.microsoft.com/en-us/microsoft-copilot-studio/requirements-messages-management), 30 Oct 2026
+- [Manage costs for agents powered by the GitHub Copilot harness](https://learn.microsoft.com/en-us/power-platform/admin/manage-usage-github-copilot-harness), 28 Oct 2026, read on 1 November 2026
 
 Every Learn page above still showed the same date on 31 October 2026. The agent reads the same list at the end of [`knowledge/review-checks.txt`](./knowledge/review-checks.txt).
+
+Other sources, read on 1 November 2026:
+
+- [The GitHub Copilot harness is now the Microsoft Copilot harness](https://www.microsoft.com/en-us/copilot/blog/copilot-studio/the-github-copilot-harness-in-copilot-studio-is-now-the-microsoft-copilot-harness/), Microsoft Copilot Studio blog, 28 Oct 2026
 
 ## Contributors
 
@@ -139,6 +146,7 @@ Every Learn page above still showed the same date on 31 October 2026. The agent 
 | Version | Date | Comments |
 | --- | --- | --- |
 | 1.0 | October 2026 | Initial release |
+| 1.1 | November 2026 | Microsoft Copilot harness and DSPM names; the Copilot Studio billing rates are scoped to the standard harness, and LI2 covers Microsoft Copilot harness agents |
 
 ## Help
 
