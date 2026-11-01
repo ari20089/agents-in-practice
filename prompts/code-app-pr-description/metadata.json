@@ -1,0 +1,13 @@
+{
+  "name": "Code App PR Description",
+  "description": "Paste it into GitHub Copilot Chat on a Power Apps code app branch and it reads the diff and writes the pull request description in the same shape every time: screens touched, data sources added, connector permissions changed, licensing impact and test evidence, each row tied to a file.",
+  "platforms": ["GitHub Copilot", "Any coding agent"],
+  "tags": ["power-apps", "code-apps", "pull-requests", "code-review", "connectors", "consent", "data-policies", "licensing", "github-copilot"],
+  "subcategory": "Developer productivity",
+  "author": "Arindam Choudhury",
+  "authorGithub": "ari20089",
+  "authorUrl": "https://www.linkedin.com/in/arindam-choudhury/",
+  "version": "1.0",
+  "createdAt": "2026-11-01",
+  "updatedAt": "2026-11-01"
+}
