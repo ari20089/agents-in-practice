@@ -44,9 +44,10 @@ The skill works through eight steps:
 ## Limitations
 
 - Agent accounts are a **Frontier** feature. Microsoft states there is no SLA for Agent 365 Frontier and that support can be removed at any time; the gate makes the process owner accept that before go-live.
-- Written against **Frontier preview** documentation. Every source was re-read on 31 October 2026. Agent accounts, triggers and hooks on the GitHub Copilot harness, agent user targeting in Conditional Access and agent risk are all prerelease.
+- Written against **Frontier preview** documentation. Every source was re-read on 31 October 2026. Agent accounts, triggers and hooks on the Microsoft Copilot harness, agent user targeting in Conditional Access and agent risk are all prerelease.
 - Several Entra Agent ID and Purview pages predate agent accounts (April to June 2026, and Purview for Agent 365 from May 2026). The skill applies them to agents with accounts only where a Copilot Studio page links them, and otherwise marks the link as an open question.
 - Three standard-harness pages are cited only to show what is *not* documented for this harness (maker-credential triggers, **Ask the end user before running**, **Request for information**); the skill never applies them to agents with accounts.
+- Microsoft renamed the GitHub Copilot harness to the Microsoft Copilot harness on 28 October 2026, and says the product will show the new name "over the coming weeks". As of 1 November 2026 the Learn pages cited here still use the old name, so the skill uses the new name and keeps the old one in page titles and quotes. The admin center's **Harness** filter value is quoted as documented.
 - Microsoft publishes credit consumption for this harness only as ranges in a diagram, so the skill sizes caps from your pilot consumption, not from rates.
 - This is not legal, financial or audit advice. Verify against the cited pages before relying on the output for an approval decision.
 
@@ -92,6 +93,10 @@ Microsoft documentation, with the date shown on the page when retrieved on 31 Oc
 - [Discover, create, and onboard agents with their own identity (preview)](https://learn.microsoft.com/en-us/microsoft-agent-365/onboard), 25 May 2026
 - [Use the Power Platform API to quarantine agents](https://learn.microsoft.com/en-us/microsoft-copilot-studio/admin-api-quarantine), 14 Jul 2026
 
+Other sources, read on 1 November 2026:
+
+- [The GitHub Copilot harness is now the Microsoft Copilot harness](https://www.microsoft.com/en-us/copilot/blog/copilot-studio/the-github-copilot-harness-in-copilot-studio-is-now-the-microsoft-copilot-harness/), Microsoft Copilot Studio blog, 28 Oct 2026
+
 The agent reads the same list at the end of [`references/gate-guide.md`](./references/gate-guide.md).
 
 ## Contributors
@@ -105,6 +110,7 @@ The agent reads the same list at the end of [`references/gate-guide.md`](./refer
 | Version | Date | Comments |
 | --- | --- | --- |
 | 1.0 | November 2026 | Initial release |
+| 1.1 | November 2026 | The GitHub Copilot harness is now the Microsoft Copilot harness; the skill uses the new name and keeps the old one in Learn page titles and quotes |
 
 ## Help
 
