@@ -17,7 +17,7 @@
 | Agent type | Built with | Runs on | Notes for the reviewer |
 |---|---|---|---|
 | **Declarative agent** | Agent Builder in Microsoft 365 Copilot, Microsoft 365 Agents Toolkit | Microsoft 365 Copilot's orchestrator and models | Knowledge and capabilities in the manifest; actions are API or MCP plugins. "Hosted by Microsoft 365 Copilot". |
-| **Copilot Studio agent** | Copilot Studio (standard or GitHub Copilot harness) | Copilot Studio | Knowledge, tools, topics, authentication and sharing are settings in Copilot Studio and the Power Platform admin center |
+| **Copilot Studio agent** | Copilot Studio (standard or Microsoft Copilot harness, formerly GitHub Copilot harness) | Copilot Studio | Knowledge, tools, topics, authentication and sharing are settings in Copilot Studio and the Power Platform admin center |
 | **Custom engine agent** | Copilot Studio, Microsoft Foundry (older pages still say Azure AI Foundry), Microsoft 365 Agents SDK | Your own orchestrator or models | Custom engine agents "are hosted outside of Microsoft 365 Copilot"; licensing differs (section 3) |
 
 How an agent reaches people also matters:
@@ -77,7 +77,7 @@ Each check has an ID, what to look for, the documented basis, a default severity
 | ID | Look for | Documented basis | Default severity | Fix |
 |---|---|---|---|---|
 | LI1 | Audience includes users without a Microsoft 365 Copilot licence, and the agent grounds on shared tenant data | "Agents that access shared tenant data (such as SharePoint or Copilot connectors) generate usage-based billing charges (metered in Copilot Credits)". "Agents utilizing metered consumption are off by default for users in Microsoft Copilot Chat." | Must fix (the agent fails for them, or costs money no one approved) | Decide: license the users, set up pay-as-you-go with a budget owner, or narrow the audience |
-| LI2 | Cost assumption "it's free for licensed users" on a Copilot Studio agent | The inclusion applies "when the user of the agent is licensed with Microsoft Copilot, and the agent operates using the authenticated Microsoft Copilot USL user's identity." | Must fix if the agent uses maker credentials, triggers, or no authentication | Re-estimate with the billing rates (section 3) |
+| LI2 | Cost assumption "it's free for licensed users" on a Copilot Studio agent | Standard harness: the inclusion applies "when the user of the agent is licensed with Microsoft Copilot, and the agent operates using the authenticated Microsoft Copilot USL user's identity." Microsoft Copilot harness: no inclusion; agents are "Billed for all usage. Creation and runtime activities consume Copilot Credits regardless of the user's license." | Must fix if the agent is on the Microsoft Copilot harness, or uses maker credentials, triggers, or no authentication | Standard harness: re-estimate with the billing rates (section 3). Microsoft Copilot harness: budget Copilot Credits for building and running; this file has no rates for it |
 | LI3 | Agent flows | "No charge" applies only to runs started by the **When an agent calls the flow** trigger for a licensed user; "Agent flows using other triggers consume Copilot Credits at the standard rate." | Should fix | Re-estimate or change the trigger |
 | LI4 | Computer-using agents | "Computer-Using Agents (CUA) usage is not included in the Microsoft Copilot USL." | Must fix if the estimate assumed inclusion | Budget it separately |
 | LI5 | Maker licensing | A Copilot Studio trial licence lets you test, "However, you can't publish the agent." | Note | Confirm the maker's licence before the release date |
@@ -108,7 +108,7 @@ Controls an admin uses to apply a fix. They are not findings on their own.
 | Maker credentials | Power Platform admin center | Allow end-user credentials, maker-provided credentials, or both |
 | Web search | Cloud Policy service: **Allow web search in Copilot** | Unconfigured, web search stays available in Copilot and Copilot Chat unless optional connected experiences are disabled (outside GCC and DoD, where it's off by default) |
 | Oversharing | SharePoint Advanced Management, Purview | Restricted Content Discovery hides sites from Copilot and agents without changing permissions; Restricted Access Control limits who can open a site |
-| Monitoring | Purview Data Security Posture Management for AI, Insider Risk Management | Activity explorer shows prompts, responses, web queries and referenced files; Insider Risk can alert on "an attempted prompt injection attack" |
+| Monitoring | Microsoft Purview Data Security Posture Management (DSPM; the earlier versions are now "DSPM for AI (classic)" and "Data Security Posture Management (classic)"), Insider Risk Management | Activity explorer shows prompts, responses, web queries and referenced files; Insider Risk can alert on "an attempted prompt injection attack" |
 | Owners | Microsoft 365 admin center | Assign a new owner; add owners to Agent Builder agents |
 | Control plane and agent identity | Microsoft 365 admin center, Microsoft Entra | "Microsoft Agent 365 is the control plane for AI agents" for agents "regardless of where these agents are built or acquired". Copilot Studio "automatically provisions Entra Agent IDs for new agents", and Entra ID Governance "Governs Microsoft Entra Agent IDs at scale with lifecycle policies" |
 
@@ -122,7 +122,7 @@ From the extensibility cost page (30 Sep 2026), the agents admin guide (7 Apr 20
 | Copilot Chat, no pay-as-you-go | "No charges for lightweight extensibility (instruction-based agents or public site grounding)." | Not available: metered agents "are off by default for users in Microsoft Copilot Chat" |
 | Copilot Chat with pay-as-you-go | No charge | "Usage-based billing charges apply for shared tenant data (SharePoint, Copilot connectors), metered in Copilot Credits via Copilot Studio." |
 
-Copilot Studio billing rates (pay-as-you-go meter or Copilot Credit packs):
+Copilot Studio billing rates for agents on the standard harness (pay-as-you-go meter or Copilot Credit packs). The page says "This article describes features used in agents or agent flows powered by the standard harness" and "Agents powered by the GitHub Copilot harness are billed differently." Agents on the Microsoft Copilot harness (its former name) consume Copilot Credits from the first build, and a Microsoft 365 Copilot licence covers none of it (see LI2); don't apply this table to them:
 
 | Agent feature | Copilot Credits | Microsoft 365 Copilot licensed user |
 |---|---|---|
@@ -172,6 +172,7 @@ Microsoft documentation, with each page's `ms.date` when it was retrieved on 30 
 - [Restrict discovery of SharePoint sites and content](https://learn.microsoft.com/en-us/sharepoint/restricted-content-discovery), 11 Oct 2026
 - [Restricted SharePoint Search](https://learn.microsoft.com/en-us/sharepoint/restricted-sharepoint-search), 6 Jul 2026
 - [Microsoft Purview DLP for Microsoft 365 Copilot and Cowork](https://learn.microsoft.com/en-us/purview/dlp-microsoft365-copilot-location-learn-about), 16 Oct 2026
+- [Learn about Microsoft Purview Data Security Posture Management (DSPM)](https://learn.microsoft.com/en-us/purview/data-security-posture-management-learn-about), 1 May 2026, read on 1 November 2026
 
 **Copilot Studio**
 
@@ -192,3 +193,8 @@ Microsoft documentation, with each page's `ms.date` when it was retrieved on 30 
 - [App registration, agent identities, and authentication](https://learn.microsoft.com/en-us/microsoft-copilot-studio/govern-agents-identities-overview), 21 Aug 2026
 - [Standard harness licensing](https://learn.microsoft.com/en-us/microsoft-copilot-studio/billing-licensing), 3 Aug 2026
 - [Billing rates and management](https://learn.microsoft.com/en-us/microsoft-copilot-studio/requirements-messages-management), 30 Oct 2026
+- [Manage costs for agents powered by the GitHub Copilot harness](https://learn.microsoft.com/en-us/power-platform/admin/manage-usage-github-copilot-harness), 28 Oct 2026, read on 1 November 2026
+
+Other sources, read on 1 November 2026:
+
+- [The GitHub Copilot harness is now the Microsoft Copilot harness](https://www.microsoft.com/en-us/copilot/blog/copilot-studio/the-github-copilot-harness-in-copilot-studio-is-now-the-microsoft-copilot-harness/), Microsoft Copilot Studio blog, 28 Oct 2026
