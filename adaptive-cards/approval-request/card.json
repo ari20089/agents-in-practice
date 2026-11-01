@@ -1,0 +1,106 @@
+{
+  "$schema": "http://adaptivecards.microsoft.com/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.5",
+  "lang": "en",
+  "fallbackText": "Approval request ${requestId}: ${title}. This app can't show the card, so respond from ${requestUrl}.",
+  "body": [
+    {
+      "type": "Container",
+      "style": "emphasis",
+      "bleed": true,
+      "items": [
+        {
+          "type": "TextBlock",
+          "text": "Approval request",
+          "size": "Small",
+          "weight": "Bolder",
+          "color": "Accent",
+          "wrap": true
+        },
+        {
+          "type": "TextBlock",
+          "text": "${title}",
+          "style": "heading",
+          "size": "Large",
+          "weight": "Bolder",
+          "spacing": "Small",
+          "wrap": true
+        }
+      ]
+    },
+    {
+      "type": "TextBlock",
+      "text": "${details}",
+      "wrap": true
+    },
+    {
+      "type": "FactSet",
+      "facts": [
+        {
+          "title": "Requested by",
+          "value": "${requesterName}"
+        },
+        {
+          "title": "Type",
+          "value": "${requestType}"
+        },
+        {
+          "title": "Submitted",
+          "value": "${submittedOn}"
+        },
+        {
+          "title": "Needed by",
+          "value": "${neededBy}"
+        },
+        {
+          "title": "Reference",
+          "value": "${requestId}"
+        }
+      ]
+    },
+    {
+      "type": "ActionSet",
+      "actions": [
+        {
+          "type": "Action.OpenUrl",
+          "id": "openRequest",
+          "title": "Open the full request",
+          "url": "${requestUrl}"
+        }
+      ]
+    },
+    {
+      "type": "Input.Text",
+      "id": "comment",
+      "label": "Comment (optional)",
+      "placeholder": "Add a note for the requester",
+      "isMultiline": true,
+      "maxLength": 500
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.Submit",
+      "id": "approve",
+      "title": "Approve",
+      "style": "positive",
+      "data": {
+        "actionSubmitId": "approval_request_approve",
+        "decision": "approve",
+        "requestId": "${requestId}"
+      }
+    },
+    {
+      "type": "Action.Submit",
+      "id": "reject",
+      "title": "Reject",
+      "style": "destructive",
+      "data": {
+        "actionSubmitId": "approval_request_reject",
+        "decision": "reject",
+        "requestId": "${requestId}"
+      }
+    }
+  ]
+}

@@ -1,8 +1,8 @@
 # Contributing
 
-Thanks for helping grow **Agents in Practice**. A *skill* is a reusable instruction set for an AI agent, published here as an unpacked folder with optional `references/`, `scripts/` and `assets/`. A *prompt* is one self-contained instruction a person pastes into a Copilot chat; see [Prompts](#prompts) below. An *agent instructions* item is the instructions and knowledge files that define an agent's role; see [Agent instructions](#agent-instructions) below.
+Thanks for helping grow **Agents in Practice**. A *skill* is a reusable instruction set for an AI agent, published here as an unpacked folder with optional `references/`, `scripts/` and `assets/`. A *prompt* is one self-contained instruction a person pastes into a Copilot chat; see [Prompts](#prompts) below. An *agent instructions* item is the instructions and knowledge files that define an agent's role; see [Agent instructions](#agent-instructions) below. An *Adaptive Card* is a card template with sample data that a maker pastes into Copilot Studio, Power Automate or a bot; see [Adaptive Cards](#adaptive-cards) below.
 
-You contribute by adding **one folder under [`skills/`](./skills/), [`prompts/`](./prompts/) or [`agent-instructions/`](./agent-instructions/)** and opening a pull request. CI validates the folder; nothing else is generated or edited by hand.
+You contribute by adding **one folder under [`skills/`](./skills/), [`prompts/`](./prompts/), [`agent-instructions/`](./agent-instructions/) or [`adaptive-cards/`](./adaptive-cards/)** and opening a pull request. CI validates the folder; nothing else is generated or edited by hand.
 
 > [!NOTE]
 > This is a volunteer-maintained community project, not a Microsoft product. Reviews and assistance are best-effort. See [SUPPORT.md](./SUPPORT.md).
@@ -75,7 +75,7 @@ description: Use when the user asks to summarize a meeting transcript, before dr
 | --- | --- | --- |
 | `name` | yes | Display name shown in the catalog |
 | `description` | yes | Catalog one-liner |
-| `platforms` | yes | One or more of `GitHub Copilot`, `Copilot Studio`, `Microsoft 365 Copilot`, `Any coding agent` (works in any agent that can read a repository, such as the GitHub Copilot CLI or Claude Code), `Other` |
+| `platforms` | yes | One or more of `GitHub Copilot`, `Copilot Studio`, `Microsoft 365 Copilot`, `Microsoft Teams`, `Power Automate`, `Any coding agent` (works in any agent that can read a repository, such as the GitHub Copilot CLI or Claude Code), `Other` |
 | `tags` | yes | Lowercase tags for search |
 | `subcategory` | yes | Catalog section inside the category, for example `Governance & compliance`. The category itself is not a field: the gallery derives it from the top-level folder (`skills/` → **Skills**) |
 | `author` | yes | Person or team who wrote the skill |
@@ -118,6 +118,16 @@ An agent instructions item lives in `agent-instructions/<slug>/`. [AGENT-INSTRUC
 
 Copy [`agent-instructions/_template/`](./agent-instructions/_template/) to get started.
 
+## Adaptive Cards
+
+An Adaptive Card lives in `adaptive-cards/<slug>/`. [ADAPTIVE-CARD-SCHEMA.md](./ADAPTIVE-CARD-SCHEMA.md) defines its shape and limits:
+
+- `card.json` is the card as it is pasted: schema version 1.5 or earlier, 28,000 bytes or less with the sample data filled in, a `label` on every input and an `actionSubmitId` in every `Action.Submit`'s `data`.
+- Bindings are plain property paths such as `${title}`, so a maker can replace each one by hand; `data.json` has a made-up value for every binding and nothing else.
+- `README.md` and `metadata.json` follow the same rules as a skill's, with the steps for each host, the bindings and what comes back on submit in place of trigger phrases.
+
+Copy [`adaptive-cards/_template/`](./adaptive-cards/_template/) to get started.
+
 ## What CI checks
 
 These jobs run on every pull request.
@@ -153,9 +163,22 @@ These jobs run on every pull request.
 - `README.md` links to a file that does not exist, has no `## Sources` section with at least one link, or `metadata.json` breaks the rules above;
 - the root `README.md` catalog has no row linking to `prompts/<slug>/`.
 
-**One skill per PR** (the check's name; it covers every kind of item) fails when the changed files span more than one `skills/<slug>/`, `prompts/<slug>/` or `agent-instructions/<slug>/` folder.
+**Validate Adaptive Cards** (`scripts/validate-adaptive-cards.mjs`) fails when:
 
-Run all three validators locally with `npm test`, or pass a slug to any of the scripts to check one item.
+- the folder name is not lowercase kebab-case;
+- `card.json`, `README.md` or `metadata.json` is missing, or `card.json` has bindings and there is no `data.json`;
+- `card.json` is not an `AdaptiveCard` with `$schema` and a `version` of 1.5 or earlier;
+- a binding is not a plain property path, or the card uses `$data`, `$when` or another `$` keyword;
+- a binding has no sample value in `data.json`, or `data.json` has a value no binding uses;
+- the card is over 28,000 bytes with the sample data filled in;
+- an input has no `id` or `label`, two elements share an `id`, or an `Action.Submit` has no `data.actionSubmitId` or sets `isEnabled`;
+- the folder has anything other than those four files and `assets/`;
+- `README.md` links to a file that does not exist, has no `## Sources` section with at least one link, or `metadata.json` breaks the rules above;
+- the root `README.md` catalog has no row linking to `adaptive-cards/<slug>/`.
+
+**One skill per PR** (the check's name; it covers every kind of item) fails when the changed files span more than one `skills/<slug>/`, `prompts/<slug>/`, `agent-instructions/<slug>/` or `adaptive-cards/<slug>/` folder.
+
+Run all four validators locally with `npm test`, or pass a slug to any of the scripts to check one item.
 
 ## Pre-submission checklist
 

@@ -7,6 +7,7 @@ on:
       - "skills/**"
       - "agent-instructions/**"
       - "prompts/**"
+      - "adaptive-cards/**"
       - "site/**"
       - "package.json"
       - "package-lock.json"
