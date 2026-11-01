@@ -1,0 +1,13 @@
+{
+  "name": "Copilot Studio Harness Chooser",
+  "description": "Describe the agent you want to build and it recommends the Copilot Studio harness to build it on (GitHub Copilot, Customer Conversation or standard) with the reasons, why not the other two, what to check before you build and the open questions. Written to HVE Core's prompt standards.",
+  "platforms": ["GitHub Copilot", "Microsoft 365 Copilot", "Any coding agent"],
+  "tags": ["copilot-studio", "harnesses", "github-copilot-harness", "customer-conversation-harness", "standard-harness", "architecture", "copilot-credits", "hve-core"],
+  "subcategory": "Architecture & design",
+  "author": "Arindam Choudhury",
+  "authorGithub": "ari20089",
+  "authorUrl": "https://www.linkedin.com/in/arindam-choudhury/",
+  "version": "1.0",
+  "createdAt": "2026-11-01",
+  "updatedAt": "2026-11-01"
+}
