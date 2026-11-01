@@ -1,0 +1,13 @@
+{
+  "name": "Cited Answer",
+  "description": "A card that shows an answer with its evidence: numbered sources, each with a link and a \"last updated\" line, and a green \"Fully covered\" or amber \"Not fully covered\" note saying what the sources leave out. For Power Automate posts, Copilot Studio topics and Teams bots, with when to use Teams' and Copilot Studio's own citations instead and the checks to run before sending.",
+  "platforms": ["Copilot Studio", "Microsoft Teams", "Power Automate"],
+  "tags": ["adaptive-cards", "citations", "sources", "grounding", "rag", "responsible-ai", "teams", "power-automate", "copilot-studio", "templating"],
+  "subcategory": "Knowledge & answers",
+  "author": "Arindam Choudhury",
+  "authorGithub": "ari20089",
+  "authorUrl": "https://www.linkedin.com/in/arindam-choudhury/",
+  "version": "1.0",
+  "createdAt": "2026-11-01",
+  "updatedAt": "2026-11-01"
+}
