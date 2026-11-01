@@ -86,9 +86,23 @@
       return Object.keys(els).some((k) => (k === "sort" ? els.sort.value !== "updated" : els[k].value.trim() !== ""));
     }
 
+    // Cards in a row share the tallest card's height, so a card with a short title has
+    // room for more description. Reset to the CSS minimum, measure, then clamp to fit.
+    function fitDescriptions() {
+      const descs = [...grid.querySelectorAll(".card-desc")];
+      descs.forEach((d) => d.style.removeProperty("-webkit-line-clamp"));
+      const lines = descs.map((d) => {
+        const cs = getComputedStyle(d);
+        const lh = parseFloat(cs.lineHeight) || parseFloat(cs.fontSize) * 1.55;
+        return Math.max(3, Math.floor((d.getBoundingClientRect().height + 0.5) / lh));
+      });
+      descs.forEach((d, i) => d.style.setProperty("-webkit-line-clamp", String(lines[i])));
+    }
+
     function render() {
       const list = sorted(data.filter(matches));
       grid.innerHTML = list.map(card).join("");
+      fitDescriptions();
       empty.hidden = list.length > 0;
       count.textContent = list.length === data.length ? `Showing ${data.length} ${word(data.length)}` : `Showing ${list.length} of ${data.length} ${word(data.length)}`;
       clearBtn.hidden = !isFiltered();
@@ -109,6 +123,40 @@
 
     readState();
     render();
+
+    // Refit when the column count changes and once the heading font has loaded.
+    let gridWidth = 0;
+    new ResizeObserver(([entry]) => {
+      if (entry.contentRect.width !== gridWidth) {
+        gridWidth = entry.contentRect.width;
+        fitDescriptions();
+      }
+    }).observe(grid);
+    document.fonts?.ready.then(fitDescriptions);
+
+    // 3D tilt: the tile leans toward the pointer and the glare follows it.
+    // Mouse and pen only, and never when the reader prefers reduced motion.
+    if (matchMedia("(hover: hover) and (pointer: fine)").matches && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      grid.addEventListener("pointermove", (e) => {
+        const tile = e.target.closest(".card");
+        if (!tile) return;
+        const r = tile.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width;
+        const y = (e.clientY - r.top) / r.height;
+        tile.classList.add("is-tilting");
+        tile.style.setProperty("--ry", `${((x - 0.5) * 8).toFixed(2)}deg`);
+        tile.style.setProperty("--rx", `${((0.5 - y) * 6).toFixed(2)}deg`);
+        tile.style.setProperty("--mx", `${(x * 100).toFixed(1)}%`);
+        tile.style.setProperty("--my", `${(y * 100).toFixed(1)}%`);
+      });
+      grid.addEventListener("pointerout", (e) => {
+        const tile = e.target.closest(".card");
+        if (!tile || tile.contains(e.relatedTarget)) return;
+        tile.classList.remove("is-tilting");
+        tile.style.removeProperty("--rx");
+        tile.style.removeProperty("--ry");
+      });
+    }
   }
 
   // ---------- download gate ----------
