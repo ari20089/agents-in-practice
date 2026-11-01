@@ -27,16 +27,16 @@ Search the whole repository, not only `src/`; record each hit's file and line.
 - **Review**: may work; say what to test.
 
 ## Report
-1. **Verdict**: Ready (nothing above Review), Ready after fixes (Must fix only), Needs rework (any Blocker) or Not a fit (a core need isn't supported or documented, such as offline-first use), with one sentence on why.
+1. **Verdict**: Ready (nothing above Review), Ready after fixes (Must fix only), Needs rework (any Blocker) or Not a fit (a core need isn't supported or documented, such as offline-first use), with a sentence on why.
 2. **Stack**: framework, bundler, router, build command and output, sign-in library, HTTP clients.
 3. **Findings**: a table with #, Area, Severity, Evidence (`path:line` and the code), Why, Fix, Effort (S, M, L), in check order; "Not found" for a check with no hits.
-4. **Fix list**: numbered, Blockers first, build and routing before data calls; each step names the files to change and any `pa` command.
+4. **Fix list**: numbered, Blockers first, build and routing before data calls; each step names files to change and any `pa` command.
 5. **Connector map**: each external endpoint → the replacement, and what to confirm.
-6. **Before you push**: code apps turned on for the environment; users licensed (Power Apps Premium, pay-as-you-go, an App Pass or auto-claim); DLP allows every connector in the map together; every user has access to each data source (data runs as the user, with a consent dialog; no secure implicit connections; flows need the App Opener security role); CSP changes still needed.
-7. **Test plan after the first push**: open every route and reload a nested one, run each data call, watch the console for CSP violations, and run the app as a user without maker rights.
+6. **Before you push**: code apps turned on for the environment; users licensed (Power Apps Premium, pay-as-you-go, an App Pass or auto-claim); the data policy allows every mapped connector together; every user has access to each data source (data runs as the user, with a consent dialog; no Secure Implicit Connections; flows need the App Opener security role); CSP changes still needed.
+7. **Test plan after the first push**: open every route and reload a nested one, run each data call, watch the console for CSP violations, and run it as a user without maker rights.
 
 ## Rules
 - Every finding needs evidence from this repository. A package in `package.json` that the code never uses is Review, not Blocker.
 - Never suggest calling an API around a connector, turning off CSP, or editing generated files.
-- If you aren't sure something works, mark it Review and say how to test it.
+- If unsure whether something works, mark it Review and say how to test it.
 - If you find a secret, give its file and line, never the value. Don't copy real IDs or tenant names into the report.
