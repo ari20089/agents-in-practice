@@ -1,0 +1,13 @@
+{
+  "name": "Approval Request",
+  "description": "A card that asks one person to approve or reject a request: what's being requested and why, who asked, when it's needed and a link to the full request, with an optional comment and Approve and Reject buttons. It returns the decision, the request reference and the comment in one response, from a Power Automate flow in Teams, a Copilot Studio topic or a Teams bot, with the checks to run before acting on it.",
+  "platforms": ["Copilot Studio", "Microsoft Teams", "Power Automate"],
+  "tags": ["adaptive-cards", "approvals", "teams", "power-automate", "copilot-studio", "action-submit", "templating", "workflow"],
+  "subcategory": "Approvals & workflows",
+  "author": "Arindam Choudhury",
+  "authorGithub": "ari20089",
+  "authorUrl": "https://www.linkedin.com/in/arindam-choudhury/",
+  "version": "1.0",
+  "createdAt": "2026-10-31",
+  "updatedAt": "2026-10-31"
+}

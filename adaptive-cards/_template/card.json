@@ -1,0 +1,30 @@
+{
+  "$schema": "http://adaptivecards.microsoft.com/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.5",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "${title}",
+      "style": "heading",
+      "size": "Large",
+      "weight": "Bolder",
+      "wrap": true
+    },
+    {
+      "type": "Input.Text",
+      "id": "answer",
+      "label": "Every input needs an id and a label"
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.Submit",
+      "id": "submit",
+      "title": "Submit",
+      "data": {
+        "actionSubmitId": "your_card_submit"
+      }
+    }
+  ]
+}

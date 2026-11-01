@@ -23,9 +23,11 @@ jobs:
         run: node scripts/validate-agent-instructions.mjs
       - name: Validate prompt folders
         run: node scripts/validate-prompts.mjs
+      - name: Validate Adaptive Card folders
+        run: node scripts/validate-adaptive-cards.mjs
 
   scope:
-    # The job name is a required check in the branch ruleset; it now covers skills, agent instructions and prompts.
+    # The job name is a required check in the branch ruleset; it now covers skills, agent instructions, prompts and Adaptive Cards.
     name: One skill per PR
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
@@ -40,7 +42,7 @@ jobs:
         run: |
           set -euo pipefail
           touched=$(git diff --name-only "$BASE" "$HEAD" \
-            | grep -E '^(skills|agent-instructions|prompts)/[^/_][^/]*/' \
+            | grep -E '^(skills|agent-instructions|prompts|adaptive-cards)/[^/_][^/]*/' \
             | cut -d/ -f1,2 \
             | sort -u || true)
           count=$(printf '%s\n' "$touched" | sed '/^$/d' | wc -l | tr -d ' ')

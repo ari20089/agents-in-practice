@@ -1,0 +1,13 @@
+{
+  "name": "Your Card Title",
+  "description": "One friendly sentence for the catalog card.",
+  "platforms": ["Copilot Studio", "Microsoft Teams", "Power Automate"],
+  "tags": ["adaptive-cards", "tag-two"],
+  "subcategory": "Approvals & workflows",
+  "author": "Your Name",
+  "authorGithub": "your-handle",
+  "authorUrl": "https://www.linkedin.com/in/your-handle/",
+  "version": "1.0",
+  "createdAt": "2026-01-01",
+  "updatedAt": "2026-01-01"
+}

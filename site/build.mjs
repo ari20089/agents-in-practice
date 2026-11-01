@@ -24,7 +24,7 @@ const RAW = `https://raw.githubusercontent.com/${OWNER}/${REPO_NAME}/main`;
 
 const SITE = {
   title: "Agents in Practice",
-  tagline: "Hands-on skills, prompts and agent instructions for AI agents working with Microsoft 365, Copilot Studio and GitHub Copilot.",
+  tagline: "Hands-on skills, prompts, agent instructions and Adaptive Cards for AI agents working with Microsoft 365, Copilot Studio and GitHub Copilot.",
   author: { name: "Arindam Choudhury", github: "https://github.com/ari20089", linkedin: "https://www.linkedin.com/in/arindam-choudhury/" },
 };
 
@@ -33,11 +33,12 @@ const TYPES = [
   { dir: "skills", label: "Skills", singular: "skill", install: ".github/skills/<slug>/", blurb: "Reusable instruction packages: a SKILL.md plus the references it needs, for any Agent Skills host." },
   { dir: "prompts", label: "Prompts", singular: "prompt", install: "", blurb: "Single instructions for a focused task or outcome." },
   { dir: "agent-instructions", label: "Agent instructions", singular: "agent instruction", install: "", blurb: "Instructions and knowledge files that define an agent's role." },
+  { dir: "adaptive-cards", label: "Adaptive Cards", singular: "Adaptive Card", install: "", blurb: "Card templates with sample data, for Copilot Studio, Power Automate and Teams bots." },
 ];
 
 marked.setOptions({ gfm: true });
 
-// Sub-category colours, kept clear of the type colours (pink, orange, violet in style.css):
+// Sub-category colours, kept clear of the type colours (emerald, orange, violet, pink in style.css):
 // teal, gold, sky, lime, indigo, cyan, green, yellow. Ordered so neighbours differ most.
 // Each sub-category takes the next free hue in the order it first appeared, so adding
 // a new one never changes the colour of an existing one.
@@ -81,7 +82,7 @@ function fmtSize(bytes) {
 }
 
 // Generated cover for items without assets/preview.png: an editor window showing the
-// item's own file (SKILL.md frontmatter, or the opening of INSTRUCTIONS.md or PROMPT.md),
+// item's own file (SKILL.md frontmatter, or the opening of INSTRUCTIONS.md, PROMPT.md or card.json),
 // the closest thing to a screenshot of it.
 function wrap(text, first, rest, maxLines) {
   const words = String(text).split(/\s+/).filter(Boolean);
@@ -158,6 +159,8 @@ function readItems() {
       const skill = existsSync(join(dir, "SKILL.md")) ? frontmatter(readFileSync(join(dir, "SKILL.md"), "utf8")) : null;
       const instructions = existsSync(join(dir, "INSTRUCTIONS.md")) ? readFileSync(join(dir, "INSTRUCTIONS.md"), "utf8").trim() : "";
       const prompt = existsSync(join(dir, "PROMPT.md")) ? readFileSync(join(dir, "PROMPT.md"), "utf8").trim() : "";
+      const card = existsSync(join(dir, "card.json")) ? readFileSync(join(dir, "card.json"), "utf8").trim() : "";
+      const cardData = existsSync(join(dir, "data.json")) ? readFileSync(join(dir, "data.json"), "utf8").trim() : "";
       const hasPreview = existsSync(join(dir, "assets", "preview.png"));
       items.push({
         slug,
@@ -182,16 +185,20 @@ function readItems() {
         instructionChars: [...instructions].length,
         prompt,
         promptChars: [...prompt].length,
+        card,
+        cardData,
+        cardBytes: Buffer.byteLength(card),
         readme,
         // metadata.json, README.md and the gallery preview are for people, not the agent.
         files: listFiles(dir).filter((f) => !["metadata.json", "README.md", "assets/preview.png"].includes(f.path)),
         hasPreview,
-        image: hasPreview ? `${type.dir}/${slug}/assets/preview.png` : cover(slug, meta.name, skill?.fields.description ?? meta.description, instructions || prompt, prompt ? "PROMPT.md" : undefined),
+        image: hasPreview ? `${type.dir}/${slug}/assets/preview.png` : cover(slug, meta.name, skill?.fields.description ?? meta.description, instructions || prompt || card, prompt ? "PROMPT.md" : card ? "card.json" : undefined),
         url: `${type.dir}/${slug}/`,
         sourceUrl: `${REPO}/tree/main/${type.dir}/${slug}`,
         skillFileUrl: skill ? `${RAW}/${type.dir}/${slug}/SKILL.md` : "",
         instructionsFileUrl: instructions ? `${RAW}/${type.dir}/${slug}/INSTRUCTIONS.md` : "",
         promptFileUrl: prompt ? `${RAW}/${type.dir}/${slug}/PROMPT.md` : "",
+        cardFileUrl: card ? `${RAW}/${type.dir}/${slug}/card.json` : "",
         issueUrl: `${REPO}/issues/new/choose`,
         install: type.install.replace("<slug>", slug),
       });
@@ -389,10 +396,11 @@ function detailPage(s) {
         ${s.skillFileUrl ? `<a class="btn" href="${s.skillFileUrl}">Open SKILL.md</a>` : ""}
         ${s.instructionsFileUrl ? `<a class="btn" href="${s.instructionsFileUrl}">Open INSTRUCTIONS.md</a>` : ""}
         ${s.promptFileUrl ? `<a class="btn" href="${s.promptFileUrl}">Open PROMPT.md</a>` : ""}
+        ${s.cardFileUrl ? `<a class="btn" href="${s.cardFileUrl}">Open card.json</a>` : ""}
         <a class="btn btn-ghost" href="${s.issueUrl}">Report an issue</a>
       </div>
     </div>
-    ${s.hasPreview ? `<a class="detail-art" href="assets/preview.png" title="Open the full-size image"><img src="assets/preview.png" alt="Example: ${esc(s.name)} answering a question in an agent chat" width="640" height="360"></a>` : ""}
+    ${s.hasPreview ? `<a class="detail-art" href="assets/preview.png" title="Open the full-size image"><img src="assets/preview.png" alt="${s.card ? `The ${esc(s.name)} card rendered with its sample data` : `Example: ${esc(s.name)} answering a question in an agent chat`}" width="640" height="360"></a>` : ""}
   </header>
 </div>
 </div>
@@ -405,6 +413,7 @@ function detailPage(s) {
         ${skillHtml ? `<button role="tab" id="tab-instructions" aria-controls="instructions" aria-selected="false">Skill instructions</button>` : ""}
         ${s.instructions ? `<button role="tab" id="tab-instructions" aria-controls="instructions" aria-selected="false">Instructions</button>` : ""}
         ${s.prompt ? `<button role="tab" id="tab-instructions" aria-controls="instructions" aria-selected="false">Prompt</button>` : ""}
+        ${s.card ? `<button role="tab" id="tab-instructions" aria-controls="instructions" aria-selected="false">Card</button>` : ""}
         <button role="tab" id="tab-files" aria-controls="files" aria-selected="false">Files <span class="tab-count">${s.files.length}</span></button>
       </div>
 
@@ -446,9 +455,23 @@ function detailPage(s) {
         <pre class="instructions-text" id="instructions-text">${esc(s.prompt)}</pre>
       </section>` : ""}
 
+      ${s.card ? `<section id="instructions" class="tab-panel prose" role="tabpanel" aria-labelledby="tab-instructions">
+        <h2 class="panel-title">Card</h2>
+        <div class="callout">
+          <p class="callout-label">Paste into your host</p>
+          <p>${s.cardBytes.toLocaleString("en-US")} bytes. Replace each <code>\${...}</code> binding with your own value first; the README says how in each host.</p>
+          <button class="btn btn-small" type="button" id="copy-instructions" data-target="instructions-text" data-label="Copy card">Copy card</button>
+        </div>
+        <p class="muted small">From <a href="${REPO}/blob/main/${s.type}/${s.slug}/card.json"><code>${esc(s.type)}/${esc(s.slug)}/card.json</code></a>, shown exactly as it is pasted.</p>
+        <pre class="instructions-text" id="instructions-text">${esc(s.card)}</pre>
+        ${s.cardData ? `<h3>Sample data</h3>
+        <p class="muted small">From <a href="${REPO}/blob/main/${s.type}/${s.slug}/data.json"><code>data.json</code></a>: a made-up value for every binding, for the Adaptive Cards Designer's sample data editor.</p>
+        <pre class="instructions-text">${esc(s.cardData)}</pre>` : ""}
+      </section>` : ""}
+
       <section id="files" class="tab-panel" role="tabpanel" aria-labelledby="tab-files">
         <h2 class="panel-title">Files</h2>
-        <p class="muted">${s.instructions ? "Everything you add to the agent, plus any extras for people in <code>assets/</code>" : s.prompt ? "The prompt you paste, plus any extras for people in <code>assets/</code>" : "Everything the agent loads. Copy the whole folder"}; <code>metadata.json</code>, <code>README.md</code> and the gallery preview image are for people and are not listed.</p>
+        <p class="muted">${s.instructions ? "Everything you add to the agent, plus any extras for people in <code>assets/</code>" : s.prompt ? "The prompt you paste, plus any extras for people in <code>assets/</code>" : s.card ? "The card and its sample data, plus any extras for people in <code>assets/</code>" : "Everything the agent loads. Copy the whole folder"}; <code>metadata.json</code>, <code>README.md</code> and the gallery preview image are for people and are not listed.</p>
         <table class="files"><thead><tr><th>Path</th><th class="num">Size</th></tr></thead><tbody>${fileRows}</tbody></table>
       </section>
     </div>
@@ -460,12 +483,12 @@ function detailPage(s) {
       </section>
       <section class="meta-sec">
         <h2 class="meta-h">Add this ${esc(s.typeLabel)}</h2>
-        <p class="meta-p">${s.install ? `Download the folder and unzip it into your host's skills directory, such as <code>${esc(s.install.replace(`${s.slug}/`, ""))}</code>.` : s.prompt ? "Copy the prompt from the Prompt tab, or download it; its README says how to run it." : "Download the folder; its README says where each file goes."}</p>
+        <p class="meta-p">${s.install ? `Download the folder and unzip it into your host's skills directory, such as <code>${esc(s.install.replace(`${s.slug}/`, ""))}</code>.` : s.prompt ? "Copy the prompt from the Prompt tab, or download it; its README says how to run it." : s.card ? "Copy the card from the Card tab, or download it; its README says how to use it in each host." : "Download the folder; its README says where each file goes."}</p>
         <div class="trust">
           <svg class="trust-icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 2.5 4 5.5v6c0 5 3.4 8.9 8 10 4.6-1.1 8-5 8-10v-6Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 7.5v5.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="16.3" r="1.1" fill="currentColor"/></svg>
           <div>
             <p class="trust-title">Add only what you trust</p>
-            <label class="trust-check"><input type="checkbox" id="trust-ok"> <span>I understand that this is a community-provided ${esc(s.typeLabel)}. It runs with my agent's permissions, so I should review it carefully and add it only if I trust the source.</span></label>
+            <label class="trust-check"><input type="checkbox" id="trust-ok"> <span>${s.card ? `I understand that this is a community-provided ${esc(s.typeLabel)}. My flow, topic or bot acts on what it sends back, so I should review it carefully and use it only if I trust the source.` : `I understand that this is a community-provided ${esc(s.typeLabel)}. It runs with my agent's permissions, so I should review it carefully and add it only if I trust the source.`}</span></label>
           </div>
         </div>
         <a class="btn btn-primary btn-block" id="download" href="${esc(s.slug)}.zip" download><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 1.75a.75.75 0 0 1 .75.75v6.19l2.22-2.22a.75.75 0 1 1 1.06 1.06l-3.5 3.5a.75.75 0 0 1-1.06 0l-3.5-3.5a.75.75 0 0 1 1.06-1.06l2.22 2.22V2.5A.75.75 0 0 1 8 1.75ZM2.75 12.5a.75.75 0 0 0 0 1.5h10.5a.75.75 0 0 0 0-1.5Z"/></svg>Download ${esc(s.typeLabel)} (.zip)</a>
@@ -526,7 +549,7 @@ function zip(entries, iso) {
 // ---------- build ----------
 
 const items = readItems();
-const catalog = items.map(({ readme, skillBody, instructions, prompt, files, ...rest }) => rest);
+const catalog = items.map(({ readme, skillBody, instructions, prompt, card, cardData, files, ...rest }) => rest);
 
 rmSync(OUT, { recursive: true, force: true });
 mkdirSync(join(OUT, "assets"), { recursive: true });

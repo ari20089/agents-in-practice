@@ -17,7 +17,7 @@ const ALLOWED_TOP_LEVEL_FILES = new Set(["PROMPT.md", "README.md", "metadata.jso
 const ALLOWED_TOP_LEVEL_DIRS = new Set(["assets"]);
 // "category" is not a metadata field: the gallery derives it from the top-level folder.
 const REQUIRED_METADATA = ["name", "description", "platforms", "tags", "subcategory", "author"];
-const KNOWN_PLATFORMS = new Set(["GitHub Copilot", "Copilot Studio", "Microsoft 365 Copilot", "Any coding agent", "Other"]);
+const KNOWN_PLATFORMS = new Set(["GitHub Copilot", "Copilot Studio", "Microsoft 365 Copilot", "Microsoft Teams", "Power Automate", "Any coding agent", "Other"]);
 
 const errors = [];
 let checked = 0;

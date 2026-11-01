@@ -1,0 +1,10 @@
+{
+  "title": "Replace three laptops for the design team",
+  "details": "Three laptops are out of warranty and failing. The quote is attached to the request, and the cost comes from this quarter's equipment budget.",
+  "requesterName": "Sam Taylor",
+  "requestType": "Equipment purchase",
+  "submittedOn": "31 Oct 2026",
+  "neededBy": "14 Nov 2026",
+  "requestId": "REQ-1042",
+  "requestUrl": "https://example.com/requests/REQ-1042"
+}
