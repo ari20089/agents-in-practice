@@ -24,7 +24,7 @@ The full skill definition is in [`SKILL.md`](./SKILL.md), which points the agent
 
 The skill works through six steps:
 
-1. **Identify the harness and the mechanisms.** "Child agent", "sub-agent" and "connected agent" behave differently on the standard, GitHub Copilot and Customer Conversation harnesses, and in the Employee Self-Service agent. The skill settles which one applies before answering.
+1. **Identify the harness and the mechanisms.** "Child agent", "sub-agent" and "connected agent" behave differently on the standard, Microsoft Copilot (formerly GitHub Copilot) and Customer Conversation harnesses, and in the Employee Self-Service agent. The skill settles which one applies before answering.
 2. **Establish what crosses each handoff**, in Microsoft's words:
    - Child agents always get the parent's context.
    - Standard-harness connected agents get history unless a default-on box is cleared.
@@ -46,10 +46,11 @@ The action types, delegation table, seven rules and `actionsTaken` output are th
 
 ## Limitations
 
-- Written against Microsoft Learn pages dated between September 2025 and 28 October 2026, all re-read on 30 October 2026. Several mechanisms are preview or prerelease: standard-harness "Add other agents", the Foundry, Fabric and Agents SDK connections, the GitHub Copilot harness, and the Customer Conversation harness.
+- Written against Microsoft Learn pages dated between September 2025 and 28 October 2026, all re-read on 30 October 2026. Several mechanisms are preview or prerelease: standard-harness "Add other agents", the Foundry, Fabric and Agents SDK connections, the Microsoft Copilot harness, and the Customer Conversation harness.
+- Microsoft renamed the GitHub Copilot harness to the Microsoft Copilot harness on 28 October 2026, and says the product will show the new name "over the coming weeks". As of 1 November 2026 the Learn pages cited here still use the old name, so the skill uses the new name and keeps the old one in page titles and quotes.
 - Ten questions are not answered by the documentation, including:
   - whose identity a connected agent's tools use at runtime;
-  - whether a delegate's confirmation prompt reaches the user on the GitHub Copilot harness;
+  - whether a delegate's confirmation prompt reaches the user on the Microsoft Copilot harness;
   - whether admins can block connections between agents.
   
   The skill reports these as *not documented* and gives a test for each.
@@ -82,7 +83,7 @@ Microsoft documentation, with each page's `ms.date` when it was retrieved on 30 
 - [Design subagents that avoid duplicate messages](https://learn.microsoft.com/en-us/microsoft-copilot-studio/guidance/generative-orchestration-subagents), 27 Aug 2026
 - [Configure handoff to any generic engagement hub](https://learn.microsoft.com/en-us/microsoft-copilot-studio/configure-generic-handoff), 16 Sep 2026
 
-**Mechanics: GitHub Copilot harness**
+**Mechanics: Microsoft Copilot harness (formerly GitHub Copilot harness)**
 
 - [Connected agents overview (GitHub Copilot)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/authoring-add-other-agents), 6 Oct 2026
 - [Add a Copilot Studio agent as a connected agent (GitHub Copilot)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/add-agent-connected), 14 Oct 2026
@@ -112,6 +113,10 @@ Microsoft documentation, with each page's `ms.date` when it was retrieved on 30 
 - [Configure data policies for agents](https://learn.microsoft.com/en-us/microsoft-copilot-studio/admin-data-loss-prevention), 1 Oct 2026
 - [Resolve agent error codes in Microsoft Copilot Studio](https://learn.microsoft.com/en-us/troubleshoot/power-platform/copilot-studio/authoring/error-codes), 28 Oct 2026
 
+Other sources, read on 1 November 2026:
+
+- [The GitHub Copilot harness is now the Microsoft Copilot harness](https://www.microsoft.com/en-us/copilot/blog/copilot-studio/the-github-copilot-harness-in-copilot-studio-is-now-the-microsoft-copilot-harness/), Microsoft Copilot Studio blog, 28 Oct 2026
+
 Every Learn page above still showed the same date on 31 October 2026. The agent reads the same list at the end of [`references/handoff-guide.md`](./references/handoff-guide.md).
 
 ## Contributors
@@ -125,6 +130,7 @@ Every Learn page above still showed the same date on 31 October 2026. The agent 
 | Version | Date | Comments |
 | --- | --- | --- |
 | 1.0 | October 2026 | Initial release |
+| 1.1 | November 2026 | The GitHub Copilot harness is now the Microsoft Copilot harness; the skill uses the new name and keeps the old one in Learn page titles and quotes |
 
 ## Help
 

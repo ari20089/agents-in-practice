@@ -11,7 +11,7 @@ Microsoft's handoff guidance for Microsoft Copilot Studio is spread across three
 
 Determine the following before proceeding. If the user has not supplied them, ask for the missing ones.
 
-1. **Harness or product** — standard, GitHub Copilot, or Customer Conversation harness in Copilot Studio, or the Employee Self-Service agent in Microsoft Copilot. Behaviour differs by harness (see Step 1); if the user does not know, ask how the agent was created and say which you assumed.
+1. **Harness or product** — standard, Microsoft Copilot (formerly GitHub Copilot), or Customer Conversation harness in Copilot Studio, or the Employee Self-Service agent in Microsoft Copilot. Behaviour differs by harness (see Step 1); if the user does not know, ask how the agent was created and say which you assumed.
 2. **Delegates** — every agent or person the design hands off to, and how: child agent, connected Copilot Studio agent, external agent (A2A, Foundry, Agents SDK, Fabric Data agent, third-party store agent), live agent through an engagement hub, or topic redirect.
 3. **Action inventory** — the tools, flows and topics each agent can reach, with each tool's authentication (end-user or maker-provided) and whether **Ask the end user before running** is on. If unknown, classify from tool names and mark the classification provisional.
 4. **Delegators** — whether the parent is reached by users in chat, by an event or scheduled trigger, or both.
@@ -44,8 +44,8 @@ Read [references/handoff-guide.md](references/handoff-guide.md) sections 1 and 2
 |---|---|---|
 | "Child agent" | Standard harness | Always receives parent context; no setting to exclude it |
 | "Sub-agent" | Customer Conversation harness (or loosely, any subagent) | Shares configuration, deployment and ALM with the primary agent |
-| "Connected agent" | Any harness | Standard: history toggle, same environment, one level. GitHub Copilot: parent is the only communicator; no history setting documented. Customer Conversation: Microsoft Foundry agents only. |
-| "A2A agent", "Foundry agent" | Standard or GitHub Copilot harness | External: Microsoft puts responsibility for data flows and approvals on the maker |
+| "Connected agent" | Any harness | Standard: history toggle, same environment, one level. Microsoft Copilot harness: parent is the only communicator; no history setting documented. Customer Conversation: Microsoft Foundry agents only. |
+| "A2A agent", "Foundry agent" | Standard or Microsoft Copilot harness | External: Microsoft puts responsibility for data flows and approvals on the maker |
 | "Hand off to a human", "escalate" | Standard harness, or Customer Conversation escalation paths | Full history and all user-defined topic variables go to the hub |
 | "Agent handoff", "hub agent" | Employee Self-Service agent in Microsoft Copilot | Handoff passes history and the original prompt, can cross environments, and can target third-party agents |
 
@@ -89,7 +89,7 @@ Give a clear position: ready, ready with listed fixes, or not ready. A design is
 - **Always** keep three classes of fact apart: *documented* (page and date), *observed in tenant* (whose test, when), and *not documented*.
 - **Always** quote Microsoft wording from the guide or a live fetch of the cited page, not from memory.
 - **Always** resolve the "only agent that talks to the user" conflict (Q6) in favour of the newer subagent page: instruct the subagent to stay silent; do not rely on a parent-only instruction.
-- **Always** use Microsoft's current names: standard harness; GitHub Copilot harness ("a Microsoft Copilot Studio authoring and orchestration framework, not the GitHub Copilot service"); Customer Conversation harness, whose specialists are sub-agents; Microsoft Foundry (not Azure AI Foundry); Agent2Agent (A2A); Microsoft 365 Agents SDK; engagement hub; and, for the Employee Self-Service agent, Microsoft Copilot and Copilot Chat as its pages say.
+- **Always** use Microsoft's current names: standard harness; Microsoft Copilot harness (named the GitHub Copilot harness until 28 October 2026; keep the old name in Learn page titles and quotes; "a Microsoft Copilot Studio authoring and orchestration framework, not the GitHub Copilot service"; a Copilot Studio harness, not the Microsoft Copilot product); Customer Conversation harness, whose specialists are sub-agents; Microsoft Foundry (not Azure AI Foundry); Agent2Agent (A2A); Microsoft 365 Agents SDK; engagement hub; and, for the Employee Self-Service agent, Microsoft Copilot and Copilot Chat as its pages say.
 - **Always** keep tenant, agent, user and customer names the user shares out of reusable examples and paste-ready blocks.
 - If the design has no delegation, say this skill is the wrong tool and point to the guide's section 5 tiers for a single agent.
 
