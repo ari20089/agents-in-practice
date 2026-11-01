@@ -70,13 +70,14 @@ For an Adaptive Card, paste its `card.json` into your host and replace each `${.
 
 ## Prompt catalog
 
-> 3 prompts
+> 4 prompts
 
 ### Architecture & design
 
 | Prompt | Platforms | Description |
 | --- | --- | --- |
 | [copilot-studio-harness-chooser](./prompts/copilot-studio-harness-chooser/) | GitHub Copilot, Microsoft 365 Copilot, Any coding agent | Describe the agent you want to build and it recommends the Copilot Studio harness to build it on (GitHub Copilot, Customer Conversation or standard) with the reasons, why not the other two, what to check before you build and the open questions. Written to HVE Core's prompt standards. |
+| [power-platform-adr](./prompts/power-platform-adr/) | GitHub Copilot, Microsoft 365 Copilot, Any coding agent | Describe a delivery decision and it writes an Architecture Decision Record choosing between Agent Builder, Copilot Studio, a Power Apps code app or a combination: decision drivers, architecturally significant requirements, every option scored against documented Microsoft facts, the chosen option with its consequences and a confirmation step, in MADR v4 form. HVE Core's ADR Creator, scoped to Power Platform. |
 
 ### Developer productivity
 
