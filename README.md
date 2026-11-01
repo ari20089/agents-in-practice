@@ -52,7 +52,7 @@ For an Adaptive Card, paste its `card.json` into your host and replace each `${.
 
 ## Skill catalog
 
-> 3 skills
+> 4 skills
 
 ### Architecture & design
 
@@ -64,6 +64,7 @@ For an Adaptive Card, paste its `card.json` into your host and replace each `${.
 
 | Skill | Platforms | Description |
 | --- | --- | --- |
+| [agent-identity-review-gate](./skills/agent-identity-review-gate/) | GitHub Copilot, Microsoft 365 Copilot, Copilot Studio, Any coding agent | A go-live gate for Copilot Studio agents with their own account (Frontier preview): who owns the account and its Entra Agent ID, what it may decide on its own when a trigger fires, how its Copilot Credits are capped and what is audited, with a Go, Go with conditions or No go verdict, the open questions and a tenant test plan. |
 | [computer-use-autonomous-agents-fs](./skills/computer-use-autonomous-agents-fs/) | GitHub Copilot, Microsoft 365 Copilot, Copilot Studio, Any coding agent | Where the line sits for agents that drive a user interface or act without a prompt in regulated financial services in the UK, EU and US: what Microsoft excludes from intended use (financial transactions, scoring in finance), what regulators have and have not published, the obligations that apply by jurisdiction, the controls on either side of the line, and a tenant test plan. |
 | [shared-agent-memory-governance](./skills/shared-agent-memory-governance/) | GitHub Copilot, Microsoft 365 Copilot, Copilot Studio, Any coding agent | Governance for the shared memory of Copilot Studio agents with an account (Frontier preview): what Microsoft documents, where Purview retention, eDiscovery and holds reach and where they don't, the open questions, and runbooks for holds, data subject requests, decommissioning and a tenant test plan. |
 
