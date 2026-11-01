@@ -59,7 +59,7 @@ For a prompt, paste its `PROMPT.md` into Copilot Chat. Its README says what it n
 
 | Skill | Platforms | Description |
 | --- | --- | --- |
-| [computer-use-autonomous-agents-fs](./skills/computer-use-autonomous-agents-fs/) | GitHub Copilot, Microsoft 365 Copilot, Copilot Studio, Any coding agent | Where the line sits for agents that drive a user interface or act without a prompt in regulated financial services: what Microsoft excludes from intended use (financial transactions, scoring in finance), what regulators have and have not published, the obligations that apply by jurisdiction, the controls on either side of the line, and a tenant test plan. |
+| [computer-use-autonomous-agents-fs](./skills/computer-use-autonomous-agents-fs/) | GitHub Copilot, Microsoft 365 Copilot, Copilot Studio, Any coding agent | Where the line sits for agents that drive a user interface or act without a prompt in regulated financial services in the UK, EU and US: what Microsoft excludes from intended use (financial transactions, scoring in finance), what regulators have and have not published, the obligations that apply by jurisdiction, the controls on either side of the line, and a tenant test plan. |
 | [shared-agent-memory-governance](./skills/shared-agent-memory-governance/) | GitHub Copilot, Microsoft 365 Copilot, Copilot Studio, Any coding agent | Governance for the shared memory of Copilot Studio agents with an account (Frontier preview): what Microsoft documents, where Purview retention, eDiscovery and holds reach and where they don't, the open questions, and runbooks for holds, data subject requests, decommissioning and a tenant test plan. |
 
 ## Prompt catalog
