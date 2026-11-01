@@ -23,7 +23,7 @@ Copy the **whole folder** so the agent gets the `references/` the instructions p
 | --- | --- |
 | GitHub Copilot in VS Code | `.github/skills/<slug>/` in your repository |
 | GitHub Copilot CLI | `.github/skills/<slug>/` or your agent's configured skills directory |
-| Copilot Studio (GitHub Copilot harness) | Add as a skill to the agent per the Copilot Studio documentation for skills |
+| Copilot Studio (Microsoft Copilot harness, formerly GitHub Copilot harness) | Add as a skill to the agent per the Copilot Studio documentation for skills |
 | Microsoft 365 Copilot / Copilot in SharePoint | Upload the folder to the site's **Agent Assets** library, **Skills** folder |
 | Any other Agent Skills host | Per the host's documentation; the folder layout is the standard one |
 
