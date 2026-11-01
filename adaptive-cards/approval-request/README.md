@@ -80,6 +80,8 @@ The flow waits until someone responds, and a card can be submitted only once: "a
 
 ### Copilot Studio: ask the user in a topic
 
+These steps are for agents on the standard harness, which the Copilot Studio pages cited here describe; topics and the **Ask with Adaptive Card** node belong to it.
+
 1. In a topic, add an **Ask with Adaptive Card** node, open **Edit adaptive card**, and paste `card.json` into the card payload editor.
 2. In the node's properties, switch to **Formula**. Copilot Studio converts the card to a Power Fx formula. Replace each `"${...}"` string, quotation marks included, with a variable, for example `Topic.RequestTitle`. The card is then a Power Fx record rather than text, so a quotation mark in a variable doesn't break it. Once you edit the formula you can't go back to JSON, so keep `card.json`.
 3. Check the output variables. Copilot Studio creates them from the card's inputs, so `comment` appears. Learn doesn't say whether the buttons' `data` fields are added too (as of 31 October 2026); if `decision`, `requestId` or `actionSubmitId` are missing, add them with **Edit Schema**.
@@ -143,7 +145,7 @@ Run these in your tenant before relying on the card. None of them have been run 
 ## Prerequisites
 
 - **Power Automate:** the Workflows app installed in Teams and allowed in the Teams admin center. The Flow bot poster isn't available in GCC, GCCH or DoD tenants; post as a user there.
-- **Copilot Studio:** an agent with a topic you can add an Ask with Adaptive Card node to.
+- **Copilot Studio:** an agent on the standard harness with a topic you can add an Ask with Adaptive Card node to.
 - **A bot or agent:** the Microsoft 365 Agents SDK or the Teams SDK, and `adaptivecards-templating` 2.3.1 or `AdaptiveCards.Templating` to fill in the bindings.
 
 ## Limitations
@@ -209,6 +211,7 @@ Other sources, read on 31 October 2026:
 | Version | Date | Comments |
 | --- | --- | --- |
 | 1.0 | October 2026 | Initial release |
+| 1.1 | November 2026 | The Copilot Studio steps say they're for the standard harness, as the cited pages do |
 
 ## Help
 
