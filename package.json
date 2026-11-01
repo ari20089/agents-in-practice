@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Skills, prompts, agent instructions and Adaptive Cards for AI agents working with Microsoft 365, Copilot Studio and GitHub Copilot",
+  "description": "Skills, prompts, agent instructions and Adaptive Cards for AI agents working with Microsoft 365, Copilot Studio, Power Platform and GitHub Copilot",
   "scripts": {
     "test": "node scripts/validate-skills.mjs && node scripts/validate-agent-instructions.mjs && node scripts/validate-prompts.mjs && node scripts/validate-adaptive-cards.mjs",
     "validate": "node scripts/validate-skills.mjs && node scripts/validate-agent-instructions.mjs && node scripts/validate-prompts.mjs && node scripts/validate-adaptive-cards.mjs",
