@@ -5,7 +5,7 @@ Fill in what you know and paste it with the agent's configuration. Items marked 
 ## The agent
 
 - **Name:**
-- **Type and tool:** declarative agent (Agent Builder / Microsoft 365 Agents Toolkit) · Copilot Studio agent (standard / GitHub Copilot harness) · custom engine agent
+- **Type and tool:** declarative agent (Agent Builder / Microsoft 365 Agents Toolkit) · Copilot Studio agent (standard / Microsoft Copilot harness, formerly GitHub Copilot harness) · custom engine agent
 - **Owners (at least two):**
 - **Support contact:**
 
