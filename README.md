@@ -80,7 +80,13 @@ For an Adaptive Card, paste its `card.json` into your host and replace each `${.
 
 ## Agent instructions catalog
 
-> 2 agent instructions items
+> 3 agent instructions items
+
+### Architecture & design
+
+| Agent | Platforms | Description |
+| --- | --- | --- |
+| [dataverse-table-designer](./agent-instructions/dataverse-table-designer/) | Microsoft 365 Copilot, Copilot Studio | Describe a business process and it proposes Dataverse tables, columns, relationships, choices and the ownership model, flags choices that should be lookups and the reverse, and returns the design as a solution checklist in build order. |
 
 ### Governance & compliance
 
