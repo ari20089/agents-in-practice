@@ -70,12 +70,13 @@ For an Adaptive Card, paste its `card.json` into your host and replace each `${.
 
 ## Prompt catalog
 
-> 1 prompt
+> 2 prompts
 
 ### Developer productivity
 
 | Prompt | Platforms | Description |
 | --- | --- | --- |
+| [code-app-pr-description](./prompts/code-app-pr-description/) | GitHub Copilot, Any coding agent | Paste it into GitHub Copilot Chat on a Power Apps code app branch and it reads the diff and writes the pull request description in the same shape every time: screens touched, data sources added, connector permissions changed, licensing impact and test evidence, each row tied to a file. |
 | [code-app-readiness-check](./prompts/code-app-readiness-check/) | GitHub Copilot, Any coding agent | Paste it into GitHub Copilot Chat on an existing React or Vue repository and it reports whether the app can become a Power Apps code app: its own sign-in, direct API calls that should go through connectors, offline and worker assumptions, and build output and routing problems, with a verdict and an ordered fix list. |
 
 ## Agent instructions catalog
