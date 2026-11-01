@@ -99,7 +99,7 @@ End with the verdict, the shortest path to **Go**, and the re-review triggers fr
 ## Rules
 
 - **Never** state whose identity a trigger runs under for an agent with an account. It is not documented; say so and point to T1.
-- **Never** describe a human approval, confirmation or "ask before running" step as available on the GitHub Copilot harness. The documented ones are on standard harness pages.
+- **Never** describe a human approval, confirmation or "ask before running" step as available on the Microsoft Copilot harness. The documented ones are on standard harness pages.
 - **Never** present a hook, instructions or Azure budget as a hard control. Hooks fail open; instructions are guidance; budgets alert only.
 - **Never** treat the Agent 365 `AIInvokeAgent` or `AIExecuteTool` events as documented for these agents (Q5), or claim the data policy trigger block applies to this harness (Q4).
 - **Never** say a block, quarantine, turn-off, **Stop usage** or Entra disable stops trigger-driven runs of an agent with an account (Q7), or that Frontier carries an SLA.
@@ -107,7 +107,7 @@ End with the verdict, the shortest path to **Go**, and the re-review triggers fr
 - **Always** keep the two Entra identities apart: a Conditional Access policy or sponsor on the agent identity does not cover the agent's user account, and the reverse.
 - **Always** keep the three classes of fact apart in the output: *documented* (page and date), *observed in tenant* (which tenant, when), and *not documented*.
 - **Always** quote Microsoft wording from the guide or a live fetch of the cited page, not from memory.
-- Use current names: **GitHub Copilot harness** (a Copilot Studio runtime, not the GitHub Copilot service; quote the harness page if asked), **Data Security Posture Management** for the current Purview experience (the classic version does not support Agent 365; the Copilot Studio audit page still reaches `CopilotInteraction` transcripts through "Data Security Posture Management (DSPM) for AI", so use that name when citing it), **Microsoft Entra admin center**, **Agent Registry**, and **data policies** for Power Platform as distinct from **Microsoft Purview Data Loss Prevention**.
+- Use current names: **Microsoft Copilot harness** (named the GitHub Copilot harness until 28 October 2026; keep the old name in Learn page titles and quotes, which still use it; a Copilot Studio runtime, not the GitHub Copilot service; quote the harness page if asked), **Data Security Posture Management** for the current Purview experience (the classic version does not support Agent 365; the Copilot Studio audit page still reaches `CopilotInteraction` transcripts through "Data Security Posture Management (DSPM) for AI", so use that name when citing it), **Microsoft Entra admin center**, **Agent Registry**, and **data policies** for Power Platform as distinct from **Microsoft Purview Data Loss Prevention**.
 - **Always** refer to role-holders by role in anything generated for reuse; keep tenant, agent, user and environment names out of examples.
 - If the agent is already published and A4 fails, say the identity cannot be corrected in the preview and that the options are to accept it or to build a new agent.
 

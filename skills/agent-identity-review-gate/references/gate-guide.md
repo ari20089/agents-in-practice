@@ -2,7 +2,7 @@
 
 **Owners, decision rights, credit caps and audit before an agent with its own identity goes live**
 
-> **Status:** Written 31 October 2026 against Microsoft Learn pages re-read that day. Agent accounts are a Frontier preview; triggers, hooks and sharing on the GitHub Copilot harness are in preview; several Entra Agent ID controls are in preview. Treat every statement below as "true of the docs on that date" and re-check the sources in the last section before you rely on it.
+> **Status:** Written 31 October 2026 against Microsoft Learn pages re-read that day. Agent accounts are a Frontier preview; triggers, hooks and sharing on the Microsoft Copilot harness are in preview; several Entra Agent ID controls are in preview. Treat every statement below as "true of the docs on that date" and re-check the sources in the last section before you rely on it.
 
 ## Who this is for
 
@@ -26,14 +26,14 @@
 | Object | Created when | Managed in | Documented accountability |
 |---|---|---|---|
 | **Agent account** (Entra user-like account with mailbox, Teams presence, directory entry, one **Microsoft 365 Frontier for AI Teammates** licence) | First publish | Microsoft 365 admin center (Agent Registry), Microsoft Entra admin center | "reports to" the maker; alias prefix is the maker's; neither changeable in preview |
-| **Entra Agent ID** (service principal with "Agent" subtype) | First publish on the GitHub Copilot harness ("Copilot Studio doesn't provision the Entra Agent ID when you save the agent as a draft") | Microsoft Entra admin center | Copilot Studio adds "the agent owner ... as a sponsor with limited permissions compared to full owners" |
+| **Entra Agent ID** (service principal with "Agent" subtype) | First publish on the Microsoft Copilot harness ("Copilot Studio doesn't provision the Entra Agent ID when you save the agent as a draft") | Microsoft Entra admin center | Copilot Studio adds "the agent owner ... as a sponsor with limited permissions compared to full owners" |
 | **Copilot Studio agent** (instructions, triggers, tools, hooks, knowledge, shared memory) | Creation | Copilot Studio, Power Platform admin center | Agent owner in Copilot Studio; reassignable by an admin in the Microsoft 365 admin center |
 
 Facts that frame the review (agent-account page, 15 Oct 2026, unless noted):
 
 - **Prerequisites.** Tenant enrolled in Frontier with the Agent 365 terms accepted; environment on the **Early** release cycle; maker on Microsoft 365 E5 with the Agent 365 add-on, or Microsoft 365 E7; a free Frontier for AI Teammates licence at publish ("If no ... license is available in your tenant when you publish, publishing fails"). After enrolment, the Agent 365 Frontier page tells admins to "confirm you see 25 active licenses for Microsoft 365 Frontier for AI Teammates"; every agent with an account in the tenant draws from that pool. Enrolment itself needs "at least one license of Microsoft E7" and "Only a global admin for the tenant can enable Agent 365 Frontier" (*Preview Agent 365 features through the Frontier program*, 15 Oct 2026).
 - **Terms and support.** Frontier previews "are subject to the existing preview terms of your customer agreements." The Frontier FAQ adds: "There is no specific Service Level Agreement associated with Microsoft Agent 365 Frontier. Frontier should not be used for product evaluations ... Microsoft reserves the right to remove Frontier feature support at any time."
-- **The harness name.** Agents with accounts run on the **GitHub Copilot harness**. No page says so in those words: the agent-account page's billing note links the GitHub Copilot harness billing page, and the identities page times Entra Agent ID provisioning for this harness at first publish, matching "When you publish it, the agent is provisioned with ... Microsoft Entra Agent IDs". Treat it as inferred. The harness "is a Microsoft Copilot Studio authoring and orchestration framework, not the GitHub Copilot service ... customer data isn't sent to or processed by the GitHub Copilot service" (*Harnesses in Copilot Studio*, 19 Oct 2026). Reviewers often stop on the name; quote this line.
+- **The harness name.** Agents with accounts run on the **Microsoft Copilot harness**, called the GitHub Copilot harness until Microsoft renamed it on 28 October 2026 (*The GitHub Copilot harness is now the Microsoft Copilot harness*); Learn pages still use the old name. No page says agents with accounts run on it in those words: the agent-account page's billing note links the harness's billing page, and the identities page times Entra Agent ID provisioning for this harness at first publish, matching "When you publish it, the agent is provisioned with ... Microsoft Entra Agent IDs". Treat it as inferred. The harness "is a Microsoft Copilot Studio authoring and orchestration framework, not the GitHub Copilot service ... customer data isn't sent to or processed by the GitHub Copilot service" (*Harnesses in Copilot Studio*, 19 Oct 2026). Reviewers often stop on the name; quote this line.
 - **Two admin switches.** The Copilot Studio (Frontier) agent template activation in the Microsoft 365 admin center, where "Only the users you select at this step and members of the selected groups can create agents with accounts", and the **Agent accounts** environment setting in the Power Platform admin center. Activation of an agent template in general "requires AI admin approval", and the wizard includes **Apply a template** (the default template "automatically assigns the license during activation") and **Review permissions and grant admin consent** (*Governance and Lifecycle actions*, 23 Sep 2026); which of these the Copilot Studio (Frontier) template uses is Q11.
 - **Identity cannot be reshaped after publish.** "During this preview, you can't change the maker-based alias prefix or reporting relationship. You also can't change the email address for your agent after you publish the agent. Plan your agent's identity before publishing."
 - **Two identities in Entra.** "Microsoft Agent 365 provisions and governs agent accounts ... Copilot Studio also creates a Microsoft Entra Agent ID that admins manage separately."
@@ -41,7 +41,7 @@ Facts that frame the review (agent-account page, 15 Oct 2026, unless noted):
 - **Hard stops.** "Agents with an account can't read protected documents." The agent "doesn't respond to anyone outside its tenant", responds only in email conversations "with up to 250 people", and cannot co-author or make targeted edits to existing documents.
 - **Labels, precisely.** Purview's Agent 365 page (1 May 2026) explains "protected": for an agent instance to read an encrypted file, the label's encryption "must explicitly grant the agent instance VIEW and EXTRACT usage rights. For example, a sensitivity label that's configured for **Add all users and groups in your organization** or **Add any authenticated users** wouldn't be sufficient." Files must also be explicitly shared with the agent. And: "Newly created content from Agent 365 doesn't inherit sensitivity labels from the source items. As a result, that content isn't automatically labeled or encrypted." A summary the agent writes from a Confidential source is unlabelled unless something else labels it.
 - **Shared memory.** One memory per agent, shared by every user, "no privacy boundary between users", no opt-out; "If no one interacts with the agent for 28 days, the system automatically deletes its shared memories"; "Everyone who interacts with the agent can view or delete its saved shared memories" (*FAQ for agent accounts*, 14 Oct 2026). Memory governance (retention, holds, eDiscovery, deletion) is a separate review; see section 7, criterion F1.
-- **Two pages disagree on timing.** *App registration, agent identities, and authentication* (21 Aug 2026) says the GitHub Copilot harness provisions the Entra Agent ID "when you publish the agent for the first time", and later, in its quota section, that "The agent identity is provisioned when the agent is **created**." Treat first publish as the documented answer for this harness and note the conflict (Q10).
+- **Two pages disagree on timing.** *App registration, agent identities, and authentication* (21 Aug 2026) says the Microsoft Copilot harness provisions the Entra Agent ID "when you publish the agent for the first time", and later, in its quota section, that "The agent identity is provisioned when the agent is **created**." Treat first publish as the documented answer for this harness and note the conflict (Q10).
 
 ## 2. Owners and accountability
 
@@ -129,11 +129,11 @@ From *Conditional Access for Agents* and *Secure agent users with Conditional Ac
 
 Two different controls share the "DLP" label. Power Platform **data policies** decide which connectors and features an agent may use. **Microsoft Purview Data Loss Prevention** inspects content the agent sends and receives.
 
-From *Configure data policies for agents* (1 Oct 2026), which has no "applies to" harness scope note (its one harness remark separates Azure Bot Service skills on the standard harness from agentic skills on the GitHub Copilot harness):
+From *Configure data policies for agents* (1 Oct 2026), which has no "applies to" harness scope note (its one harness remark separates Azure Bot Service skills on the standard harness from agentic skills on the Microsoft Copilot harness):
 
 - Blocking a connector removes it as a tool; "Blocking Power Platform connectors also blocks access to tools in connected MCP servers."
 - Block the **HTTP** connector, or use endpoint filtering, to stop HTTP calls. The page's HTTP section is about the **HTTP request** node in topics; whether the block also stops REST API tools on this harness is not stated.
-- "To prevent agent makers from adding event triggers ... configure a data policy that blocks the **Microsoft Copilot Studio** connector." The page links to the standard-harness trigger article; whether the block applies to GitHub Copilot harness triggers is not stated (Q4).
+- "To prevent agent makers from adding event triggers ... configure a data policy that blocks the **Microsoft Copilot Studio** connector." The page links to the standard-harness trigger article; whether the block applies to Microsoft Copilot harness triggers is not stated (Q4).
 - The identities page says the connector runtime "revalidates that the agent can call the connector under your tenant's advanced connector policies and data policies" at run time.
 
 From *Use Microsoft Purview to manage data security & compliance for Microsoft Agent 365* (1 May 2026):
@@ -185,7 +185,7 @@ Pick one primary stop path, name who holds it, and prove it on a test agent (T11
 ### 4.1 How usage is billed
 
 - "For experiences powered by the GitHub Copilot harness, Copilot Credits are charged for large language model (LLM) tokens, tools (including knowledge and MCPs), and the harness itself." "Unlike the standard harness, which starts billing after publish, the GitHub Copilot harness charges credits from the moment you start building", including previewing, testing and evaluations. (*Overview of usage-based billing*, 6 Oct 2026.)
-- GitHub Copilot harness agents: covered by a Microsoft 365 Copilot licence? "No". "Billed for all usage. Creation and runtime activities consume Copilot Credits regardless of the user's license." (*Manage costs for agents powered by the GitHub Copilot harness*, 28 Oct 2026.)
+- Microsoft Copilot harness agents (the page's "GitHub Copilot harness agents" row): covered by a Microsoft 365 Copilot licence? "No". "Billed for all usage. Creation and runtime activities consume Copilot Credits regardless of the user's license." (*Manage costs for agents powered by the GitHub Copilot harness*, 28 Oct 2026.)
 - "Copilot Credits are charged to the environment where the agent runs ... and not to the individual makers or users who run agents." For shared autonomous agents, "Each end user's autonomous agent usage is totaled and billed through the underlying environment".
 - "Account licensing and usage-based service charges are separate." No page says the Frontier for AI Teammates licence includes credits.
 - Rates for this harness are published only as a diagram of ranges by task complexity; use the Copilot Credit Estimator and pilot consumption, not a rate quoted from memory.
@@ -212,7 +212,7 @@ Pick one primary stop path, name who holds it, and prove it on a test agent (T11
 
 - Per agent: the agent's **Monitor** tab ("the final, source-of-truth number used for billing"), and the **Manage Agents** page (month-to-date billed credits, limit, status **Within limit**, **Nearing limit** or **Over limit**).
 - Monitor "shows billed credits only, so it can show less consumption than" the downloadable reports, which include non-billed credits and can be split by environment or agent, and by product feature, channel, model and tool; a per-user split is documented only "For agents powered by the standard harness".
-- To find these agents: Power Platform admin center > **Manage** > **Copilot Studio**, filter **Harness** to **GitHub Copilot**. "**Harness** is currently a user interface column only." Licensing reports may call them "Process Agents".
+- To find these agents: Power Platform admin center > **Manage** > **Copilot Studio**, filter **Harness** to **GitHub Copilot**, the value the page documents; it may change as the product picks up the new name. "**Harness** is currently a user interface column only." Licensing reports may call them "Process Agents".
 
 ### 4.5 Sizing a cap
 
@@ -260,7 +260,7 @@ Microsoft's guidance is to "Govern at the environment level, not just the publis
 | Q1 | Under which identity do a trigger's connection and the resulting run act when the agent has an account: the agent account, the maker, or each user? | None. The trigger page describes maker credentials (**Activate for myself**) and user credentials (**Share with others**) only. |
 | Q2 | Does reassigning the owner in the Microsoft 365 admin center, or the maker leaving, change the alias, the "reports to" relationship or the Entra Agent ID sponsor? | None. Alias and reporting relationship are documented as unchangeable in preview. |
 | Q3 | Who is sponsor, owner or manager on the agent's user account, and does a sponsor added in Entra survive a republish? | None |
-| Q4 | Does blocking the **Microsoft Copilot Studio** connector in a data policy stop triggers on GitHub Copilot harness agents? | None; the data policy page links to the standard-harness trigger article |
+| Q4 | Does blocking the **Microsoft Copilot Studio** connector in a data policy stop triggers on Microsoft Copilot harness agents? | None; the data policy page links to the standard-harness trigger article |
 | Q5 | Do Copilot Studio agents with accounts emit the Agent 365 `AIInvokeAgent` and `AIExecuteTool` audit events, and does a trigger run with no signed-in user produce a `CopilotInteraction` event? | None. Agent 365 provisions the account; the Purview Agent 365 page predates agent accounts; Copilot Studio audit needs a licensed user. |
 | Q6 | What happens when an agent reaches a per-agent limit in a Microsoft 365 admin center resource-based spending policy: stop, or alert only? | None |
 | Q7 | Which stop path (block, quarantine, turn off, **Stop usage**, disabling the Entra Agent ID) stops trigger-driven runs of an agent with an account, what happens to a run in progress, and are events received while stopped dropped or replayed on restart? | None. Each path is documented for chat availability or tokens, not for triggers. |
@@ -463,7 +463,7 @@ Decline, or keep the agent in its pilot, when any of these is true:
 ## 11. What to watch
 
 - **Add triggers to an agent (GitHub Copilot)** and **Give your agent an account**: any sentence on trigger identity for agents with accounts answers Q1.
-- **Configure data policies for agents**: a harness note or a GitHub Copilot harness trigger example answers Q4.
+- **Configure data policies for agents**: a harness note or a trigger example for this harness answers Q4.
 - **Audit log activities** and the Purview Agent 365 page: a statement that Copilot Studio agents with accounts emit Agent 365 events answers Q5.
 - **Manage Copilot Studio costs in the Microsoft 365 admin center**: behaviour at the per-agent limit answers Q6.
 - **Hooks** and the tools pages for this harness: a human approval or confirmation setting would change section 3.5 and class D3.
@@ -512,3 +512,7 @@ Microsoft documentation, with the date shown on the page when retrieved on 31 Oc
 - [Agent Registry in Microsoft 365 admin center](https://learn.microsoft.com/en-us/microsoft-agent-365/admin/agent-registry-overview), 21 Sep 2026
 - [Discover, create, and onboard agents with their own identity (preview)](https://learn.microsoft.com/en-us/microsoft-agent-365/onboard), 25 May 2026
 - [Use the Power Platform API to quarantine agents](https://learn.microsoft.com/en-us/microsoft-copilot-studio/admin-api-quarantine), 14 Jul 2026
+
+Other sources, read on 1 November 2026:
+
+- [The GitHub Copilot harness is now the Microsoft Copilot harness](https://www.microsoft.com/en-us/copilot/blog/copilot-studio/the-github-copilot-harness-in-copilot-studio-is-now-the-microsoft-copilot-harness/), Microsoft Copilot Studio blog, 28 Oct 2026

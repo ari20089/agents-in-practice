@@ -2,12 +2,12 @@
   "name": "Agent Identity Review Gate",
   "description": "Copilot Studio agent accounts, with their own Entra Agent ID, shared memory and event triggers, are in preview. A go-live gate for one: who owns it, what it may decide on its own, how its Copilot Credits are capped and what is audited, with a Go, Go with conditions or No go verdict, the evidence behind it, the open questions and a tenant test plan.",
   "platforms": ["GitHub Copilot", "Microsoft 365 Copilot", "Copilot Studio", "Any coding agent"],
-  "tags": ["copilot-studio", "agent-accounts", "entra-agent-id", "agent-365", "triggers", "copilot-credits", "audit", "governance", "go-live", "frontier"],
+  "tags": ["copilot-studio", "agent-accounts", "entra-agent-id", "agent-365", "triggers", "microsoft-copilot-harness", "copilot-credits", "audit", "governance", "go-live", "frontier"],
   "subcategory": "Governance & compliance",
   "author": "Arindam Choudhury",
   "authorGithub": "ari20089",
   "authorUrl": "https://www.linkedin.com/in/arindam-choudhury/",
-  "version": "1.0",
+  "version": "1.1",
   "createdAt": "2026-10-31",
   "updatedAt": "2026-11-01"
 }
