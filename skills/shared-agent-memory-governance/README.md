@@ -40,9 +40,10 @@ The skill works through six steps:
 ## Limitations
 
 - Written against **Frontier preview** documentation: the agent-account pages are dated 14 and 15 October 2026, and every source was re-read on 30 October 2026. Agent accounts and shared memory are prerelease and Microsoft's pages carry the "subject to change" banner.
+- Microsoft renamed the GitHub Copilot harness to the Microsoft Copilot harness on 28 October 2026, and says the product will show the new name "over the coming weeks". As of 1 November 2026 the Learn pages cited here still use the old name, so the skill uses the new name and keeps the old one in page titles and quotes.
 - The Purview pages for Copilot Studio and Agent 365 are dated May 2026 and predate agent accounts; a revision there would change the coverage matrix.
 - One source (Message Center notice MC1478965) was read from a public archive because the Message Center requires tenant sign-in.
-- The statement that deleting an agent deletes its Entra Agent ID comes from a Microsoft page scoped to the standard harness; agents with accounts run on the GitHub Copilot harness. The skill reports it as inferred, not documented.
+- The statement that deleting an agent deletes its Entra Agent ID comes from a Microsoft page scoped to the standard harness; agents with accounts run on the Microsoft Copilot harness. The skill reports it as inferred, not documented.
 - Purview terminology moves: the skill uses the current names (Data Security Posture Management, unified eDiscovery with cases and data sources, Agent Registry) and says so when an older name is still common.
 - This is not legal advice. Verify against the cited pages before relying on the output for a compliance, legal or regulatory decision.
 
@@ -67,6 +68,7 @@ Microsoft documentation, with the date shown on the page when retrieved on 30 Oc
 - [Learn about eDiscovery](https://learn.microsoft.com/en-us/purview/edisc), 29 Jun 2026
 - [MC1478965: Microsoft Purview Data Lifecycle Management, retention for Copilot memory](https://mc.merill.net/message/MC1478965) (archived copy), published 24 Sep 2026, updated 22 Oct 2026
 - [Delegate shared business processes to agents that are more persistent and proactive with Microsoft Copilot Studio](https://www.microsoft.com/en-us/copilot/blog/copilot-studio/delegate-shared-business-processes-to-agents-that-are-more-persistent-and-proactive-with-microsoft-copilot-studio/), Microsoft Copilot Blog, 15 Oct 2026
+- [The GitHub Copilot harness is now the Microsoft Copilot harness](https://www.microsoft.com/en-us/copilot/blog/copilot-studio/the-github-copilot-harness-in-copilot-studio-is-now-the-microsoft-copilot-harness/), Microsoft Copilot Studio blog, 28 Oct 2026
 
 Commentary that identified parts of the gap before this skill:
 
@@ -88,6 +90,7 @@ Every Learn page above still showed the same date on 31 October 2026. The agent 
 | Version | Date | Comments |
 | --- | --- | --- |
 | 1.0 | October 2026 | Initial release |
+| 1.1 | November 2026 | The GitHub Copilot harness is now the Microsoft Copilot harness; the skill uses the new name and keeps the old one in Learn page titles and quotes. The gallery image no longer calls per-user memory a "standard agent" feature: it belongs to the Microsoft Copilot harness |
 
 ## Help
 
