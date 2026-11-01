@@ -1,8 +1,8 @@
 {
   "name": "Computer-Using and Autonomous Agents in Regulated FS",
-  "description": "Where the line sits for agents that drive a user interface or act without a prompt in banks, insurers and investment firms: what Microsoft excludes from intended use, what regulators have and have not published, the controls on either side of the line, and a tenant test plan.",
+  "description": "Where the line sits for agents that drive a user interface or act without a prompt in UK, EU and US banks, insurers and investment firms: what Microsoft excludes from intended use, what regulators have and have not published, the obligations by jurisdiction, the controls on either side of the line, and a tenant test plan.",
   "platforms": ["GitHub Copilot", "Microsoft 365 Copilot", "Copilot Studio", "Any coding agent"],
-  "tags": ["copilot-studio", "computer-use", "autonomous-agents", "event-triggers", "financial-services", "regulatory", "sm-cr", "eu-ai-act", "governance", "cowork"],
+  "tags": ["copilot-studio", "computer-use", "autonomous-agents", "event-triggers", "financial-services", "regulatory", "sm-cr", "finra", "eu-ai-act", "gdpr", "dora", "governance", "cowork"],
   "subcategory": "Governance & compliance",
   "author": "Arindam Choudhury",
   "authorGithub": "ari20089",
