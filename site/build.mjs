@@ -24,7 +24,7 @@ const RAW = `https://raw.githubusercontent.com/${OWNER}/${REPO_NAME}/main`;
 
 const SITE = {
   title: "Agents in Practice",
-  tagline: "Hands-on skills, prompts, agent instructions and Adaptive Cards for AI agents working with Microsoft 365, Copilot Studio and GitHub Copilot.",
+  tagline: "Skills, Prompts, Agent Instructions and Adaptive Cards for Microsoft 365 Copilot, Copilot Studio, Power Automate, Teams and GitHub Copilot. Every item cites the Microsoft Learn pages it relies on, with their dates.",
   author: { name: "Arindam Choudhury", github: "https://github.com/ari20089", linkedin: "https://www.linkedin.com/in/arindam-choudhury/" },
 };
 
@@ -310,8 +310,8 @@ function indexPage(items, catalog) {
 
 
 <section id="gallery" class="gallery">
-  <img class="deco deco-left" src="assets/deco-left.svg" alt="" aria-hidden="true" width="420" height="1100">
-  <img class="deco deco-right" src="assets/deco-right.svg" alt="" aria-hidden="true" width="420" height="1100">
+  <div class="deco-rail deco-rail-left" aria-hidden="true"><img class="deco" src="assets/deco-left.svg" alt="" width="420" height="1100"></div>
+  <div class="deco-rail deco-rail-right" aria-hidden="true"><img class="deco" src="assets/deco-right.svg" alt="" width="420" height="1100"></div>
   <div class="container">
     <h2 class="visually-hidden">Browse the catalog</h2>
 
