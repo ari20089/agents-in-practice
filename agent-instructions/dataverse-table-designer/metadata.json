@@ -1,0 +1,13 @@
+{
+  "name": "Dataverse Table Designer",
+  "description": "Agent instructions for a data model designer: describe a business process and it proposes Dataverse tables, columns, relationships, choices and the ownership model, flags choices that should be lookups and the reverse, and returns the design as a solution checklist in build order.",
+  "platforms": ["Microsoft 365 Copilot", "Copilot Studio"],
+  "tags": ["dataverse", "data-modeling", "power-apps", "power-platform", "tables", "relationships", "choices", "lookups", "security", "solutions", "copilot-studio", "agent-builder"],
+  "subcategory": "Architecture & design",
+  "author": "Arindam Choudhury",
+  "authorGithub": "ari20089",
+  "authorUrl": "https://www.linkedin.com/in/arindam-choudhury/",
+  "version": "1.0",
+  "createdAt": "2026-11-01",
+  "updatedAt": "2026-11-01"
+}

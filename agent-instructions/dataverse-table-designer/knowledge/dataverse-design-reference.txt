@@ -1,0 +1,318 @@
+# Dataverse design reference
+
+**Reference data for the Dataverse Table Designer: table types, ownership, column types, choices and lookups, relationship behaviours, security, solutions, decisions that can't be undone, and sources**
+
+> **Status:** Compiled 1 November 2026 from the Microsoft Learn pages listed under Sources, each read that day. Dataverse changes often; each statement is true of the documentation on that date. Rule IDs (CL, IR, OW) and the thresholds in section 5 are this designer's rubric, not Microsoft guidance. Where a Learn page is quoted, the page name is given; its date is in Sources.
+
+## The short version
+
+1. **Reuse before you create.** "We recommend that you look for and use the provided standard tables, columns, and table relationships when they make sense for your organization." A standard table can be renamed: "it's common for people to change the display name of the Account table to Company" (Tables and metadata).
+2. **Some decisions are permanent.** Table ownership, schema names and column data types can't be changed after save (section 10). A wrong choice means a new table or column and a data migration.
+3. **Choices are categories; lookups are things.** "Use choice columns to define categories for data. Don't use choice columns to select categories that actually represent separate items of data." Microsoft's example: a manufacturer list belongs in a table with a lookup, not a choice (Tables and metadata).
+4. **A lookup shows the related row's primary name to anyone who can read the row holding the lookup**, "even if they don't have permission to view the related record. Don't store sensitive information in a primary name column." (Types of columns)
+5. **Build in your own solution with your own publisher.** "Because every solution has a publisher, you should create your own publisher rather than use the default." (Solution concepts)
+
+## 1. Table types
+
+Source: Types of tables; Create and edit tables using Power Apps.
+
+| Type | Use it when | Notes |
+|---|---|---|
+| Standard | Most tables. "Use standard for most tables." | Includes the out-of-box tables such as account, contact, task and user |
+| Activity | Rows with "a subject, start time, stop time, due date, and duration"; anything that "can be thought of as any action for which an entry can be made on a calendar" | Activity tables are tables "that only a user or team can own". No primary column choice: "All activity tables have a Primary Field set to Subject". Type and "Display in activity menus" can't change after save |
+| Virtual | Data "populated with data from an external source outside of Dataverse", read at runtime | Rows look like regular rows in apps. Always organization owned. See the limits below |
+| Elastic | "Very large data volumes with high throughput, storage, and low latency requirements"; "a very large dataset in excess of tens of millions of rows" | Powered by Azure Cosmos DB. See the limits below |
+
+Elastic table limits (Create and edit elastic tables):
+
+- Ownership: "Either user or organization owned". Filtered ownership isn't an option. Column-level security can be set (the page calls it "Field level security").
+- Relationships supported: "One-to-many" and "Many-to-one when the N table is a standard table".
+- No filters on related tables in views or queries: "we recommend that you denormalize columns from related tables".
+- "Elastic tables don't support multi-record transactions." An error in a post-operation plug-in "won't roll back the created record".
+- Table features not supported: business rules; charts; business process flows; many-to-many (N:N) relationships to standard tables; alternate key; duplicate detection; calculated and rollup columns; currency columns; column comparison in queries; table sharing; composite indexes; cascade operations (Delete, Reparent, Assign, Share, Unshare); ordering on lookup columns; several aggregate queries; table connections; access teams; queues; attachment; import and export of table data.
+- Column data types not available: Currency; Formula; Whole number formats other than None (Duration, Language code, Time zone); "Lookup based on the Customer option".
+- Time to live: a column created automatically; rows are deleted after the period in seconds since last modified.
+
+Virtual table limits (Get started with virtual tables; Create and edit virtual tables; Work with alternate keys):
+
+- "Only organization-owned tables are supported. The security filtering applied to user-owned tables isn't supported." "Virtual tables are organization owned and don't support the row-level Dataverse security concepts. We recommend that you implement your own security model for the external data source."
+- "Field-level security isn't supported." "Auditing isn't supported."
+- "A column on a virtual table can't be calculated or rollup."
+- "Alternate keys aren't supported in virtual tables because the system can't enforce uniqueness when the data is on another system."
+- "Once created, a virtual table can't be changed to be a standard (nonvirtual) table. The reverse is also true."
+
+Enabling activities on a table ("Creating a new activity" property): "Once enabled this setting can't be disabled." (Types of tables)
+
+## 2. Ownership
+
+Source: Types of tables; Types of columns; Ownership-based security in Microsoft Dataverse; Security roles and privileges for Dataverse; Filtered record ownership; Microsoft Dataverse teams management.
+
+"When you create a custom table the ownership options are User or team, Organization, or Filtered owned. Once a table is created, the ownership type can't be changed." "If you later determine that your custom table must be of a different type, you need to delete it and create a new one." (Types of tables)
+
+| Ownership | What it means | Privilege access levels | Assign and share |
+|---|---|---|---|
+| User or team | "Data belongs to a user or a team. Actions that can be performed on these rows can be controlled on a user level." | "Most privileges support user, business unit, parent-child business unit, and organization access levels." | Yes: Assign and Share are privileges |
+| Organization | "Data belongs to the organization. Access to the data is controlled at the organization level." | "A privilege either applies to all records or doesn't apply." | No Owner column, so no record owner: the Owner lookup exists on user or team owned tables ("All team or user-owned tables have one of these", Types of columns) |
+| Filtered (preview) | "Data access is granted based on filter privileges, allowing users to create or read records based on the value of a column." | Filter-based privileges defined with FetchXML record filters in security roles | No: "records can't be owned by an individual. Since there's no record owner, these records can't be shared or assigned to an individual." |
+
+Filtered record ownership is "prerelease documentation" and "a preview feature", and Microsoft says preview features "aren't meant for production use". Filter-based privileges can also be applied to "existing user-owned or organization-owned tables" and that "retains the underlying ownership model" (Ownership-based security).
+
+OW rubric (this designer's):
+
+| ID | Signal in the process | Suggest |
+|---|---|---|
+| OW1 | Rows belong to a person or a team; people see "their own" or "their team's" rows; rows are reassigned or shared | User or team |
+| OW2 | Reference or configuration data everyone with access reads alike (rates, regions, settings) | Organization |
+| OW3 | Access depends on a column value (region, country, department) and no row has a natural owner | Filtered, marked preview, with User or team as the production alternative |
+| OW4 | Unclear who sees whose rows | Ask before proposing; default to User or team because it supports the most access levels, and say why |
+| OW5 | Virtual table | Organization, always; row-level security belongs in the external source |
+| OW6 | Elastic table | User or team, or Organization; never Filtered |
+
+Security model facts (Ownership-based security; Security roles and privileges; Microsoft Dataverse teams management):
+
+- "Security privileges are cumulative. A user receives the broadest access granted by all their roles and team memberships."
+- "Every Dataverse database has one root business unit." Child business units divide "users and data into smaller security boundaries". "By default, the user's business unit owns records that the user creates."
+- Record ownership across business units (matrix data access) lets a user hold roles from several business units and pick the owning business unit when creating a record.
+- Lookups need two privileges besides Read (Security roles and privileges). Append is "Required to associate the current record with another record" (on the child, the table holding the lookup). Append To is "Required to associate a record with the current record" (on the parent). "For many-to-many relationships, a user must have Append privilege for both tables being associated or disassociated."
+- Owner team: "owns records and has security roles assigned to the team". Access team: "doesn't own records and doesn't have security roles assigned"; rows are shared with it (Read, Write, Append). Microsoft Entra group team: "can own records and can have security roles assigned", with members derived from the group.
+
+## 3. Column types
+
+Source: Types of columns; Create and edit columns in Dataverse using Power Apps.
+
+| Need | Column type | Facts |
+|---|---|---|
+| Short text | Text | Default 100, maximum 4,000 characters |
+| Longer text | Text Area (4,000) or Multiline Text | Multiline Text: default 150, maximum 1,048,576 characters |
+| Generated reference number | Autonumber | "A customizable combination of numbers and letters that is automatically generated by the server whenever the row is created." Text columns can be converted to autonumber. The seed "is not included in a solution" (Autonumber columns) |
+| Count or integer | Whole Number | |
+| Exact decimals, equality queries | Decimal Number | "Use decimals when you need to provide reports that require very accurate calculations, or if you typically use queries that look for values that are equal or not equal to another value." "Canvas apps don't currently support decimal type numbers." |
+| Fractions, range queries | Floating Point Number | "Unless you require the most accurate possible calculations, floating point numbers should work for you." |
+| Money | Currency | The first currency column on a table adds a Currency lookup and an Exchange Rate column; each currency column adds a `_Base` column |
+| Very large integers | Big | "Big and BigInt aren't supported in canvas and model-driven apps." |
+| Yes or no | Yes/No | "Select Choice > Yes/No if you want a two option single select choice field." (Create a choice) |
+| Date | Date Only or Date and Time | Pick a behaviour too; see Date and time behaviour below |
+| Category, one value | Choice | See section 4 |
+| Categories, several values | Choices (multi-select) | See section 4 limits |
+| Reference to a row | Lookup | Creates a many-to-one relationship. Types: Simple, Customer (account or contact), Owner, PartyList (system only), Regarding, Custom multi-table ("powerapps.com doesn't yet allow you to create this type of lookup") |
+| Reference to one of several tables | Custom multi-table lookup | "You can create and modify custom multi-table lookups through the SDK for .NET or Dataverse Web API." "Each table requires a separate one-to-many relationship." (Use multi-table lookup columns) A build step for a developer, not the maker portal |
+| Picture | Image | "Each table can have one primary image column." Under 30 MB |
+| Document | File | "The default Maximum file size is 32 MB, and the largest size you can set by using the designer is 131,072 KB (131 MB)." "You can't change the maximum file size after you save it." "File columns don't work with business process flows, business rules, charts, rollup columns, or calculated columns." |
+| Computed value | Formula, Calculated or Rollup | See Computed columns below |
+| Lifecycle state | Status and Status Reason (system) | Custom tables have only Active and Inactive status; Status Reason options can be added per status, and transitions can be limited (Define status reason transitions) |
+
+Date and time behaviour (Behavior and format of the date and time column):
+
+| Behaviour | Use it for | Facts |
+|---|---|---|
+| User local | Moments in time seen in each user's time zone, such as a meeting start | "This is the default behavior for the Date and time format." "Avoid Date only format with User local behavior. Users in different time zones might see a different date" |
+| Time zone independent | Times that read the same everywhere: "such as hotel check-in times" | "No time zone conversion." "This is the default behavior for the Date only format." |
+| Date only | Dates with no time of day: "such as birthdays or anniversaries" | The time portion "isn't stored at all" |
+
+Changing behaviour: "you can change the behavior of existing custom date columns from User local to Date only or Time zone independent. This is a one-time change." Existing values "remain in the database in the UTC time zone format", so converting them may need a developer.
+
+Computed columns (Work with formula columns; Automate calculations by defining calculated columns; Define rollup columns that aggregate values):
+
+| Kind | When it's calculated | Facts |
+|---|---|---|
+| Formula (Power Fx) | Returns "values during fetch operations" (Create and edit columns) | "The formula that you enter determines the column type. You can't change a column type after the column is created." "You can't trigger workflows or plug-ins on formula columns." |
+| Calculated | "available in real time" in forms, views, charts and reports | "Saved queries, charts, and visualizations can have a maximum of 50 unique calculated columns." |
+| Rollup | "The rollups are calculated by scheduled system jobs that run asynchronously in the background." | "By default, you can define a maximum of 200 rollup columns for the environment and up to 50 rollup columns per table." Online refresh is limited to 50,000 related rows |
+
+"We don't recommend using calculated columns in formula columns and vice versa." A general preference between formula and calculated columns isn't documented on these pages.
+
+Requirement level: "When a row is saved programmatically using web services, only the SystemRequired columns are enforced." Business required is enforced by the apps. Microsoft also warns: "People might enter incorrect data simply to save the row." (Create and edit columns)
+
+Columns per table: "if you find yourself planning to add hundreds of custom columns to a table, you should consider if this is the best design." (Tables and metadata)
+
+Primary column: every non-activity table has one; it "is used by lookup fields when establishing relationships with other tables." (Create and edit tables)
+
+Auditing: "some columns aren't enabled by default such as those with data types of lookup, but those columns can be enabled." (Create and edit tables)
+
+## 4. Choices
+
+Source: Create a choice; Create and edit choice columns overview; Types of columns; Tables and metadata.
+
+- Choice is single select; Choices is multi-select. Formerly "option sets", sometimes "picklists".
+- Global choice: options "defined elsewhere (globally), which can be made available to other choice columns". Local choice: options "only available within the choice column".
+- "Global choice columns are useful when you have a standard set of categories that can apply to more than one column." "If you know that the set of options will only be used in one place, use a local choice."
+- Option values: "a number generated for each Value automatically. We recommend that you not change this." The number comes from the publisher's choice value prefix (Create a solution).
+- Hidden options are a display setting only: "The Hidden property should never be used as a secure way to prevent users from viewing or editing column values."
+- Size: "Your environment can support thousands of options within a choice column, but you shouldn't consider this as the upper limit. Usability studies show that people have trouble using a system where a drop-down control provides large numbers of options."
+- Multi-select choices can't be used with "Workflows, business process flows, actions, dialogs, business rules, charts, rollup columns, or calculated columns" or with reports, SLAs and routing rules (the last two where the table requires Dynamics 365 Customer Service) (Types of columns).
+
+## 5. Choice or lookup (CL rubric)
+
+Microsoft's rule (Tables and metadata): choices "define categories for data"; separate items of data belong in a table with a lookup. The signals and thresholds below are this designer's rubric built on that rule and the facts in sections 3, 4 and 7.
+
+**A choice that should be a lookup**
+
+| ID | Signal | Why |
+|---|---|---|
+| CL1 | Each value has attributes of its own (contact, address, rate, code, active dates) | It is an item of data, not a category |
+| CL2 | Business users add, retire or rename values as part of normal work | Choice options are metadata, changed through customization and solutions; table rows are data |
+| CL3 | More than about 30 values, or the list keeps growing | Usability guidance on large drop-downs |
+| CL4 | Values differ by business unit or need their own ownership or security | Rows can be owned and secured; options can't |
+| CL5 | Other tables relate to the same values, or reports need rollups per value with extra fields | A table can be the parent in relationships |
+| CL6 | Multi-select, and the process needs workflows, business rules, charts, rollups or calculated columns on it | Multi-select choices aren't supported there; use an N:N relationship or a child table |
+
+**A lookup that should be a choice**
+
+| ID | Signal | Why |
+|---|---|---|
+| CL7 | The referenced table holds only a name column | A category list with no attributes |
+| CL8 | Fewer than about 30 values that change only with a release | Stable categories fit options |
+| CL9 | The value drives a lifecycle (Draft, Submitted, Approved) | Use Status Reason on the table itself, with transitions if needed |
+| CL10 | The column must be hidden from some users with column-level security | Choice columns can be secured; lookup columns can't (section 7). Status Reason can't be secured either, so a secured lifecycle needs a custom choice, not CL9 |
+| CL11 | The values are shared across many tables only as labels | A global choice keeps them in sync without extra relationships |
+
+**A choice that should be Yes/No**
+
+| ID | Signal | Why |
+|---|---|---|
+| CL12 | A choice or lookup with exactly two options that mean yes and no, true and false, or on and off | Yes/No is the two-option column type (section 3); it can't grow a third option by accident |
+
+**Cost of getting it wrong:** "Once a column is saved, you can't change the data type except for converting text columns to autonumber columns." (Create and edit columns) Switching between choice and lookup means a new column, a data migration, and updates to every form, view, flow and app that uses the old one.
+
+## 6. Relationships
+
+Source: Microsoft Dataverse table relationships; Create a relationship between tables; Create many-to-many table relationships overview; Define and query hierarchically related data.
+
+- Two types: one-to-many (1:N) and many-to-many (N:N). "A N:1 relationship is just a 1:N relationship viewed from the related table." "Adding a lookup column to a table creates a new 1:N (one-to-many) relationship."
+- N:N uses an intersect table: "You can't add custom columns to a relationship table and it's never visible in the user interface." If the link itself carries data (role, start date, quantity), model it as a custom table with two lookups instead.
+- "Not all tables can be used with many-to-many relationships. If the table isn't available to be chosen in the designer, you can't create a new many-to-many relationship with this table."
+- Use relationships for formal links "that define the table or that most rows can use"; use connections for informal ones such as "if two contacts are married".
+- Hierarchies (a manager, a parent project, a parent account) use a self-referential 1:N relationship: "the table is related to itself". "You can have multiple self-referential relationships, but only one relationship per table can be defined as the hierarchical relationship." Set Hierarchical to Yes on that one to query the data as a hierarchy.
+
+Standard behaviours (Create a relationship between tables):
+
+| Behaviour | What happens |
+|---|---|
+| Referential, Remove Link | Deleting the parent clears the lookup on children; other actions don't cascade |
+| Referential, Restrict Delete | "The parent row can't be deleted while the child row exists." |
+| Parental | "Any action taken on a record of the parent table is also taken on any child table records"; deleting the parent deletes the children, and the parent's owner has inherited access |
+| Custom | Choose the behaviour per action |
+
+Actions and options (Microsoft Dataverse table relationships):
+
+| Action | Options |
+|---|---|
+| Assign, Share, Unshare, Reparent, Rollup View | Cascade All, Cascade Active, Cascade User-owned, Cascade None |
+| Delete | Cascade All, Remove Link, Restrict |
+| Merge | Cascade All, Cascade None |
+
+Limits:
+
+- "Usually this means that for each table pair there's only one parental relationship." The exception is a lookup to more than one table: a customer lookup gives "two separate parental 1:N table relationships", and activity tables have a similar set for the Regarding lookup.
+- "A custom table can't be the primary table in a relationship with a related system table that cascades."
+- "No new relationship can have any action set to Cascade All, Cascade Active, or Cascade User-Owned if the related table in that relationship already exists as a related table in another relationship" that cascades. This "prevents relationships that create a multi-parent relationship."
+- Changing Reparent or Share to Cascade None starts a cleanup job that removes access granted only through inheritance.
+- Assign deactivates workflows and business rules active on the reassigned rows.
+
+## 7. Security for columns and names
+
+Source: Column-level security to control access; Types of columns; Work with alternate keys.
+
+- "Column-level security configurations are organization-wide and apply to all data access requests." "Data is never hidden from system administrators."
+- Columns that can't be secured include "Lookup columns", "Formula columns", "Primary name columns", "Columns in virtual tables" and "System columns like createdon, modifiedon, statecode, and statuscode." File and image columns can be secured but not masked.
+- "When a calculated column or prompt column includes a column that is secured, data might be displayed in the calculated or prompt column to users that don't have permission to the secured column. Both the original column and the calculated or prompt column should be secured."
+- Alternate key columns: "Attributes must not have field-level security applied" (Work with alternate keys).
+- "Unless one or more security profiles are assigned to a column with security, only users with the system administrator security role can access the column."
+- Primary name values travel with every lookup to the row (short version, point 4).
+
+## 8. Solutions and naming
+
+Source: Create a solution; Solution concepts; Solution layers; Create and edit tables; Create and edit columns; Define alternate keys using Power Apps; Dataverse long term data retention overview.
+
+- Schema names "can't contain spaces" and include the publisher's customization prefix. The default publisher's prefix "is randomly assigned... for example it could be cr8a3".
+- "We recommend that you create a publisher for your organization to use consistently across your environments." The publisher has a Prefix and a "Choice value prefix".
+- "It's possible to move the ownership of a component from one solution to another within the same publisher, but not across publishers." "It's best to define a single publisher."
+- Unmanaged solutions are developed; managed solutions are deployed to test and production. "When you delete a managed solution, the following data is lost: data stored in custom tables that are part of the managed solution and data stored in custom columns that are part of the managed solution on other tables."
+- Segmentation: when adding an existing table, add only the changed objects. "Don't segment tables that don't exist in the target environment"; new custom tables need "Include all objects".
+- Alternate keys "provide an efficient and accurate way of integrating data with external systems". Columns in a key shouldn't hold `/ # < > * % & : \ ? +` if the key is used in GET or PATCH. "The alternate key isn't immediately available for use"; a system job builds the index.
+- Autonumber seeds don't travel with the solution; set them in each environment.
+- Layers: "All unmanaged solutions share a single unmanaged layer." Most components follow a "top wins" behaviour, where the top layer decides how the component works at runtime. "All imported unmanaged solutions and ad-hoc customizations exist at this layer", so make changes in development and deploy them, not directly in test or production.
+- Retention: "Dataverse supports custom retention policies to securely retain unlimited data long term in a cost-efficient way." Data in the long term retention store "is immutable and read-only". Use it for inactive rows the process must keep, such as closed loans kept for years.
+
+## 9. Microsoft features that also generate tables
+
+- Plans in Power Apps: "Describe your business use case in natural language" and it "generates a complete Power Platform solution", including "Microsoft Dataverse tables". "Plans is generally available and enabled by default." (Overview of plans)
+- Start with Copilot when creating tables: "Describe your data in natural language and Copilot generates tables along with relationships for you." (Create and edit tables)
+- Either one can produce the first draft. This designer reviews a generated model with the same steps and rubric, and it doesn't create anything itself.
+
+## 10. Decisions you can't undo (IR)
+
+| ID | Decision | Source |
+|---|---|---|
+| IR1 | Table ownership type | Types of tables |
+| IR2 | Table schema name (with prefix) | Create and edit tables |
+| IR3 | Column schema name | Create and edit columns |
+| IR4 | Column data type, except text to autonumber | Create and edit columns |
+| IR5 | Formula column result type | Work with formula columns |
+| IR6 | Activity table type and "Display in activity menus" | Types of tables |
+| IR7 | "Creating a new activity" enabled on a table | Types of tables |
+| IR8 | Primary column display name and description: "After you save the table, the Primary column display name and description can't be changed." | Create and edit tables |
+| IR9 | Publisher of a component in a managed solution | Solution concepts |
+| IR10 | Choice schema name: "After a new choice column is saved, you can't change this." | Create a choice |
+| IR11 | Virtual or not: "a virtual table can't be changed to be a standard (nonvirtual) table. The reverse is also true" | Get started with virtual tables |
+| IR12 | File column maximum size: "You can't change the maximum file size after you save it." | Types of columns |
+| IR13 | Date and time behaviour: User local can change once to Date only or Time zone independent ("This is a one-time change"); no other change is described | Behavior and format of the date and time column |
+## 11. Not documented as of 1 November 2026
+
+- A fixed maximum number of options per choice column. Learn says "thousands" without an upper limit.
+- A fixed maximum number of columns per table. Learn says the limit "isn't viewable" and depends on the space each column uses.
+- Whether filtered record ownership will reach general availability, or when.
+- Whether an elastic table can be converted to a standard table, or the reverse.
+- A general recommendation to prefer formula columns over calculated columns.
+
+## Sources
+
+Microsoft Learn, with each page's `ms.date` when it was read on 1 November 2026:
+
+**Tables**
+
+- [Types of tables](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/types-of-entities), 31 Aug 2026
+- [Create and edit tables using Power Apps](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/create-edit-entities-portal), 31 Aug 2026
+- [Tables and metadata in Microsoft Dataverse](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/create-edit-metadata), 17 Apr 2026
+- [Create and edit elastic tables](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/create-edit-elastic-tables), 31 Mar 2025
+- [Create and edit virtual tables that contain data from an external data source](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/create-edit-virtual-entities), 9 Sep 2026
+- [Get started with virtual tables (entities)](https://learn.microsoft.com/en-us/power-apps/developer/data-platform/virtual-entities/get-started-ve), 7 Jan 2026
+- [Filtered record ownership (preview)](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/filtered-view-record-ownership), 24 Sep 2026
+- [Overview of plans](https://learn.microsoft.com/en-us/power-apps/maker/plan-designer/plan-designer), 7 Aug 2026
+
+**Columns and choices**
+
+- [Types of columns](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/types-of-fields), 14 Sep 2026
+- [Create and edit columns in Dataverse using Power Apps](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/create-edit-field-portal), 9 Jan 2026
+- [Behavior and format of the date and time column](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/behavior-format-date-time-field), 9 Apr 2026
+- [Create a choice](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/custom-picklists), 21 Apr 2026
+- [Create and edit choice columns overview](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/create-edit-global-option-sets), 5 Aug 2022
+- [Autonumber columns](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/autonumber-fields), 26 Feb 2019
+- [Work with formula columns](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/formula-columns), 9 Jan 2026
+- [Automate calculations by defining calculated columns](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/define-calculated-fields), 22 May 2024
+- [Define rollup columns that aggregate values](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/define-rollup-fields), 30 Apr 2024
+- [Define status reason transitions for the Case or custom tables](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/define-status-reason-transitions), 25 May 2018
+- [Define alternate keys using Power Apps](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/define-alternate-keys-portal), 14 May 2025
+- [Work with alternate keys](https://learn.microsoft.com/en-us/power-apps/developer/data-platform/define-alternate-keys-entity), 30 Mar 2026
+
+**Relationships**
+
+- [Microsoft Dataverse table relationships](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/create-edit-entity-relationships), 14 Sep 2026
+- [Create a relationship between tables](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/data-platform-entity-lookup), 16 Sep 2026
+- [Create many-to-many table relationships overview](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/create-edit-nn-relationships), 16 Sep 2024
+- [Define and query hierarchically related data](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/define-query-hierarchical-data), 21 Aug 2026
+- [Use multi-table lookup columns](https://learn.microsoft.com/en-us/power-apps/developer/data-platform/webapi/multitable-lookup), 27 Oct 2026
+
+**Security**
+
+- [Ownership-based security in Microsoft Dataverse](https://learn.microsoft.com/en-us/power-platform/admin/wp-security-cds), 5 Oct 2026
+- [Security roles and privileges for Dataverse](https://learn.microsoft.com/en-us/power-platform/admin/security-roles-privileges), 9 Dec 2025
+- [Column-level security to control access](https://learn.microsoft.com/en-us/power-platform/admin/field-level-security), 21 Sep 2026
+- [Microsoft Dataverse teams management](https://learn.microsoft.com/en-us/power-platform/admin/manage-teams), 15 Jul 2025
+
+**Solutions and data lifecycle**
+
+- [Create a solution](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/create-solution), 9 Jan 2026
+- [Solution concepts](https://learn.microsoft.com/en-us/power-platform/alm/solution-concepts-alm), 29 Jan 2025
+- [Solution layers](https://learn.microsoft.com/en-us/power-platform/alm/solution-layers-alm), 30 Jan 2025
+- [Dataverse long term data retention overview](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/data-retention-overview), 10 Apr 2026
