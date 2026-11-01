@@ -1,6 +1,6 @@
 # Agents in Practice
 
-A catalog of skills, prompts, agent instructions and Adaptive Cards for AI agents working with Microsoft 365, Copilot Studio and GitHub Copilot. This file is for coding agents operating inside this repository.
+A catalog of skills, prompts, agent instructions and Adaptive Cards for AI agents working with Microsoft 365, Copilot Studio, Power Platform and GitHub Copilot. This file is for coding agents operating inside this repository.
 
 ## Fresh information first
 
