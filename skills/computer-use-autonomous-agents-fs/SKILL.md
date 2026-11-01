@@ -12,7 +12,7 @@ Microsoft's computer use FAQ says the tool "isn't intended for" "Making financia
 Determine the following before proceeding. If the user has not supplied them, ask for the missing ones.
 
 1. **Use case** — the business process end to end: which systems the agent touches, what it reads, what it enters or sends, and what the final step is.
-2. **Mechanism** — Copilot Studio computer use (and where it runs: hosted browser, Cloud PC pool, own machine), Copilot Studio event triggers (standard or GitHub Copilot harness), an agent with an account (Frontier), Cowork browser or automated tasks, Foundry computer use, the Windows 365 for Agents MCP server, Edge or Windows agent features. If unsure, ask how the agent was built and say what you assumed.
+2. **Mechanism** — Copilot Studio computer use (and where it runs: hosted browser, Cloud PC pool, own machine), Copilot Studio event triggers (standard or Microsoft Copilot harness, formerly GitHub Copilot harness), an agent with an account (Frontier), Cowork browser or automated tasks, Foundry computer use, the Windows 365 for Agents MCP server, Edge or Windows agent features. If unsure, ask how the agent was built and say what you assumed.
 3. **Credentials** — maker-provided, end-user, a dedicated agent account, or a customer's own credentials, for each target system; and what that account is entitled to do there.
 4. **Firm and jurisdictions** — firm type (bank, broker-dealer, investment adviser or firm, insurer, payment firm) and every jurisdiction whose rules apply (UK, EU and the member states, US and the states, Singapore, Hong Kong, Canada, Australia, other). For the US, also which customers are in Colorado or California, and whether payments are from consumer or business accounts. Defaults to asking; do not assume the UK.
 5. **Artifact wanted** — placement assessment (default), control set, risk committee paper, inventory record, regulatory mapping, instruction block, or tenant test plan.
@@ -46,7 +46,7 @@ Read [references/autonomy-line-guide.md](references/autonomy-line-guide.md) sect
 - a Cloud PC pool or the standalone computer use tool in a production design (both preview: "Preview features aren't meant for production use");
 - experimental models (Claude Sonnet 4.6, Opus 4.6), which are not listed as supporting human supervision;
 - Researcher with Computer Use (status unclear; see D6);
-- an agent with an account or a GitHub Copilot harness trigger (both preview).
+- an agent with an account or a Microsoft Copilot harness trigger (both preview).
 
 ## Step 2: Classify every step
 

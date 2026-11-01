@@ -51,6 +51,7 @@ The skill works through seven steps:
 ## Limitations
 
 - Written against documentation retrieved on **31 October 2026**. Several components are preview or experimental, and the regulator landscape is moving: MAS consults on agentic guidance in 2027, the FCA has promised a framework for agentic finance, the HKMA has promised a discussion paper, and HM Treasury has not responded on agentic payments.
+- Microsoft renamed the GitHub Copilot harness to the Microsoft Copilot harness on 28 October 2026, and says the product will show the new name "over the coming weeks". As of 1 November 2026 the Learn pages cited here still use the old name, so the skill uses the new name and keeps the old one in page titles and quotes.
 - Microsoft's own pages disagree in places, for example on whether the computer use allow list blocks navigation. The skill reports the conflict and assumes the weaker reading.
 - FCA Handbook provisions (SYSC 4.1.1R, SYSC 9, COBS 11.8) are cited as the FCA's own publications describe them, and SYSC 15A and the Consumer Duty rules are quoted as made in the FCA legal instruments, because the Handbook text could not be retrieved directly. FINRA pages and the FFIEC booklet were read from archived copies where the live site blocked retrieval.
 - EUR-Lex blocked retrieval. GDPR Article 22 is quoted from the Court of Justice judgment that reproduces it, and the Consumer Credit Directive and the DORA ICT risk RTS from secondary copies of the Official Journal text. Check them against EUR-Lex before relying on them.
@@ -192,6 +193,10 @@ Non-regulator frameworks that name computer-use agents or agentic controls:
 - Cyber Security Agency of Singapore, [Securing Agentic AI: An Addendum to the Guidelines and Companion Guide on Securing AI Systems](https://www.csa.gov.sg/resources/publications/addendum-on-securing-ai-systems), Jun 2026
 - OWASP, [Top 10 for Agentic Applications for 2026](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/), 9 Dec 2025
 
+Other sources, read on 1 November 2026:
+
+- [The GitHub Copilot harness is now the Microsoft Copilot harness](https://www.microsoft.com/en-us/copilot/blog/copilot-studio/the-github-copilot-harness-in-copilot-studio-is-now-the-microsoft-copilot-harness/), Microsoft Copilot Studio blog, 28 Oct 2026
+
 Every Microsoft page above was re-checked for its date on 31 October 2026. The agent reads the same list at the end of [`references/autonomy-line-guide.md`](./references/autonomy-line-guide.md).
 
 ## Contributors
@@ -205,6 +210,7 @@ Every Microsoft page above was re-checked for its date on 31 October 2026. The a
 | Version | Date | Comments |
 | --- | --- | --- |
 | 1.0 | October 2026 | Initial release |
+| 1.1 | November 2026 | The GitHub Copilot harness is now the Microsoft Copilot harness; the skill uses the new name and keeps the old one in Learn page titles and quotes |
 
 ## Help
 
