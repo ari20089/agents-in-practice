@@ -66,7 +66,7 @@ Each button also has an `id` (`approve`, `reject`). **Open the full request** op
 1. Add the Microsoft Teams action **Post adaptive card and wait for a response**. The older per-channel and per-user versions are marked deprecated.
 2. Set **Post as** and **Post in** to the approver's chat or a channel.
 3. Paste `card.json` into **Message**. Replace each `${...}` with dynamic content from earlier steps, keeping the quotation marks. `${requestId}` appears three times: once in the facts and once in each button.
-4. Escape any value that can contain a double quotation mark, a backslash, a tab or a line break, which is likely for `details`. Inserted as is, such a value breaks the JSON, and improperly formatted JSON is one of the two most common problems Microsoft lists for a failed card (Create your first adaptive card). Learn doesn't give an escaping expression (as of 31 October 2026); this one works for a value `X`:
+4. Escape any value that can contain a double quotation mark, a backslash, a tab or a line break, which is likely for `details`. Inserted as is, such a value breaks the JSON, and improperly formatted JSON is one of the most common problems Microsoft lists for a failed card (Create your first adaptive card). Learn doesn't give an escaping expression (as of 31 October 2026); this one works for a value `X`:
 
    ```text
    replace(replace(replace(replace(replace(X, '\', '\\'), '"', '\"'), decodeUriComponent('%0D'), ''), decodeUriComponent('%0A'), '\n'), decodeUriComponent('%09'), '\t')
