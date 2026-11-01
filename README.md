@@ -103,13 +103,14 @@ For an Adaptive Card, paste its `card.json` into your host and replace each `${.
 
 ## Adaptive Card catalog
 
-> 2 Adaptive Cards
+> 3 Adaptive Cards
 
 ### Approvals & workflows
 
 | Card | Platforms | Description |
 | --- | --- | --- |
 | [approval-request](./adaptive-cards/approval-request/) | Copilot Studio, Microsoft Teams, Power Automate | A card that asks one person to approve or reject a request: what's being requested and why, who asked, when it's needed and a link to the full request, with an optional comment and Approve and Reject buttons. It returns the decision, the request reference and the comment in one response, from a Power Automate flow in Teams, a Copilot Studio topic or a Teams bot, with the checks to run before acting on it. |
+| [confirm-before-acting](./adaptive-cards/confirm-before-acting/) | Copilot Studio, Microsoft Teams, Power Automate | A card an agent shows before it does something it can't take back: what it's about to do, the recipient, the record and the values it will use, and what happens once it runs, with Confirm, Edit and Cancel buttons. It returns the choice and a reference to the pending action, from a Copilot Studio topic, a Power Automate flow in Teams or a Teams bot, with when to use Copilot Studio's and Microsoft 365 Copilot's own confirmation instead and the checks to run before acting. |
 
 ### Knowledge & answers
 

@@ -1,0 +1,136 @@
+{
+  "$schema": "http://adaptivecards.microsoft.com/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.5",
+  "lang": "en",
+  "fallbackText": "Confirm before I act: ${actionTitle}. Nothing has been done. This app can't show the card, so open the conversation in an app that can to confirm, edit or cancel.",
+  "body": [
+    {
+      "type": "Container",
+      "style": "emphasis",
+      "bleed": true,
+      "items": [
+        {
+          "type": "TextBlock",
+          "text": "Confirm before I act",
+          "size": "Small",
+          "weight": "Bolder",
+          "color": "Accent",
+          "wrap": true
+        },
+        {
+          "type": "TextBlock",
+          "text": "${actionTitle}",
+          "style": "heading",
+          "size": "Large",
+          "weight": "Bolder",
+          "spacing": "Small",
+          "wrap": true
+        }
+      ]
+    },
+    {
+      "type": "TextBlock",
+      "text": "${summary}",
+      "wrap": true
+    },
+    {
+      "type": "FactSet",
+      "facts": [
+        {
+          "title": "Recipient",
+          "value": "${recipient}"
+        },
+        {
+          "title": "Record",
+          "value": "${record}"
+        }
+      ]
+    },
+    {
+      "type": "TextBlock",
+      "text": "Values",
+      "style": "heading",
+      "size": "Default",
+      "weight": "Bolder",
+      "spacing": "Medium",
+      "separator": true,
+      "wrap": true
+    },
+    {
+      "type": "FactSet",
+      "spacing": "Small",
+      "facts": [
+        {
+          "title": "${value1Label}",
+          "value": "${value1}"
+        },
+        {
+          "title": "${value2Label}",
+          "value": "${value2}"
+        },
+        {
+          "title": "${value3Label}",
+          "value": "${value3}"
+        },
+        {
+          "title": "${value4Label}",
+          "value": "${value4}"
+        }
+      ]
+    },
+    {
+      "type": "Container",
+      "style": "warning",
+      "spacing": "Medium",
+      "items": [
+        {
+          "type": "TextBlock",
+          "text": "${consequence}",
+          "wrap": true
+        }
+      ]
+    },
+    {
+      "type": "TextBlock",
+      "text": "Nothing happens until you select Confirm. Select Edit to change anything first.",
+      "size": "Small",
+      "isSubtle": true,
+      "spacing": "Medium",
+      "wrap": true
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.Submit",
+      "id": "confirm",
+      "title": "Confirm",
+      "style": "positive",
+      "data": {
+        "actionSubmitId": "confirm_action_confirm",
+        "decision": "confirm",
+        "actionId": "${actionId}"
+      }
+    },
+    {
+      "type": "Action.Submit",
+      "id": "edit",
+      "title": "Edit",
+      "data": {
+        "actionSubmitId": "confirm_action_edit",
+        "decision": "edit",
+        "actionId": "${actionId}"
+      }
+    },
+    {
+      "type": "Action.Submit",
+      "id": "cancel",
+      "title": "Cancel",
+      "data": {
+        "actionSubmitId": "confirm_action_cancel",
+        "decision": "cancel",
+        "actionId": "${actionId}"
+      }
+    }
+  ]
+}

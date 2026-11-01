@@ -1,0 +1,13 @@
+{
+  "name": "Confirm Before Acting",
+  "description": "A card an agent shows before it does something it can't take back: what it's about to do, the recipient, the record and the values it will use, and what happens once it runs, with Confirm, Edit and Cancel buttons. It returns the choice and a reference to the pending action, from a Copilot Studio topic, a Power Automate flow in Teams or a Teams bot, with when to use Copilot Studio's and Microsoft 365 Copilot's own confirmation instead and the checks to run before acting.",
+  "platforms": ["Copilot Studio", "Microsoft Teams", "Power Automate"],
+  "tags": ["adaptive-cards", "confirmation", "human-in-the-loop", "agent-actions", "responsible-ai", "teams", "power-automate", "copilot-studio", "action-submit", "templating"],
+  "subcategory": "Approvals & workflows",
+  "author": "Arindam Choudhury",
+  "authorGithub": "ari20089",
+  "authorUrl": "https://www.linkedin.com/in/arindam-choudhury/",
+  "version": "1.0",
+  "createdAt": "2026-11-01",
+  "updatedAt": "2026-11-01"
+}
