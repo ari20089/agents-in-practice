@@ -16,7 +16,7 @@ It only reads. It doesn't change files or run commands that change anything.
 
 | File | What it's for | Where it goes |
 |---|---|---|
-| [`PROMPT.md`](./PROMPT.md) | The prompt: what a code app is, ten checks, severities, the report format and the rules. 8,000 of the 8,000 characters allowed. | Pasted into chat, as is |
+| [`PROMPT.md`](./PROMPT.md) | The prompt: what a code app is, ten checks, severities, the report format and the rules. 7,996 of the 8,000 characters allowed. | Pasted into chat, as is |
 
 ## Run it
 
@@ -62,7 +62,7 @@ Each check rests on documented behaviour, stated in the prompt itself so the age
 | 9 | Client library | Missing `@microsoft/power-apps`, leftover `initialize` calls | "Apps must no longer import or call `initialize`" (v1.0 migration guide) |
 | 10 | Platform fit | Power Apps for Windows, SharePoint forms, Power BI data integration, Git integration, IP restriction, FetchXML, alternate keys, polymorphic lookups, embedding | Overview limitations; Connect to Dataverse; Embed in an iframe |
 
-Two things the code can't show go into the report's **Before you push** list. Data access runs as each user: "End-users see consent dialog for connector permissions", and "Code apps don't yet support Secure Implicit Connections" (Overview). An app that reached its data with one shared key or service account must give every user access to each data source instead. The environment's Data Loss Prevention policy is enforced "during app launch" (Overview), so every connector in the connector map has to be allowed together; and flow callers need "the App Opener security role or an equivalent role" (Add flows).
+Two things the code can't show go into the report's **Before you push** list. Data access runs as each user: "End-users see consent dialog for connector permissions", and "Code apps don't yet support Secure Implicit Connections" (Overview). An app that reached its data with one shared key or service account must give every user access to each data source instead. The environment's data policy is enforced "during app launch" (Overview; Learn's page is now titled Data policies), so every connector in the connector map has to be allowed together; and flow callers need "the App Opener security role or an equivalent role" (Add flows).
 
 CSP is set per environment by an admin, and "When you customize a directive, the values you supply are appended to the default value. If the default value is `'none'`, your custom values replace the default value" (Configure CSP). The prompt treats opening `connect-src` as an option to list, not the fix, because the change applies to every code app in the environment.
 
@@ -76,7 +76,7 @@ After the fixes, the [Connector Call Wrapper Generator](../../agent-instructions
 
 ## Limitations
 
-- Written against 17 Microsoft Learn pages dated 5 March 2026 to 2 October 2026, all read on 31 October 2026, and against Microsoft's code apps templates (last changed 1 July 2026) and `@microsoft/power-apps-vite` 1.0.13. Code apps change often; check the Sources before relying on a finding.
+- Written against 18 Microsoft Learn pages dated 5 March 2026 to 14 October 2026, read on 31 October and 1 November 2026, and against Microsoft's code apps templates (last changed 1 July 2026) and `@microsoft/power-apps-vite` 1.0.13. Code apps change often; check the Sources before relying on a finding.
 - Repositories created before the Power Apps CLI (`pa`) may still reference the earlier `pac code init`, `pac code run` and `pac code push` commands (the `@microsoft/power-apps-vite` README and Microsoft's templates README still show them). The prompt names only `pa`; the rename isn't documented on Learn as of 31 October 2026.
 - It assumes the default CSP. If your environment's admin has changed it, some Must fix findings may already be allowed. Ask for the environment's CSP settings and compare.
 - Some things aren't documented as of 31 October 2026, so the prompt says so instead of guessing: whether reloading a nested route works once hosted, and whether code apps work offline. Both go in the test plan. On the first, Vue Router's own page explains the risk: with history mode, "without a proper server configuration, the users will get a 404 error if they access `https://example.com/user/id` directly", and no code apps page says whether the host serves `index.html` for unknown paths. Hash mode avoids the question.
@@ -106,6 +106,7 @@ Microsoft Learn, with each page's `ms.date` when it was read on 31 October 2026:
 - [Power Apps CLI environment variables](https://learn.microsoft.com/en-us/power-apps/developer/code-apps/reference/environment-variables), 2 Oct 2026
 - [Power Apps CLI command reference](https://learn.microsoft.com/en-us/power-apps/developer/code-apps/reference/cli), 2 Oct 2026
 - [Connect to Copilot Studio](https://learn.microsoft.com/en-us/power-apps/developer/code-apps/how-to/connect-to-copilot-studio), 13 Aug 2026
+- [Data policies](https://learn.microsoft.com/en-us/power-platform/admin/wp-data-loss-prevention), 14 Oct 2026, read on 1 November 2026
 
 Other sources, read on 31 October 2026:
 
@@ -127,6 +128,7 @@ Other sources, read on 31 October 2026:
 | Version | Date | Comments |
 | --- | --- | --- |
 | 1.0 | October 2026 | Initial release |
+| 1.1 | November 2026 | Uses "data policy", Power Platform's current term, instead of DLP |
 
 ## Help
 
