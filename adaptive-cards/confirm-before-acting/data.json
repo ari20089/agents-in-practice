@@ -1,0 +1,16 @@
+{
+  "actionTitle": "Send a payment reminder for invoice INV-30418",
+  "summary": "I'll email the second payment reminder for invoice INV-30418 to Jordan Lee at Lakeside Stationery, copy the accounts team, and log the reminder on the invoice.",
+  "recipient": "Jordan Lee (jordan.lee@example.com)",
+  "record": "Invoice INV-30418, Lakeside Stationery",
+  "value1Label": "Amount due",
+  "value1": "EUR 4,250.00",
+  "value2Label": "Due date",
+  "value2": "15 Oct 2026 (17 days overdue)",
+  "value3Label": "Template",
+  "value3": "Second reminder",
+  "value4Label": "Copy to",
+  "value4": "accounts@example.com",
+  "consequence": "The email is sent from the finance mailbox as soon as you confirm, and it can't be recalled.",
+  "actionId": "3f6c2a9e-8b1d-4e57-a0c4-7d2e91b5f604"
+}
