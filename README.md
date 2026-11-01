@@ -70,7 +70,13 @@ For an Adaptive Card, paste its `card.json` into your host and replace each `${.
 
 ## Prompt catalog
 
-> 2 prompts
+> 3 prompts
+
+### Architecture & design
+
+| Prompt | Platforms | Description |
+| --- | --- | --- |
+| [copilot-studio-harness-chooser](./prompts/copilot-studio-harness-chooser/) | GitHub Copilot, Microsoft 365 Copilot, Any coding agent | Describe the agent you want to build and it recommends the Copilot Studio harness to build it on (GitHub Copilot, Customer Conversation or standard) with the reasons, why not the other two, what to check before you build and the open questions. Written to HVE Core's prompt standards. |
 
 ### Developer productivity
 
