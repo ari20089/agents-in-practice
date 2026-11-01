@@ -96,13 +96,19 @@ For an Adaptive Card, paste its `card.json` into your host and replace each `${.
 
 ## Adaptive Card catalog
 
-> 1 Adaptive Card
+> 2 Adaptive Cards
 
 ### Approvals & workflows
 
 | Card | Platforms | Description |
 | --- | --- | --- |
 | [approval-request](./adaptive-cards/approval-request/) | Copilot Studio, Microsoft Teams, Power Automate | A card that asks one person to approve or reject a request: what's being requested and why, who asked, when it's needed and a link to the full request, with an optional comment and Approve and Reject buttons. It returns the decision, the request reference and the comment in one response, from a Power Automate flow in Teams, a Copilot Studio topic or a Teams bot, with the checks to run before acting on it. |
+
+### Knowledge & answers
+
+| Card | Platforms | Description |
+| --- | --- | --- |
+| [cited-answer](./adaptive-cards/cited-answer/) | Copilot Studio, Microsoft Teams, Power Automate | A card that shows an answer with its evidence: numbered sources, each with a link and a "last updated" line, and a green "Fully covered" or amber "Not fully covered" note saying what the sources leave out. For Power Automate posts, Copilot Studio topics and Teams bots, with when to use Teams' and Copilot Studio's own citations instead and the checks to run before sending. |
 
 ## Contribute
 

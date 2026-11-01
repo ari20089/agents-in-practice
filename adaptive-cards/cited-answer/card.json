@@ -1,0 +1,180 @@
+{
+  "$schema": "http://adaptivecards.microsoft.com/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.5",
+  "lang": "en",
+  "fallbackText": "${question}\n\n${answer}\n\nThis app can't show the sources for this answer.",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "Answer",
+      "size": "Small",
+      "weight": "Bolder",
+      "color": "Accent",
+      "wrap": true
+    },
+    {
+      "type": "TextBlock",
+      "text": "${question}",
+      "style": "heading",
+      "size": "Medium",
+      "weight": "Bolder",
+      "spacing": "Small",
+      "wrap": true
+    },
+    {
+      "type": "TextBlock",
+      "text": "${answer}",
+      "spacing": "Medium",
+      "wrap": true
+    },
+    {
+      "type": "Container",
+      "style": "${coverageStyle}",
+      "spacing": "Medium",
+      "items": [
+        {
+          "type": "TextBlock",
+          "text": "${coverageLabel}",
+          "weight": "Bolder",
+          "wrap": true
+        },
+        {
+          "type": "TextBlock",
+          "text": "${coverageNote}",
+          "spacing": "Small",
+          "wrap": true
+        }
+      ]
+    },
+    {
+      "type": "TextBlock",
+      "text": "Sources",
+      "style": "heading",
+      "size": "Default",
+      "weight": "Bolder",
+      "spacing": "Large",
+      "separator": true,
+      "wrap": true
+    },
+    {
+      "type": "ColumnSet",
+      "spacing": "Small",
+      "columns": [
+        {
+          "type": "Column",
+          "width": "auto",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "[1]",
+              "weight": "Bolder",
+              "color": "Accent"
+            }
+          ]
+        },
+        {
+          "type": "Column",
+          "width": "stretch",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "[${source1Title}](${source1Url})",
+              "wrap": true
+            },
+            {
+              "type": "TextBlock",
+              "text": "Last updated ${source1Updated}",
+              "size": "Small",
+              "isSubtle": true,
+              "spacing": "None",
+              "wrap": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "ColumnSet",
+      "spacing": "Small",
+      "columns": [
+        {
+          "type": "Column",
+          "width": "auto",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "[2]",
+              "weight": "Bolder",
+              "color": "Accent"
+            }
+          ]
+        },
+        {
+          "type": "Column",
+          "width": "stretch",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "[${source2Title}](${source2Url})",
+              "wrap": true
+            },
+            {
+              "type": "TextBlock",
+              "text": "Last updated ${source2Updated}",
+              "size": "Small",
+              "isSubtle": true,
+              "spacing": "None",
+              "wrap": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "ColumnSet",
+      "spacing": "Small",
+      "columns": [
+        {
+          "type": "Column",
+          "width": "auto",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "[3]",
+              "weight": "Bolder",
+              "color": "Accent"
+            }
+          ]
+        },
+        {
+          "type": "Column",
+          "width": "stretch",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "[${source3Title}](${source3Url})",
+              "wrap": true
+            },
+            {
+              "type": "TextBlock",
+              "text": "Last updated ${source3Updated}",
+              "size": "Small",
+              "isSubtle": true,
+              "spacing": "None",
+              "wrap": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "TextBlock",
+      "text": "AI-generated content may be incorrect. Check the sources before you rely on it.",
+      "size": "Small",
+      "isSubtle": true,
+      "spacing": "Medium",
+      "wrap": true
+    }
+  ]
+}
