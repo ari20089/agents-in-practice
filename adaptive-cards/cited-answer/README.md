@@ -70,6 +70,8 @@ The card also works as the payload of a Workflows webhook: "Workflows webhooks s
 
 ### Copilot Studio: show an answer in a topic
 
+These steps are for agents on the standard harness, which the Copilot Studio pages cited here describe; topics, the generative answers node and the Message node belong to it.
+
 **From a generative answer.** Learn documents this pattern on the generative answers page:
 
 1. On the **Create generative answers** node, set **Input** to the `Activity.Text` system variable.
@@ -146,7 +148,7 @@ Run these in your tenant before relying on the card. None of them have been run 
 ## Prerequisites
 
 - **Power Automate:** the Workflows app installed in Teams and allowed in the Teams admin center, and a poster other than the Flow bot in GCC, GCCH and DoD tenants, where it isn't available (Microsoft Teams connector reference).
-- **Copilot Studio:** a topic you can add a Message node to, and the answer and its sources in variables.
+- **Copilot Studio:** an agent on the standard harness with a topic you can add a Message node to, and the answer and its sources in variables.
 - **A bot or agent:** the Microsoft 365 Agents SDK or the Teams SDK, and `adaptivecards-templating` 2.3.1 or `AdaptiveCards.Templating` to fill in the bindings.
 
 ## Limitations
@@ -205,6 +207,7 @@ Other sources, read on 1 November 2026:
 | Version | Date | Comments |
 | --- | --- | --- |
 | 1.0 | November 2026 | Initial release |
+| 1.1 | November 2026 | The Copilot Studio steps say they're for the standard harness, as the cited pages do |
 
 ## Help
 
