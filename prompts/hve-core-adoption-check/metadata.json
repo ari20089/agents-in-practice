@@ -1,0 +1,13 @@
+{
+  "name": "HVE Core Adoption Check",
+  "description": "Paste it into GitHub Copilot Chat on a repository and it reports which HVE Core agents and instruction files fit the repository's languages, where HVE's instructions would contradict or duplicate its existing copilot-instructions.md, and which install route (Marketplace extensions, Copilot CLI plugin or a selective clone) avoids the clashes.",
+  "platforms": ["GitHub Copilot", "Any coding agent"],
+  "tags": ["hve-core", "github-copilot", "custom-instructions", "copilot-instructions", "instruction-files", "applyto", "custom-agents", "copilot-cli", "vs-code-extensions", "adoption", "conflicts"],
+  "subcategory": "Developer productivity",
+  "author": "Arindam Choudhury",
+  "authorGithub": "ari20089",
+  "authorUrl": "https://www.linkedin.com/in/arindam-choudhury/",
+  "version": "1.0",
+  "createdAt": "2026-11-04",
+  "updatedAt": "2026-11-04"
+}
