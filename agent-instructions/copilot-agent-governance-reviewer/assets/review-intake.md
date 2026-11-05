@@ -5,7 +5,7 @@ Fill in what you know and paste it with the agent's configuration. Items marked 
 ## The agent
 
 - **Name:**
-- **Type and tool:** declarative agent (Agent Builder / Microsoft 365 Agents Toolkit) · Copilot Studio agent (standard / Microsoft Copilot harness, formerly GitHub Copilot harness) · custom engine agent
+- **Type and tool:** declarative agent (Agent Builder / Microsoft 365 Agents Toolkit) · SharePoint agent · Copilot Studio agent (standard / Microsoft Copilot harness, formerly GitHub Copilot harness / Customer Conversation harness) · custom engine agent
 - **Owners (at least two):**
 - **Support contact:**
 
@@ -25,6 +25,8 @@ Paste the full instructions, description and conversation starters.
 
 - **Uploaded or embedded files ★:** what each one contains, and whether every user of the agent may see all of it:
 - **Web search:** on / off
+- **Skills:** name and purpose of each, and whether it includes scripts
+- **Memory:** on / off
 - **General knowledge:** Allow ungrounded responses (Copilot Studio) or Only use specified sources (Agent Builder): on / off
 
 ## Actions ★
