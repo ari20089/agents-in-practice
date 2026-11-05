@@ -4,7 +4,7 @@
 
 OWASP's **Top 10 for Agentic Applications (2026)** and **Top 10 for LLM Applications (2025)** tell you what can go wrong with an agent and what to do about it in general terms: add human approval, enforce least privilege, check retrieved content. In Copilot Studio, each of those is a specific setting: a tool property, an agent setting, a Power Platform admin center control, a Purview, Defender or Agent 365 policy, or an Entra setting. Each has its own owner and default, exists on some harnesses and not others, and is often in preview. Some only detect, and some fail open.
 
-This skill maps all 20 risks (ASI01 to ASI10, LLM01 to LLM10) to the named Copilot Studio controls that address them, including the environment-level guardrails admins can now set over makers (preview), and states what no control covers. It also checks Microsoft's own March 2026 OWASP mapping against the current documentation, where several claims no longer hold.
+This skill maps all 20 risks (ASI01 to ASI10, LLM01 to LLM10) to the named Copilot Studio controls that address them, including the environment-level guardrails admins can now set over makers (preview), and states what no control covers. It also checks 28 of the 34 claims in Microsoft's own March 2026 OWASP mapping against the current documentation, where several no longer hold.
 
 ## Skill
 
@@ -31,7 +31,7 @@ The two work together. With HVE Core installed, the agent reads the risk definit
 The skill works through seven steps:
 
 1. **Settle the harness and scope.** Some controls exist on the standard harness only, and most admin pages state no harness at all. The Microsoft Copilot harness (formerly GitHub Copilot) has hooks instead of **Ask the end user before running**, its own moderation and agent-connection settings, per-user memory and uploaded skills. It doesn't support manual authentication.
-2. **Decide which risks apply** from the agent's features, as *applies*, *partly applies* or *does not apply*: no code interpreter or computer use means no ASI05; an agent that calls no other agent but still accepts incoming connections (the default) partly carries ASI07.
+2. **Decide which risks apply** from the agent's features, as *applies*, *partly applies* or *does not apply*: no code interpreter or computer use means no ASI05, except on the Microsoft Copilot harness, where code interpreter is native; an agent that calls no other agent but still accepts incoming connections (the default) partly carries ASI07.
 3. **Map each risk to controls**, split into *primary* (prevent or block) and *supporting* (warn, detect, reduce impact), with each control's state in this agent or tenant: set, not set, *unknown*, not on this harness, or not licensed. Admin controls include the preview **Authentication for agents**, **Agent access channels** and **Connected Agents** settings, the data policy that blocks event triggers, inventory **Block**, transcript controls, the **Preview and experimental AI models** environment setting and Global Secure Access for agent traffic.
 4. **Check the claims the user relies on** against current pages. Microsoft's one-pager says "Session memory does not persist", "Single agent operation by default" and that communication stays "within environments that are isolated by default". Per-user memory, shared memory for agents with accounts, connected agents that receive history by default, A2A connections with no authentication and tenant isolation off by default are all documented now.
 5. **State the residual risk**: what no setting covers, and the design measure that answers it.
@@ -43,36 +43,38 @@ The applicability rules, the primary/supporting split, residual-risk design meas
 ## Prerequisites
 
 - None to run; the skill is self-contained.
-- If the host has web access, the skill re-checks the cited Microsoft Learn pages and reports what changed since 4 November 2026.
+- If the host has web access, the skill re-checks the cited Microsoft Learn pages and reports what changed since 5 November 2026.
 - Optional: HVE Core's `owasp-agentic` and `owasp-llm` skills, for the full risk definitions.
-- To act on the output, you need maker access to the agent, and the admin roles for the layers involved: Power Platform admin center, Purview, Defender, the Microsoft 365 admin center and Entra. Defender's security for AI on Copilot Studio agents needs a Microsoft Agent 365 licence from 1 July 2026.
+- To act on the output, you need maker access to the agent, and the admin roles for the layers involved: Power Platform admin center, Purview, Defender, the Microsoft 365 admin center and Entra. Defender's security for AI on Copilot Studio agents needs a Microsoft Agent 365 licence from 1 July 2026, although real-time protection through Defender for Cloud Apps "remains unchanged" for tenants that keep using it. Agent 365 rules set to block stopped blocking on 1 July 2026 until they are redefined under **Real-time protection**, and all Security for AI capabilities now sit under one **Security for AI Agents** toggle.
 
 ## Limitations
 
-- Written against Microsoft Learn pages dated between November 2024 and 4 November 2026, all fetched on 4 November 2026. Several controls the mapping relies on are preview:
+- Written against Microsoft Learn pages dated between November 2024 and 4 November 2026, fetched on 4 November 2026 and re-checked on 5 November 2026. Several controls the mapping relies on are preview:
   - the admin controls **Authentication for agents**, **Agent access channels** and **Connected Agents**;
   - the **Pre tool use** hook, which fails open and which Microsoft says not to rely on alone;
-  - **Sharing agent with embedded maker credentials**, which isn't retroactive and doesn't stop a running agent;
+  - **Sharing agents with embedded maker credentials**, which isn't retroactive and doesn't stop a running agent;
   - external threat detection;
   - Defender real-time protection for Copilot Studio;
-  - sensitivity labels in responses (stated for the standard harness only);
   - memory;
   - connector endpoint filtering.
+- Two Copilot Studio pages the skill first cited, on sensitivity labels in responses and on Purview audit, redirect to *Configure data policies for agents* as of 5 November 2026. The skill now cites Purview pages for both, and reports the labels' release state and harness scope as not documented.
 - Learn still calls the Microsoft Copilot harness the "GitHub Copilot harness" on every page. Most admin pages state no harness scope. Where a control's harness isn't stated, the skill says so rather than assume it covers every harness.
-- Thirteen questions aren't answered by the documentation, including:
+- Fifteen questions aren't answered by the documentation, including:
   - whether users can extract an agent's instructions;
   - whether data policies govern MCP servers added by URL on the Microsoft Copilot harness (they do govern its tools);
   - whether any admin control covers skills uploaded to Microsoft Copilot harness agents;
+  - whether a **Request for information** step in a workflow can gate a tool call on the Microsoft Copilot harness;
   - whether Copilot Studio's Prompt Shields block events reach Defender (two Defender pages disagree).
   
   The skill reports these as *not documented* and gives a test for each.
+- Sovereign clouds: Learn documents differences only for code interpreter (not available), Claude models, Defender's AI agent posture and Power Platform inventory (which lists no Microsoft Copilot harness agents in GCC, GCC High or DoD). For other controls, GCC, GCC High and DoD availability isn't documented, and the skill reports it as *unknown*.
 - The automatic security scan page is dated November 2024 and describes three checks only. The Power Platform admin center label of the code interpreter environment setting isn't documented.
 - The mapping is a design aid, not a certification. Covering a risk with a control reduces it; it doesn't remove it.
 - This is not security or legal advice. Verify against the cited pages before relying on the output for an approval decision.
 
 ## Sources
 
-Microsoft Learn, with each page's `ms.date` when fetched on 4 November 2026:
+Microsoft Learn, with each page's `ms.date` when fetched on 4 November 2026 and re-checked on 5 November 2026:
 
 **Harnesses and overview**
 
@@ -81,6 +83,7 @@ Microsoft Learn, with each page's `ms.date` when fetched on 4 November 2026:
 - [FAQ for agents powered by the GitHub Copilot harness](https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/faqs-copilot-harness), 2 Nov 2026
 - [Configure settings for GitHub Copilot agents](https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/settings-overview), 10 Sep 2026
 - [Skills overview for agents (GitHub Copilot)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/skills-overview), 19 Oct 2026
+- [Agents powered by the Customer Conversation harness overview (preview)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/overview-customer-conversation), 8 Oct 2026
 - [Configure agent details and security (Customer Conversation) (preview)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/settings-details-security-customer-conversation), 8 Oct 2026
 - [Security and governance](https://learn.microsoft.com/en-us/microsoft-copilot-studio/security-and-governance), 24 Sep 2026
 
@@ -102,7 +105,6 @@ Microsoft Learn, with each page's `ms.date` when fetched on 4 November 2026:
 - [Add Dataverse tables as a knowledge source](https://learn.microsoft.com/en-us/microsoft-copilot-studio/knowledge-add-dataverse), 26 Jun 2026
 - [Choose knowledge sources for agents built in Copilot Studio](https://learn.microsoft.com/en-us/microsoft-copilot-studio/choose-knowledge-sources), 19 Oct 2026
 - [Data, privacy, and security for web search](https://learn.microsoft.com/en-us/microsoft-copilot-studio/data-privacy-security-web-search), 30 Jan 2026
-- [View sensitivity labels in agent responses (preview)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/sensitivity-label-copilot-studio), 30 Sep 2026
 - [Control how transcripts are retained and accessed](https://learn.microsoft.com/en-us/microsoft-copilot-studio/admin-transcript-controls), 27 Aug 2026
 - [Choose evaluation methods](https://learn.microsoft.com/en-us/microsoft-copilot-studio/analytics-agent-evaluation-overview), 16 Sep 2026
 - [Evaluate an agent (preview)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/analytics-agent-evaluation-intro), 5 Oct 2026
@@ -116,6 +118,8 @@ Microsoft Learn, with each page's `ms.date` when fetched on 4 November 2026:
 - [Hooks (GitHub Copilot) (preview)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/hooks-overview), 29 Sep 2026
 - [Request information from human review in agent flows](https://learn.microsoft.com/en-us/microsoft-copilot-studio/flows-request-for-information), 18 Jun 2026
 - [Multistage and AI approvals in agent flows (preview)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/flows-advanced-approvals), 4 Sep 2025
+- [Request information from human review in workflows (GitHub Copilot)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/workflows-experience/flows-request-for-information), 22 Jun 2026
+- [Add a workflow as a tool to an agent (GitHub Copilot)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/workflows-experience/flow-agent), 22 Jun 2026
 - [Use environment variables for Azure Key Vault secrets](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/environmentvariables-azure-key-vault-secrets), 9 Jan 2026
 
 **Code interpreter and computer use**
@@ -138,7 +142,7 @@ Microsoft Learn, with each page's `ms.date` when fetched on 4 November 2026:
 - [Allow external language models for generative responses](https://learn.microsoft.com/en-us/power-platform/admin/allow-llm-generative-responses), 12 Oct 2026
 - [Choose an external model as the primary AI model](https://learn.microsoft.com/en-us/microsoft-copilot-studio/authoring-select-external-response-model), 28 May 2026
 - [Model availability and controls (GitHub Copilot)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/authoring-agent-model-availability), 2 Nov 2026
-- [Claude models from Anthropic in Microsoft Online Services](https://learn.microsoft.com/en-us/copilot/microsoft-365/connect-to-ai-subprocessor), 4 Nov 2026
+- [Claude models from Anthropic in Microsoft Online Services](https://learn.microsoft.com/en-us/copilot/implement/connect-to-ai-subprocessor), 4 Nov 2026
 - [Move data across regions for Copilots, AI agents, and generative AI features](https://learn.microsoft.com/en-us/power-platform/admin/geographical-availability-copilot), 14 Oct 2026
 - [Publish an agent (GitHub Copilot)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/publication-publish-agent), 8 Sep 2026
 - [Create and manage custom solutions](https://learn.microsoft.com/en-us/microsoft-copilot-studio/authoring-solutions-overview), 29 Apr 2026
@@ -180,12 +184,12 @@ Microsoft Learn, with each page's `ms.date` when fetched on 4 November 2026:
 - [Manage Copilot Credits and capacity for Copilot Studio](https://learn.microsoft.com/en-us/power-platform/admin/manage-copilot-studio-copilot-credits-capacity), 14 Oct 2026
 - [Manage costs for agents powered by the GitHub Copilot harness](https://learn.microsoft.com/en-us/power-platform/admin/manage-usage-github-copilot-harness), 28 Oct 2026
 - [Govern Copilot Credit consumption for agents powered by the GitHub Copilot harness](https://learn.microsoft.com/en-us/microsoft-copilot-studio/guidance/govern-credit-consumption), 6 Oct 2026
-- [Manage Copilot Studio costs in the Microsoft 365 admin center](https://learn.microsoft.com/en-us/microsoft-365/copilot/usage-based-billing-manage-copilot-studio-costs), 30 Oct 2026
+- [Manage Copilot Studio costs in the Microsoft 365 admin center](https://learn.microsoft.com/en-us/copilot/implement/usage-based-billing-manage-copilot-studio-costs), 30 Oct 2026
 - [Use the Power Platform API to quarantine agents](https://learn.microsoft.com/en-us/microsoft-copilot-studio/admin-api-quarantine), 14 Jul 2026
 
 **Purview, Defender, Agent 365 and Entra**
 
-- [View Copilot Studio audit logs in Purview](https://learn.microsoft.com/en-us/microsoft-copilot-studio/admin-logging-copilot-studio), 18 Aug 2026
+- [Turn auditing on or off](https://learn.microsoft.com/en-us/purview/audit-log-enable-disable), 19 Jun 2026
 - [Use Microsoft Purview to manage data security & compliance for Microsoft Copilot Studio](https://learn.microsoft.com/en-us/purview/ai-copilot-studio), 1 May 2026
 - [Microsoft Purview DLP for Microsoft 365 Copilot and Cowork](https://learn.microsoft.com/en-us/purview/dlp-microsoft365-copilot-location-learn-about), 16 Oct 2026
 - [Learn about Microsoft Purview Data Security Posture Management (DSPM)](https://learn.microsoft.com/en-us/purview/data-security-posture-management-learn-about), 1 May 2026
@@ -219,6 +223,7 @@ The agent reads the same list at the end of [`references/controls-guide.md`](./r
 | Version | Date | Comments |
 | --- | --- | --- |
 | 1.0 | November 2026 | Initial release |
+| 1.1 | November 2026 | Re-checked every source on 5 November 2026: corrected the external and experimental model defaults, the Copilot Studio authors default, the Defender move to Agent 365, the Microsoft Copilot harness approval step and the evidence for two withdrawn pages (sensitivity labels, audit). Added Customer Conversation harness and sovereign cloud differences, two open questions and tests (Q14, Q15, T17, T18) and six more one-pager claims (28 of 34 checked). |
 
 ## Help
 
