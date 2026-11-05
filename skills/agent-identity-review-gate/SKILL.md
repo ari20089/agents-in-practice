@@ -17,7 +17,7 @@ Determine the following before proceeding. If the user has not supplied them, as
 4. **Role-holders** — maker, Copilot Studio owner, business sponsor, deputy, cost owner, audit reviewer, stop authority, data and memory owner, by role. Do not ask for names.
 5. **Cost setup** — environment allocation, **Draw from the available capacity in my tenant**, pay-as-you-go plan, per-agent limit, any Microsoft 365 admin center spending policy.
 6. **Artifact wanted** — full gate review (default), gate record, owner map, decision-rights matrix, decision-rights instruction block, credit cap worksheet, audit evidence pack, stop runbook, or tenant test plan.
-7. **Documentation date** — if you have web access, re-check the Microsoft Learn pages in the guide's Sources list, compare each page's `ms.date` with the date listed, and say what changed. Otherwise, say you are relying on 31 October 2026.
+7. **Documentation date** — if you have web access, re-check the Microsoft Learn pages in the guide's Sources list, compare each page's `ms.date` with the date listed, and say what changed. Otherwise, say you are relying on the documentation as of 31 October 2026, with the pages marked re-read checked again on 5 November 2026.
 8. **Tenant observations** — results the user already has from tests T1 to T12. Report these as *observed in tenant*, separate from *documented* and *not documented*, with the tenant type and date.
 
 ## Output Structure
@@ -30,7 +30,7 @@ Produce, in this order:
 4. **Observed in tenant** — only if the user supplied results; otherwise omit the heading.
 5. **Gate results** — the guide's section 7 criteria A1 to F3 as a table: criterion, result (*Pass*, *Fail*, *Unknown*), evidence or what is missing, Blocking or Condition.
 6. **Blocking issues and conditions** — each failed or unknown Blocking criterion with the fix; each open Condition with an owner role and a date.
-7. **Open questions that apply** — the relevant rows from Q1 to Q11.
+7. **Open questions that apply** — the relevant rows from Q1 to Q12.
 8. **Assumptions** — one line listing defaults you applied. Omit if the user supplied everything.
 9. **The requested artifact** — built from the matching guide section (Step 7).
 10. **Sources and dates** — one line naming the pages relied on and their dates, plus "Frontier preview, subject to change".
@@ -39,14 +39,14 @@ Use tables for the gate, the owner map, the matrix and the test plan; numbered l
 
 ## Step 1: Confirm scope
 
-Read the short version and section 1 of [references/gate-guide.md](references/gate-guide.md). Confirm the agent has, or will have, an account: Copilot Studio Preview, early release environment, **Agent account** added before first publish. Then route:
+Read the short version and section 1 of [references/gate-guide.md](references/gate-guide.md). Confirm the agent has, or will have, an account: Copilot Studio Preview, early release environment, **Agent account** added before first publish. If the tenant is in GCC, GCC High, DoD or another sovereign cloud, say availability is not documented (guide section 1); in a FedRAMP tenant, E1 passes only if a tenant audit search shows the events (guide section 1). Then route:
 
 | The user is asking about | Do |
 |---|---|
 | Going live, approval, ownership, autonomy, cost or audit of an agent with an account | Continue with this skill |
 | Shared memory retention, holds, eDiscovery, DSRs or deletion only | Say the shared-agent-memory-governance skill covers it; still apply criterion F1 if running the gate |
 | Delegation to child, connected or external agents | Out of scope; name the multi-agent handoff design as a separate review |
-| A standard harness agent with no account | Out of scope; the identity, trigger and billing facts differ |
+| A standard harness or Customer Conversation harness agent with no account | Out of scope; the identity, trigger and billing facts differ |
 
 ## Step 2: Check ownership
 
@@ -57,20 +57,21 @@ Use guide section 2. Build the role map in section 2.3 from the user's answers a
 Use guide section 3.
 
 1. List each trigger with its activation mode. For **Activate for myself**, record that the documentation says it runs "using your own maker credentials"; for an agent with an account, the identity is not documented (Q1).
-2. List each tool with its authentication mode and the identity it acts as. Note which connectors add scopes to the Entra Agent ID and which (custom connectors, MCP servers, REST tools) do not.
+2. List each tool with its authentication mode and the identity it acts as. For end-user authentication, the agent-account page says both that the tool uses "the agent's identity and consent" and that each person authenticates; record the identity as *Unknown* (Q1). Note which connectors add scopes to the Entra Agent ID and which (custom connectors, MCP servers, REST tools) do not.
 3. Classify every action D0 to D4 (section 3.6). The class is the highest the tool can reach, not what the instructions say it should do.
 4. Check controls per class. Say explicitly that no human approval or confirmation step is documented for this harness, that hooks fail open and Post tool use fires only on success (log failures with After tool failure), and that Conditional Access on the agent identity is enforced only in Teams.
 5. Check the stop path (section 3.7): which one the team will use, who holds it, and whether T11 has shown it stops a trigger-driven run. None of the paths is documented to stop triggers for an agent with an account (Q7). If the environment's IP firewall is in active enforcement mode, Microsoft 365 admin center actions fail and the Power Platform API is the fallback.
+6. Check the environment's **Sharing agents with embedded maker credentials** setting and the share settings (section 3.1, C5, C6). It governs sharing and publishing only; it does not stop a running agent.
 
 Score C1 to C9.
 
 ## Step 4: Check credit caps
 
-Use guide section 4. Confirm that every activity on this harness is billed, from the first build session, and that the Frontier licence is separate from credits. Check for a per-agent limit with a notification threshold and **Stop usage** on, an environment allocation with tenant draw cleared, and a fallback for when the agent stops. Treat Azure budgets as alerts only. Check that only tenant administrators can change allocations, because environment administrators given that right get it across every environment. If a Microsoft 365 admin center resource-based policy covers the agent, note that it takes precedence and that behaviour at its per-agent limit is not documented (Q6). If the user has no sizing, offer the worksheet in section 8.4 instead of a number. Score D1 to D5.
+Use guide section 4. Confirm that every activity on this harness is billed, from the first build session, and that the Frontier licence is separate from credits. Check for a per-agent limit with a notification threshold and **Stop usage** on, an environment allocation with tenant draw cleared, and a fallback for when the agent stops. Treat Azure budgets as alerts only. Check that only tenant administrators can change allocations, because environment administrators given that right get it across every environment. If a Microsoft 365 admin center resource-based policy covers the agent, note that it takes precedence and that behaviour at its per-agent limit is not documented (Q6). Say that Work IQ API spending is managed in Microsoft 365 admin center **Cost management** from the same prepaid packs, and that whether the agent's Work IQ use is billed there is not documented (Q12). If the user has no sizing, offer the worksheet in section 8.4 instead of a number. Score D1 to D5.
 
 ## Step 5: Check audit
 
-Use guide section 5. Map what the audit reviewer can reconstruct from Purview Audit (Copilot Studio events), Entra logs, Monitor (28 days), Copilot Studio's per-agent protection status, Data Security Posture Management AI observability, Microsoft 365 admin center lifecycle events and any Post tool use hook. Say which questions in the section 5.2 table have no documented source, including whether trigger runs with no signed-in user are audited (Q5). Then check data protection from section 1 and 3.4: encrypting labels must not grant the agent VIEW and EXTRACT, content the agent creates is unlabelled, and Purview DLP needs the agent instance in scope and an owner watching its blocks. Score E1 to E6 and F1 to F3.
+Use guide section 5. Map what the audit reviewer can reconstruct from Purview Audit (Copilot Studio events), Entra logs, Monitor (28 days), Copilot Studio's per-agent protection status, Data Security Posture Management AI observability, Microsoft 365 admin center lifecycle events and any Post tool use hook. Say which questions in the section 5.2 table have no documented source, including whether trigger runs with no signed-in user are audited (Q5). Then check data protection from section 1 and 3.4: encrypting labels must not grant the agent VIEW and EXTRACT, content the agent creates is unlabelled, anything shared with the agent in conversation can reach other users through shared memory "regardless of sensitivity label", and Purview DLP needs the agent instance in scope and an owner watching its blocks. Score E1 to E6 and F1 to F3.
 
 ## Step 6: Apply the verdict rules
 
@@ -101,7 +102,7 @@ End with the verdict, the shortest path to **Go**, and the re-review triggers fr
 - **Never** state whose identity a trigger runs under for an agent with an account. It is not documented; say so and point to T1.
 - **Never** describe a human approval, confirmation or "ask before running" step as available on the Microsoft Copilot harness. The documented ones are on standard harness pages.
 - **Never** present a hook, instructions or Azure budget as a hard control. Hooks fail open; instructions are guidance; budgets alert only.
-- **Never** treat the Agent 365 `AIInvokeAgent` or `AIExecuteTool` events as documented for these agents (Q5), or claim the data policy trigger block applies to this harness (Q4).
+- **Never** treat the Agent 365 `AIInvokeAgent` or `AIExecuteTool` events, or the Microsoft 365 admin center agent management events such as `BlockedAgent`, as documented for these agents (Q5), or claim the data policy trigger block applies to this harness (Q4).
 - **Never** say a block, quarantine, turn-off, **Stop usage** or Entra disable stops trigger-driven runs of an agent with an account (Q7), or that Frontier carries an SLA.
 - **Never** quote credit rates for this harness. Microsoft publishes them only as ranges in a diagram; use pilot consumption and the estimator.
 - **Always** keep the two Entra identities apart: a Conditional Access policy or sponsor on the agent identity does not cover the agent's user account, and the reverse.
@@ -129,9 +130,9 @@ End with the verdict, the shortest path to **Go**, and the re-review triggers fr
 > | C9 | Stop path proved on a test agent | Unknown | No path chosen; T11 not run | Blocking |
 > | E4 | Transcript retention for D2 actions | Fail | Monitor keeps 28 days; no export | Blocking |
 >
-> **Fixes:** add the reviewer group as a sponsor; replace the connector with the single update-item action and add Pre tool use, Post tool use and After tool failure hooks; set a limit sized from last month's report with **Stop usage** on; schedule a monthly transcript export; name the stop authority and run T11 with Block. Then run T1 to settle the trigger identity before widening the audience.
+> **Fixes:** add the reviewer group as a sponsor (a dynamic-membership or assigned Microsoft 365 group; assigned security groups and role-assignable groups can't be sponsors); replace the connector with the single update-item action and add Pre tool use, Post tool use and After tool failure hooks; set a limit sized from last month's report with **Stop usage** on; schedule a monthly transcript export; name the stop authority and run T11 with Block. Then run T1 to settle the trigger identity before widening the audience.
 > **Sources and dates:** Add triggers (20 Oct 2026); Give your agent an account (15 Oct 2026); Manage Copilot Credits and capacity (14 Oct 2026); Monitor (28 Sep 2026). Frontier preview, subject to change.
 
 ## References
 
-- [references/gate-guide.md](references/gate-guide.md) — the three objects behind an agent with an account, documented facts on owners and sponsors (section 2), triggers, tools, Conditional Access, data policies, Purview DLP, hooks, action classes D0 to D4 and stop paths (section 3), credit controls and sizing (section 4), audit sources and gaps (section 5), open questions Q1 to Q11 (section 6), gate criteria A1 to F3 and verdict rules (section 7), artifact templates (section 8), tenant tests T1 to T12 (section 9), and all sources with dates. Read it before answering; read the section named in each step before scoring it.
+- [references/gate-guide.md](references/gate-guide.md) — the three objects behind an agent with an account, documented facts on owners and sponsors (section 2), triggers, tools, Conditional Access, data policies, Purview DLP, hooks, action classes D0 to D4 and stop paths (section 3), credit controls and sizing (section 4), audit sources and gaps (section 5), open questions Q1 to Q12 (section 6), gate criteria A1 to F3 and verdict rules (section 7), artifact templates (section 8), tenant tests T1 to T12 (section 9), and all sources with dates. Read it before answering; read the section named in each step before scoring it.
