@@ -26,7 +26,7 @@ Two or three sentences on the scenario, who the agent is for, and the outcome.
 - *starter one*
 - *starter two*
 
-Then give the steps for each tool you support: Agent Builder in Microsoft 365 Copilot, Copilot Studio, Microsoft 365 Agents Toolkit.
+Then give the steps for each tool you support: Agent Builder in Microsoft 365 Copilot, Copilot Studio (say which harness), Microsoft 365 Agents Toolkit.
 
 ## Prerequisites
 
@@ -36,6 +36,7 @@ Then give the steps for each tool you support: Agent Builder in Microsoft 365 Co
 ## Limitations
 
 - Known gaps, preview caveats, the documentation date relied on
+- If there are knowledge files: uploaded files don't work in GCC, so say what to use instead (see AGENT-INSTRUCTIONS-SCHEMA.md)
 
 ## Sources
 

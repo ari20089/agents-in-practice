@@ -8,7 +8,7 @@
 Hands-on **skills**, **prompts**, **agent instructions** and **Adaptive Cards** for AI agents working with Microsoft 365, Copilot Studio, Power Platform and GitHub Copilot. Skills are reusable instruction packages (a `SKILL.md` plus optional `references/`, `scripts/` and `assets/`) that give an agent a focused, repeatable capability; they follow the [Agent Skills specification](https://agentskills.io/specification) and install into any host that reads it. Agent instructions are the instructions and knowledge files that define an agent's role, ready to paste into Agent Builder, Copilot Studio or the Microsoft 365 Agents Toolkit. Prompts are single, self-contained instructions you paste into a Copilot chat for a focused result, such as a readiness check of the repository you have open. Adaptive Cards are card templates with sample data, ready to paste into a Copilot Studio topic, a Power Automate flow or a bot.
 
 > [!IMPORTANT]
-> Everything here is provided as-is, are not Microsoft products, and include no official Microsoft support or service-level agreement. Several describe **preview** features that change without notice. Validate every item against the Microsoft Learn pages it cites and against your own security, privacy, compliance and governance requirements before relying on it. See [SUPPORT.md](./SUPPORT.md).
+> Everything here is provided as-is. None of it is a Microsoft product, and none of it includes official Microsoft support or a service-level agreement. Several describe **preview** features that change without notice. Validate every item against the Microsoft Learn pages it cites and against your own security, privacy, compliance and governance requirements before relying on it. See [SUPPORT.md](./SUPPORT.md).
 
 ## Quick start
 
@@ -22,7 +22,7 @@ Each skill folder is self-contained: copy the whole folder, not just `SKILL.md`,
 
 For agent instructions, paste the item's `INSTRUCTIONS.md` into your agent's instructions and upload its `knowledge/` files. Each item's README gives the settings and steps for each tool; see [agent-instructions/README.md](./agent-instructions/README.md).
 
-For a prompt, paste its `PROMPT.md` into Copilot Chat. Its README says what it needs and how to save it as a prompt file; see [prompts/README.md](./prompts/README.md).
+For a prompt, paste its `PROMPT.md` into GitHub Copilot Chat, or into the Copilot chat its README names. Its README says what it needs and how to save it as a prompt file; see [prompts/README.md](./prompts/README.md).
 
 For an Adaptive Card, paste its `card.json` into your host and replace each `${...}` binding with your own value. Its README gives the steps for each host; see [adaptive-cards/README.md](./adaptive-cards/README.md).
 
@@ -58,16 +58,16 @@ For an Adaptive Card, paste its `card.json` into your host and replace each `${.
 
 | Skill | Platforms | Description |
 | --- | --- | --- |
-| [connected-agent-handoff-boundaries](./skills/connected-agent-handoff-boundaries/) | GitHub Copilot, Microsoft 365 Copilot, Copilot Studio, Any coding agent | Decision boundaries for Copilot Studio multi-agent designs: who may delegate which actions to child, connected, external and live agents, what context crosses each handoff and what comes back, with instruction blocks, a handoff contract, open questions and a tenant test plan. |
+| [connected-agent-handoff-boundaries](./skills/connected-agent-handoff-boundaries/) | GitHub Copilot, Microsoft 365 Copilot, Copilot Studio, Any coding agent | Who may delegate what to whom in a Copilot Studio multi-agent design, and what survives the handoff: the documented mechanics for child, connected, external and live agents across harnesses, a decision-boundary pattern per action type, instruction blocks, a handoff contract and a tenant test plan. |
 
 ### Governance & compliance
 
 | Skill | Platforms | Description |
 | --- | --- | --- |
-| [agent-identity-review-gate](./skills/agent-identity-review-gate/) | GitHub Copilot, Microsoft 365 Copilot, Copilot Studio, Any coding agent | A go-live gate for Copilot Studio agents with their own account (Frontier preview): who owns the account and its Entra Agent ID, what it may decide on its own when a trigger fires, how its Copilot Credits are capped and what is audited, with a Go, Go with conditions or No go verdict, the open questions and a tenant test plan. |
-| [computer-use-autonomous-agents-fs](./skills/computer-use-autonomous-agents-fs/) | GitHub Copilot, Microsoft 365 Copilot, Copilot Studio, Any coding agent | Where the line sits for agents that drive a user interface or act without a prompt in regulated financial services in the UK, EU and US: what Microsoft excludes from intended use (financial transactions, scoring in finance), what regulators have and have not published, the obligations that apply by jurisdiction, the controls on either side of the line, and a tenant test plan. |
-| [owasp-copilot-studio](./skills/owasp-copilot-studio/) | GitHub Copilot, Microsoft 365 Copilot, Copilot Studio, Any coding agent | Maps every OWASP Top 10 for Agentic Applications (2026) and LLM Applications (2025) risk to the Copilot Studio settings and controls that address it: the agent setting, tool property, Power Platform admin center, Purview, Defender, Agent 365 or Entra control, its default, the harness it exists on, whether it blocks or only detects, and what no control covers, with Microsoft's March 2026 OWASP one-pager checked against current docs. Builds on HVE Core's generic owasp-agentic and owasp-llm skills. |
-| [shared-agent-memory-governance](./skills/shared-agent-memory-governance/) | GitHub Copilot, Microsoft 365 Copilot, Copilot Studio, Any coding agent | Governance for the shared memory of Copilot Studio agents with an account (Frontier preview): what Microsoft documents, where Purview retention, eDiscovery and holds reach and where they don't, the open questions, and runbooks for holds, data subject requests, decommissioning and a tenant test plan. |
+| [agent-identity-review-gate](./skills/agent-identity-review-gate/) | GitHub Copilot, Microsoft 365 Copilot, Copilot Studio, Any coding agent | Copilot Studio agent accounts, with their own Entra Agent ID, shared memory and event triggers, are in preview. A go-live gate for one: who owns it, what it may decide on its own, how its Copilot Credits are capped and what is audited, with a Go, Go with conditions or No go verdict, the evidence behind it, the open questions and a tenant test plan. |
+| [computer-use-autonomous-agents-fs](./skills/computer-use-autonomous-agents-fs/) | GitHub Copilot, Microsoft 365 Copilot, Copilot Studio, Any coding agent | Where the line sits for agents that drive a user interface or act without a prompt in UK, EU and US banks, insurers and investment firms: what Microsoft excludes from intended use, what regulators have and have not published, the obligations by jurisdiction, the controls on either side of the line, and a tenant test plan. |
+| [owasp-copilot-studio](./skills/owasp-copilot-studio/) | GitHub Copilot, Microsoft 365 Copilot, Copilot Studio, Any coding agent | Maps every OWASP Top 10 for Agentic Applications (2026) and LLM Applications (2025) risk to the Copilot Studio settings and controls that address it: which agent setting, tool property, Power Platform admin center, Purview, Defender, Agent 365 or Entra control, its default, which harness it exists on, whether it blocks or only detects, and what no control covers. Checks Microsoft's March 2026 OWASP one-pager against current docs. Builds on HVE Core's generic owasp-agentic and owasp-llm skills. |
+| [shared-agent-memory-governance](./skills/shared-agent-memory-governance/) | GitHub Copilot, Microsoft 365 Copilot, Copilot Studio, Any coding agent | Retention, eDiscovery, holds and deletion for the shared memory of Copilot Studio agents with an account: what Microsoft documents, where Purview reaches, the open questions, and runbooks for holds, data subject requests, decommissioning and a tenant test plan. |
 
 ## Prompt catalog
 
@@ -77,8 +77,8 @@ For an Adaptive Card, paste its `card.json` into your host and replace each `${.
 
 | Prompt | Platforms | Description |
 | --- | --- | --- |
-| [copilot-studio-harness-chooser](./prompts/copilot-studio-harness-chooser/) | GitHub Copilot, Microsoft 365 Copilot, Any coding agent | Describe the agent you want to build and it recommends the Copilot Studio harness to build it on (Microsoft Copilot, formerly GitHub Copilot, Customer Conversation or standard) with the reasons, why not the other two, what to check before you build and the open questions. Written to HVE Core's prompt standards. |
-| [power-platform-adr](./prompts/power-platform-adr/) | GitHub Copilot, Microsoft 365 Copilot, Any coding agent | Describe a delivery decision and it writes an Architecture Decision Record choosing between Agent Builder, Copilot Studio, a Power Apps code app or a combination: decision drivers, architecturally significant requirements, every option scored against documented Microsoft facts, the chosen option with its consequences and a confirmation step, in MADR v4 form. HVE Core's ADR Creator, scoped to Power Platform. |
+| [copilot-studio-harness-chooser](./prompts/copilot-studio-harness-chooser/) | GitHub Copilot, Microsoft 365 Copilot, Any coding agent | Describe the agent you want to build and it recommends the Copilot Studio harness to build it on (Microsoft Copilot, formerly GitHub Copilot, Customer Conversation or standard) with the reasons, why not the other two, what to check before you build and the open questions. Adapted from HVE Core's prompt standards. |
+| [power-platform-adr](./prompts/power-platform-adr/) | GitHub Copilot, Microsoft 365 Copilot, Any coding agent | Describe a delivery decision and it writes an Architecture Decision Record choosing between Agent Builder, Copilot Studio, a Power Apps code app or a combination: decision drivers, architecturally significant requirements, every option scored against documented Microsoft facts, the chosen option with its consequences and a confirmation step, in MADR v4 form. Adapted from HVE Core's ADR Creator, scoped to Power Platform. |
 
 ### Developer productivity
 
@@ -86,7 +86,7 @@ For an Adaptive Card, paste its `card.json` into your host and replace each `${.
 | --- | --- | --- |
 | [code-app-pr-description](./prompts/code-app-pr-description/) | GitHub Copilot, Any coding agent | Paste it into GitHub Copilot Chat on a Power Apps code app branch and it reads the diff and writes the pull request description in the same shape every time: screens touched, data sources added, connector permissions changed, licensing impact and test evidence, each row tied to a file. |
 | [code-app-readiness-check](./prompts/code-app-readiness-check/) | GitHub Copilot, Any coding agent | Paste it into GitHub Copilot Chat on an existing React or Vue repository and it reports whether the app can become a Power Apps code app: its own sign-in, direct API calls that should go through connectors, offline and worker assumptions, and build output and routing problems, with a verdict and an ordered fix list. |
-| [hve-core-adoption-check](./prompts/hve-core-adoption-check/) | GitHub Copilot, Any coding agent | Paste it into GitHub Copilot Chat on a repository and it reports which HVE Core agents and instruction files fit the repository's languages, where HVE's instructions would contradict or duplicate its existing copilot-instructions.md, and which install route (Marketplace extensions, Copilot CLI plugin or a selective clone) avoids the clashes. |
+| [hve-core-adoption-check](./prompts/hve-core-adoption-check/) | GitHub Copilot, Any coding agent | Paste it into GitHub Copilot Chat on a repository and it reports which HVE Core agents and instruction files fit the repository's languages, where HVE's instructions would contradict or duplicate its existing copilot-instructions.md, and which install route (Marketplace extensions, Copilot CLI plugin, a submodule or a selective clone) avoids the clashes. |
 
 ## Agent instructions catalog
 
@@ -96,19 +96,19 @@ For an Adaptive Card, paste its `card.json` into your host and replace each `${.
 
 | Agent | Platforms | Description |
 | --- | --- | --- |
-| [dataverse-table-designer](./agent-instructions/dataverse-table-designer/) | Microsoft 365 Copilot, Copilot Studio | Describe a business process and it proposes Dataverse tables, columns, relationships, choices and the ownership model, flags choices that should be lookups and the reverse, and returns the design as a solution checklist in build order. |
+| [dataverse-table-designer](./agent-instructions/dataverse-table-designer/) | Microsoft 365 Copilot, Copilot Studio | Agent instructions for a data model designer: describe a business process and it proposes Dataverse tables, columns, relationships, choices and the ownership model, flags choices that should be lookups and the reverse, and returns the design as a solution checklist in build order. |
 
 ### Governance & compliance
 
 | Agent | Platforms | Description |
 | --- | --- | --- |
-| [copilot-agent-governance-reviewer](./agent-instructions/copilot-agent-governance-reviewer/) | Microsoft 365 Copilot, Copilot Studio | A reviewer agent: paste in another Copilot agent's instructions, knowledge sources and actions and it reviews them the way a tenant admin or risk team would (scope, data exposure, write actions without confirmation, licensing fit and Responsible AI gaps) with findings tied to Microsoft documentation and a ship or fix verdict. |
+| [copilot-agent-governance-reviewer](./agent-instructions/copilot-agent-governance-reviewer/) | Microsoft 365 Copilot, Copilot Studio | Agent instructions for a reviewer agent: paste in another Copilot agent's instructions, knowledge sources and actions and get the review a tenant admin or risk team would give it, covering scope, data exposure, write actions without confirmation, licensing fit and Responsible AI gaps, with a ship or fix verdict. |
 
 ### Developer productivity
 
 | Agent | Platforms | Description |
 | --- | --- | --- |
-| [connector-call-wrapper-generator](./agent-instructions/connector-call-wrapper-generator/) | GitHub Copilot, Copilot Studio, Microsoft 365 Copilot, Any coding agent | Name a Dataverse table or connector operation in a Power Apps code app and it writes the typed data access layer over the generated services, with loading, error and empty states, instead of raw generated calls scattered through components. |
+| [connector-call-wrapper-generator](./agent-instructions/connector-call-wrapper-generator/) | GitHub Copilot, Copilot Studio, Microsoft 365 Copilot, Any coding agent | Agent instructions for a coding agent: name a Dataverse table or connector operation in a Power Apps code app and it writes the typed data access layer over the generated services, with loading, error and empty states, instead of raw generated calls scattered through components. |
 
 ## Adaptive Card catalog
 
@@ -120,7 +120,7 @@ For an Adaptive Card, paste its `card.json` into your host and replace each `${.
 | --- | --- | --- |
 | [approval-request](./adaptive-cards/approval-request/) | Copilot Studio, Microsoft Teams, Power Automate | A card that asks one person to approve or reject a request: what's being requested and why, who asked, when it's needed and a link to the full request, with an optional comment and Approve and Reject buttons. It returns the decision, the request reference and the comment in one response, from a Power Automate flow in Teams, a Copilot Studio topic or a Teams bot, with the checks to run before acting on it. |
 | [confirm-before-acting](./adaptive-cards/confirm-before-acting/) | Copilot Studio, Microsoft Teams, Power Automate | A card an agent shows before it does something it can't take back: what it's about to do, the recipient, the record and the values it will use, and what happens once it runs, with Confirm, Edit and Cancel buttons. It returns the choice and a reference to the pending action, from a Copilot Studio topic, a Power Automate flow in Teams or a Teams bot, with when to use Copilot Studio's and Microsoft 365 Copilot's own confirmation instead and the checks to run before acting. |
-| [plan-approval](./adaptive-cards/plan-approval/) | Copilot Studio, Microsoft Teams, Power Automate | A card that asks a reviewer to approve an implementation plan from HVE Core's Research, Plan, Implement (RPI) workflow before any code is written: the executive summary, repository, scope, files touched, what the reviewer may not know, the first four phases and the critique result, with links to the plan and the critique. Approve is one click; Request changes and Reject open a short form that requires a reason. It returns the decision, the plan file and the revision it applies to, from a Power Automate flow in Teams, a Copilot Studio topic or a Teams bot, with a repository instruction that stops RPI implementing an unapproved plan and the checks to run before acting. |
+| [plan-approval](./adaptive-cards/plan-approval/) | Copilot Studio, GitHub Copilot, Microsoft Teams, Power Automate | A card that asks a reviewer to approve an implementation plan from HVE Core's Research, Plan, Implement (RPI) workflow before any code is written: the executive summary, repository, scope, files touched, what the reviewer may not know, the first four phases and the critique result, with links to the plan and the critique. Approve is one click; Request changes and Reject open a short form that requires a reason. It returns the decision, the plan file and the revision it applies to, from a Power Automate flow in Teams, a Copilot Studio topic or a Teams bot, with a repository instruction that stops RPI implementing an unapproved plan and the checks to run before acting. |
 
 ### Knowledge & answers
 

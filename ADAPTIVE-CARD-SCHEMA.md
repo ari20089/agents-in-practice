@@ -27,14 +27,16 @@ The file holds the card exactly as it is pasted, so the whole file can be copied
 | Rule | Limit | Why |
 | --- | --- | --- |
 | Root | `"type": "AdaptiveCard"`, with `$schema` and `version` set | Every host reads `version` to decide what it can render |
-| Version | `1.5` or earlier | Copilot Studio supports 1.6 and earlier, but "Teams is also limited to version 1.5", and so is the live chat widget (Ask questions with Adaptive Cards). A card that has to work everywhere stays at 1.5 |
+| Version | `1.5` or earlier | Copilot Studio supports 1.6 and earlier, but "Teams is also limited to version 1.5", and so is the live chat widget (Ask questions with Adaptive Cards). Microsoft's pages conflict on Teams: the Teams platform says it "supports v1.6 or earlier of Adaptive Card features for bot sent cards" (Cards reference). The live chat widget limit holds either way, so a card that has to work everywhere stays at 1.5 |
 | Size | 28,000 bytes or less after the sample data is filled in | Power Automate's Teams actions fail with "Request Entity too large" above "approximately 28 KB" (Microsoft Teams connector reference) |
-| Bindings | Plain property paths only: `${title}`, `${requester.name}`. No functions, `$data`, `$when` or `$root` | Bindings use the Adaptive Cards template language, which only bots and the Designer expand. In Power Automate and Copilot Studio the maker replaces each binding by hand with dynamic content or a variable, which only works when each one is a single value |
+| Bindings | Plain property paths only: `${title}`, `${requester.name}`. No functions, `$data`, `$when` or `$root` | Bindings use the Adaptive Cards template language, which bots, the Designer and Microsoft 365 Copilot API plugin response templates expand (Adaptive Card response templates for API plugins); this repository's cards aren't written for plugin responses. In Power Automate and Copilot Studio the maker replaces each binding by hand with dynamic content or a variable, which only works when each one is a single value |
 | Inputs | Every input has a unique `id` and a `label` | The `id` is the name the response comes back under. `label` (schema 1.3) is "the recommended way of tagging inputs", and screen readers rely on it (Input Validation) |
 | Submit actions | Each `Action.Submit` has a `data` object with an `actionSubmitId` | Copilot Studio: "include an identifier in each submit action's data payload and validate it when processing the response" |
 | No `isEnabled` on `Action.Submit` | | "The `isEnabled` property for `Action.Submit` type in an Adaptive Card isn't supported in Teams" (Cards reference) |
 
 Prefer `Action.Submit` when the card must work in Copilot Studio and Power Automate. Teams recommends `Action.Execute` for new bots, but "the Bot Framework Web Chat component … doesn't support `Action.Execute`", nor does a Copilot Studio agent in Microsoft Copilot, and Power Automate's wait-for-response actions collect submissions. The README says how to switch when a card is only for a Teams bot.
+
+In Copilot Studio, the Adaptive Card node is documented for agents on the standard harness (Ask questions with Adaptive Cards). An equivalent for agents on the Microsoft Copilot harness (formerly GitHub Copilot harness) isn't documented as of 5 November 2026, so the Copilot Studio steps in a card's README apply to the standard harness.
 
 A card can't check who answered or whether the request is still open. Its README must say what the host has to check before acting on a response.
 
@@ -59,7 +61,7 @@ The same fields as a skill's `metadata.json` (see [CONTRIBUTING.md](./CONTRIBUTI
 
 ## Validation
 
-`node scripts/validate-adaptive-cards.mjs` enforces the layout, the root and version rules, the binding rules, that every binding has sample data and every sample value is used, the size limit after the sample data is filled in, input ids and labels, the `actionSubmitId` rule, the `metadata.json` schema, README links, the README `## Sources` section and the catalog row. `npm test` runs it with the other validators, and CI runs all of them on every pull request.
+`node scripts/validate-adaptive-cards.mjs` enforces the layout, the root and version rules, the binding rules, that every binding has sample data and every sample value is used, the size limit after the sample data is filled in, input ids and labels, the `actionSubmitId` rule, the `metadata.json` schema, README links, the README `## Sources` section and the catalog row (present, with the `metadata.json` `description` exactly). `npm test` runs it with the other validators, and CI runs all of them on every pull request.
 
 ## Sources
 
@@ -67,8 +69,9 @@ Microsoft Learn, with each page's `ms.date` when it was read on 31 October 2026:
 
 - [Ask questions with Adaptive Cards (Copilot Studio)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/authoring-ask-with-adaptive-card), 21 Oct 2026
 - [Connect and configure an agent for Teams and Microsoft Copilot](https://learn.microsoft.com/en-us/microsoft-copilot-studio/publication-add-bot-to-microsoft-teams), 29 Oct 2026
-- [Microsoft Teams connector reference](https://learn.microsoft.com/en-us/connectors/teams/), updated 2 Oct 2026
+- [Microsoft Teams connector reference](https://learn.microsoft.com/en-us/connectors/teams/), updated 5 Nov 2026, read on 5 November 2026
 - [Create and explore card types in Teams (Cards reference)](https://learn.microsoft.com/en-us/microsoftteams/platform/task-modules-and-cards/cards/cards-reference), 13 Oct 2026
 - [Adaptive Card actions in Teams SDK](https://learn.microsoft.com/en-us/microsoftteams/platform/task-modules-and-cards/cards/cards-actions), 10 Jun 2026
 - [Adaptive Cards Template Language](https://learn.microsoft.com/en-us/adaptive-cards/templating/language), 18 May 2020
+- [Adaptive Card response templates for API plugins for Microsoft 365 Copilot](https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/api-plugin-adaptive-cards), 19 Aug 2026, read on 5 November 2026
 - [Input Validation (Adaptive Cards)](https://learn.microsoft.com/en-us/adaptive-cards/authoring-cards/input-validation), 24 Jul 2020

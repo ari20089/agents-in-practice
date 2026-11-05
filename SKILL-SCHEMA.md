@@ -9,7 +9,7 @@ A skill is a Markdown file with YAML frontmatter that an agent host reads at run
 | Concept | What it is | Where it runs |
 | --- | --- | --- |
 | **Prompt** | A single instruction the user types | Any Copilot chat |
-| **Agent instructions** | A system prompt that defines an agent's role | Copilot Studio |
+| **Agent instructions** | A system prompt that defines an agent's role | Agent Builder, Copilot Studio, Microsoft 365 Agents Toolkit ([AGENT-INSTRUCTIONS-SCHEMA.md](./AGENT-INSTRUCTIONS-SCHEMA.md)) |
 | **Skill** | A reusable instruction package that teaches an agent a multi-step task | GitHub Copilot, Copilot Studio, Microsoft 365 Copilot, any Agent Skills host |
 
 ## File layout
@@ -23,6 +23,17 @@ skills/<slug>/
 ```
 
 Keep `SKILL.md` under **500 lines**. Long reference material belongs in `references/` with a link from the body, so the agent loads it only when needed.
+
+### Host limits
+
+Some hosts set limits of their own. A skill whose `metadata.json` lists a platform must fit that platform's limits.
+
+| Host | Limit | Source |
+| --- | --- | --- |
+| Microsoft 365 Copilot (Agent Builder and Agents Toolkit) | Skill instructions under **20,000 characters**; up to 8 skills per agent, 350 files, directory depth 3; Agent Builder takes a `.zip` of up to 50 MB with `SKILL.md` at its root, Agents Toolkit takes the directory | [Skills in declarative agents](https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/declarative-agent-skills), [Add skills in Agent Builder](https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/agent-builder-add-skills) (both 26 Oct 2026) |
+| Copilot Studio (Microsoft Copilot harness, formerly GitHub Copilot harness) | A Markdown file, or a `.zip` that includes `SKILL.md`; the description must fit "the model-facing catalog" (no number given) | [Add and manage an uploaded skill](https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/skills-add-existing) (10 Sep 2026) |
+
+The validator fails a skill that lists **Microsoft 365 Copilot** when the `SKILL.md` body after the frontmatter is 20,000 characters or more.
 
 ## Frontmatter (required)
 
@@ -91,4 +102,11 @@ Relative links to the documents the agent should read, with one line each on wha
 
 ## Validation
 
-`node scripts/validate-skills.mjs` enforces the frontmatter rules, the line limit, the `metadata.json` schema, the folder layout and the README `## Sources` section (present, with links, and the same links as any Sources list in `references/`). CI runs it on every pull request.
+`node scripts/validate-skills.mjs` enforces the frontmatter rules, the line limit, the Microsoft 365 Copilot character limit above, the `metadata.json` schema, the folder layout, the README `## Sources` section (present, with links, and the same links as any Sources list in `references/`) and the root README catalog row (present, with the `metadata.json` `description` exactly). CI runs it on every pull request.
+
+## Sources
+
+- [Agent Skills specification](https://agentskills.io/specification), read on 5 November 2026
+- [Skills in declarative agents](https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/declarative-agent-skills), 26 Oct 2026
+- [Add skills to your declarative agent in Agent Builder](https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/agent-builder-add-skills), 26 Oct 2026
+- [Add and manage an uploaded skill (Copilot Studio)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/skills-add-existing), 10 Sep 2026
