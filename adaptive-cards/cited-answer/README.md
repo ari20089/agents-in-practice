@@ -23,6 +23,7 @@ Teams and Copilot Studio can show citations themselves, so check whether you nee
 | A Copilot Studio generative answer, shown as it is | The built-in citations. In Teams, "Copilot Studio agents automatically return citation links only for answers without customizations" (Add a generative answers node) |
 | A Copilot Studio generative answer that you customize | This card is one documented way to do it: store the answer in a variable and show it "on an Adaptive Card" in a Message or Question node (Add a generative answers node). The steps are in [Copilot Studio](#copilot-studio-show-an-answer-in-a-topic). If you'd rather keep Teams' own citation pop-ups, Learn shows how to send the citations with a `SendActivity` node and `citationEntities` instead (Connect and configure an agent for Teams and Microsoft Copilot) |
 | A Teams bot or agent you build | Teams' own citations, for most answers: in-text markers "in the [#] format", each opening a pop-up with the title, link and abstract, up to 20 per message, each able to carry the source's sensitivity label, with the "AI Generated" label next to the agent's name (AI content labels). Use this card when the dates and the coverage note must be visible without hovering |
+| A declarative agent in Microsoft 365 Copilot that calls an API plugin | The plugin's own Adaptive Card response template, not this card. API plugins "can use Adaptive Card response templates to enhance the response that Microsoft 365 Copilot generates", the templates use the Adaptive Cards template language, and "the Adaptive Card renders citations within the generated response" (Adaptive Card response templates for API plugins) |
 | A Power Automate flow, or a website chat built on Bot Framework Web Chat | This card |
 
 ## What's in the folder
@@ -52,7 +53,7 @@ Each `${...}` in `card.json` is one value. Replace it, keeping the quotation mar
 In Teams, every text binding is Markdown: "Markdown is supported in Adaptive Card Textblock field, and Fact.Title and Fact.Value", including links written `[Title](https://example.com)` (Format text in cards). Each source title is such a link, so clean the values first:
 
 - **Titles:** remove `[`, `]`, `*` and `_`. Learn doesn't document a Markdown escape character for Teams cards (as of 1 November 2026).
-- **URLs:** encode spaces as `%20` and brackets as `%28` and `%29`. SharePoint document links often contain spaces, and in standard Markdown a link destination can't contain a space (CommonMark). In Power Automate, use `replace(url, ' ', '%20')`, not `encodeUriComponent()` on the whole URL, which would also encode the `:` and `/`.
+- **URLs:** encode spaces as `%20` and parentheses as `%28` and `%29`. SharePoint document links often contain spaces, and in standard Markdown a link destination can't contain a space (CommonMark). In Power Automate, use `replace(url, ' ', '%20')`, not `encodeUriComponent()` on the whole URL, which would also encode the `:` and `/`.
 
 If the answer isn't AI-generated, delete the last `TextBlock`.
 
@@ -60,13 +61,28 @@ If the answer isn't AI-generated, delete the last `TextBlock`.
 
 ### Power Automate: post an answer to a chat or channel
 
-1. Add the Microsoft Teams action **Post card in a chat or channel** (the connector's known-issues table calls it "Post adaptive card in a chat or channel"), and set **Post as** and **Post in**.
+1. Add the Microsoft Teams action **Post card in a chat or channel** (the connector's known-issues table calls it "Post adaptive card in a chat or channel"), and set **Post as** and **Post in**. Not a private channel: "Posting a message or adaptive card to a private channel currently isn't supported" (Microsoft Teams connector reference).
 2. Paste `card.json` into the action's card field and replace each `${...}` with dynamic content from earlier steps, keeping the quotation marks.
 3. Escape every text value before you insert it, `answer` above all. A double quotation mark, a backslash, a tab or a line break breaks the JSON, and improperly formatted JSON is one of the most common problems Microsoft lists for a failed card (Create your first adaptive card). The [Approval Request](../approval-request/README.md#power-automate-send-the-request-to-an-approver-in-teams) card gives an expression that does this.
 
 The card has no buttons, so nothing waits for a reply. Cards posted this way can't collect responses: "Adaptive cards that don't wait return an error for all button actions except OpenURL" (Overview of adaptive cards for Microsoft Teams). Links in the text open as normal.
 
-The card also works as the payload of a Workflows webhook: "Workflows webhooks support Adaptive Card and MessageCard payloads" (Webhooks and connectors in Teams).
+The card also works as the payload of a Workflows webhook: "Workflows webhooks support Adaptive Card and MessageCard payloads" (Webhooks and connectors in Teams). The same page says "Workflows webhooks support private channels", while the connector reference says its actions can't post to one; the pages disagree, so test a private channel before you rely on it. Fill in the bindings first, then wrap the card in a message. The **When a Teams webhook request is received** trigger takes `"type": "message"` and an `attachments` array; each item has `"contentType": "application/vnd.microsoft.card.adaptive"`, `"contentUrl": null` and the card as `content` (Microsoft Teams connector reference):
+
+```json
+{
+  "type": "message",
+  "attachments": [
+    {
+      "contentType": "application/vnd.microsoft.card.adaptive",
+      "contentUrl": null,
+      "content": { "type": "AdaptiveCard", "version": "1.5", "body": [] }
+    }
+  ]
+}
+```
+
+Replace the `content` object with the filled-in `card.json`.
 
 ### Copilot Studio: show an answer in a topic
 
@@ -75,13 +91,13 @@ These steps are for agents on the standard harness, which the Copilot Studio pag
 **From a generative answer.** Learn documents this pattern on the generative answers page:
 
 1. On the **Create generative answers** node, set **Input** to the `Activity.Text` system variable.
-2. In the node's properties, expand **Advanced**, create a variable to store the answer, and clear **Send a message**. Set **Save LLM response** to **Complete**, which "captures the full response, including citation metadata" (Connect and configure an agent for Teams and Microsoft Copilot).
+2. In the node's properties, expand **Advanced**, create a global variable to store the answer, and clear **Send a message**. The Teams channel page's example, used in step 4, stores the answer in a topic variable, `Topic.Answer`, instead. Set **Save LLM response** to **Complete**, which "captures the full response, including citation metadata" (Connect and configure an agent for Teams and Microsoft Copilot).
 3. Add a **Message** node, select **Add** > **Adaptive card**, open **Edit adaptive card** and paste `card.json`.
 4. In the Adaptive Card properties panel, "switch to Formula, and replace the default content with a Power Fx formula that uses your global variable" (Add a generative answers node). The Teams channel page's `SendActivity` example shows the shape of that variable: the answer in `Topic.Answer.Text.Content` and the citations in `Topic.Answer.Text.CitationSources` (Connect and configure an agent for Teams and Microsoft Copilot).
 
 Two parts of this aren't documented (as of 1 November 2026), so check them before you rely on them:
 
-- **The citation fields.** Learn passes `CitationSources` on whole, as `citationEntities`. It doesn't list the fields each citation has, so whether you can read a title, a URL and a last-modified date from it is unverified.
+- **The citation fields.** Learn passes `CitationSources` on whole, as `citationEntities`. It doesn't list the fields each citation has, so whether you can read a title, a URL and a last-modified date from it is unverified. The generative answers page also says "citations returned from a knowledge source can't be used as inputs to other tools or actions" (Add a generative answers node); whether that stops a card formula in a Message node from reading them isn't documented (as of 5 November 2026).
 - **The coverage.** Generative answers don't return a coverage judgement. Unless your topic decides it, delete the coverage `Container`.
 
 In Teams, a customized answer loses the automatic citation links, which is the gap this card's source list fills.
@@ -147,7 +163,7 @@ Run these in your tenant before relying on the card. None of them have been run 
 
 ## Prerequisites
 
-- **Power Automate:** the Workflows app installed in Teams and allowed in the Teams admin center, and a poster other than the Flow bot in GCC, GCCH and DoD tenants, where it isn't available (Microsoft Teams connector reference).
+- **Power Automate:** the Workflows app installed in Teams and allowed in the Teams admin center, and a poster other than the Flow bot in GCC tenants, where it isn't available (Microsoft Teams connector reference). In GCC High and DoD, send the card from [a Teams bot](#a-teams-bot-or-custom-engine-agent) instead: Teams marks Workflows as unavailable in both (Teams for Government Clouds, 23 April 2026), and Power Automate's adaptive cards aren't available in DoD at all (Overview of adaptive cards for Microsoft Teams, 19 August 2026); see [Limitations](#limitations).
 - **Copilot Studio:** an agent on the standard harness with a topic you can add a Message node to, and the answer and its sources in variables.
 - **A bot or agent:** the Microsoft 365 Agents SDK or the Teams SDK, and `adaptivecards-templating` 2.3.1 or `AdaptiveCards.Templating` to fill in the bindings.
 
@@ -156,12 +172,13 @@ Run these in your tenant before relying on the card. None of them have been run 
 - **Three sources, fixed.** The repository's cards use plain bindings so they can be filled in by hand, which rules out repeating a source row for each item in a list. Teams' own citations allow up to 20.
 - **No sensitivity labels.** Teams' own citations can show each source's sensitivity label; this card can't. Don't cite labelled content with it, or use Teams' citations instead.
 - **Schema version 1.5.** Copilot Studio supports 1.6 and earlier, but says Teams and the live chat widget are "limited to version 1.5" (21 October 2026). The Teams cards reference says Teams supports 1.6 (13 October 2026). The card stays at 1.5, and needs it for the headings' `"style": "heading"`.
-- **Colours depend on the host.** `good` and `warning` are container styles in schema 1.5. Each host picks its own colours for them, and a host that doesn't support a style shows the default. Teams' card pages don't document container styles or the `heading` text style (as of 1 November 2026); tests 1 and 8 cover them. The label's text always says the state, so the meaning never rests on colour alone. The preview image uses colours chosen for it.
+- **Colours depend on the host.** `good` and `warning` are container styles in schema 1.5. Each host picks its own colours for them, and a host that doesn't support a style shows the default. Teams' Format text in cards page uses container styles (`good`, `attention`, `emphasis`, `accent`) and the `heading` text style in its samples, and says a border's colour "matches the element's style, as defined in the HostConfig.json", but no Teams page lists how Teams renders each style (not documented as of 5 November 2026); tests 1 and 8 cover them. The label's text always says the state, so the meaning never rests on colour alone. The preview image uses colours chosen for it.
 - **Dates are plain text.** Adaptive Cards can instead show a date in the reader's own time zone: "Adaptive Cards offers DATE() and TIME() formatting functions to automatically localize the time on the target device", written `{{DATE(2026-09-12T14:30:00Z, SHORT)}}` (Text features). Pass the document's real last-modified timestamp: a date at midnight UTC shows as the day before to readers west of UTC. The Teams formatting page points to Text features "for more information about date and time formatting and localization" (Format text in cards). Test it in each host before you switch.
 - **English only.** "Answer", "Sources", "Last updated", the fallback sentence and the closing line are in English, and the root `lang` is `en`. Translate them for another audience.
 - **The coverage note is only as honest as the code behind it.** The card shows what it's given. A pipeline that always sends `good` turns the note into decoration.
+- **No Power Automate route in GCC High or DoD.** Power Automate's overview says "Adaptive cards aren't available within the DoD (Department of Defense) environment" (Overview of adaptive cards for Microsoft Teams, 19 August 2026). Teams for Government Clouds (23 April 2026) marks **Workflows** as unavailable in GCC High and DoD and notes "GCC High supports Incoming Webhooks only", while the connector's card actions "require Workflows (formerly Power Automate) app availability". The Teams connector reference's Flow bot note, read on 5 November 2026, still tells every Government Cloud tenant, GCC High and DoD included, to "Use the **User** poster option instead of Flow Bot"; the pages disagree, and this card follows the stricter ones. Teams lists bots and Adaptive Cards as available in GCC High and DoD, so use a bot there, distributed as a custom app for your organization: the same page marks uploading a custom app as unavailable in both.
 - **Not for Office 365 connector webhooks.** Office 365 Connectors in Teams, "including connector-based Incoming Webhooks, were retired in May 2026". Post from a flow or a Workflows webhook instead.
-- **Size.** 4.8 KB filled in with the sample data. Power Automate's Teams actions fail above "approximately 28 KB", so a very long answer is the thing to watch; it counts twice, once in `fallbackText`.
+- **Size.** 4.8 KB filled in with the sample data. Power Automate's Teams actions fail above "approximately 28 KB", so a very long answer is the thing to watch; it counts twice, once in `fallbackText`. Teams' Format text in cards page, in its section on mentions, also limits a message to "28 KB for Incoming Webhooks and 100 KB for a bot message".
 - **Not tested in a tenant.** The card was checked against the Adaptive Cards 1.5 JSON schema with the sample data filled in, and rendered with the Adaptive Cards JavaScript renderer 3.0.6 for the preview image. It hasn't been posted from a flow, a Copilot Studio agent or a bot; run the [test plan](#test-plan) first.
 
 ## Sources
@@ -171,19 +188,22 @@ Microsoft Learn, with each page's `ms.date` when it was read on 1 November 2026:
 - [Use Adaptive Cards in Copilot Studio](https://learn.microsoft.com/en-us/microsoft-copilot-studio/adaptive-cards-overview), 21 Oct 2026
 - [Send a message (Copilot Studio)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/authoring-send-message), 2 Jul 2026
 - [Ask questions with Adaptive Cards (Copilot Studio)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/authoring-ask-with-adaptive-card), 21 Oct 2026
-- [Add a generative answers node](https://learn.microsoft.com/en-us/microsoft-copilot-studio/nlu-boost-node), 21 Jul 2026
+- [Add a generative answers node](https://learn.microsoft.com/en-us/microsoft-copilot-studio/nlu-boost-node), 21 Jul 2026 (re-read 5 Nov 2026)
 - [Connect and configure an agent for Teams and Microsoft Copilot](https://learn.microsoft.com/en-us/microsoft-copilot-studio/publication-add-bot-to-microsoft-teams), 29 Oct 2026
-- [AI content labels (Teams)](https://learn.microsoft.com/en-us/microsoftteams/platform/bots/how-to/bot-messages-ai-generated-content), 27 Sep 2026
-- [Format text in cards](https://learn.microsoft.com/en-us/microsoftteams/platform/task-modules-and-cards/cards/cards-format), 22 Oct 2026
+- [AI content labels (Teams)](https://learn.microsoft.com/en-us/microsoftteams/platform/agents-in-teams/integrate-ai/ai-content-labels), 27 Sep 2026 (re-read 5 Nov 2026)
+- [Format text in cards](https://learn.microsoft.com/en-us/microsoftteams/platform/task-modules-and-cards/cards/cards-format), 22 Oct 2026 (re-read 5 Nov 2026)
 - [Create and explore card types in Teams (Cards reference)](https://learn.microsoft.com/en-us/microsoftteams/platform/task-modules-and-cards/cards/cards-reference), 13 Oct 2026
-- [Teams bots overview](https://learn.microsoft.com/en-us/microsoftteams/platform/bots/bot-features), 7 May 2025
+- [Teams SDK: Welcome](https://learn.microsoft.com/en-us/microsoftteams/platform/teams-sdk/welcome), 9 Oct 2026 (read 5 Nov 2026). It replaces the Teams bots overview, which now redirects to an archived page; What's new in the Bot Framework SDK names it "Teams SDK (Teams AI Library)"
+- [What's new in the Bot Framework SDK](https://learn.microsoft.com/en-us/azure/bot-service/what-is-new?view=azure-bot-service-4.0), 9 Oct 2024 (read 5 Nov 2026)
 - [Azure Bot Framework SDK to Microsoft 365 Agents SDK migration guidance](https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/bf-migration-guidance), 28 Apr 2026
-- [Overview of adaptive cards for Microsoft Teams (Power Automate)](https://learn.microsoft.com/en-us/power-automate/overview-adaptive-cards), 19 Aug 2026
+- [Overview of adaptive cards for Microsoft Teams (Power Automate)](https://learn.microsoft.com/en-us/power-automate/overview-adaptive-cards), 19 Aug 2026 (re-read 5 Nov 2026)
 - [Create your first adaptive card (Power Automate)](https://learn.microsoft.com/en-us/power-automate/create-adaptive-cards), 19 Aug 2026
-- [Microsoft Teams connector reference](https://learn.microsoft.com/en-us/connectors/teams/), `ms.date` 1 Mar 2024; the generated reference's own updated date is 2 Oct 2026
-- [Webhooks and connectors in Teams](https://learn.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/what-are-webhooks-and-connectors), 23 Jan 2025
+- [Microsoft Teams connector reference](https://learn.microsoft.com/en-us/connectors/teams/), `ms.date` 1 Mar 2024; the generated reference's own updated date is 5 Nov 2026 (re-read 5 Nov 2026)
+- [Teams for Government Clouds](https://learn.microsoft.com/en-us/microsoftteams/platform/concepts/cloud-overview), 23 Apr 2026 (read 5 Nov 2026): Workflows unavailable, bots and Adaptive Cards available, in GCC High and DoD
+- [Webhooks and connectors in Teams](https://learn.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/what-are-webhooks-and-connectors), 23 Jan 2025 (re-read 5 Nov 2026)
+- [Adaptive Card response templates for API plugins for Microsoft 365 Copilot](https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/api-plugin-adaptive-cards), 19 Aug 2026 (read 5 Nov 2026)
 - [Power Fx operators](https://learn.microsoft.com/en-us/power-platform/power-fx/operators), 22 Mar 2024: `&` is the "string concatenation operator"
-- [Power Fx Char function](https://learn.microsoft.com/en-us/power-platform/power-fx/reference/function-char), 22 Mar 2024: `Char(10)` is a line feed
+- [Power Fx Char function](https://learn.microsoft.com/en-us/power-platform/power-fx/reference/function-char), 22 Mar 2024: `Char` returns "the corresponding ASCII character"; ASCII code 10 is the line feed
 - [Adaptive Cards: Text features](https://learn.microsoft.com/en-us/adaptive-cards/authoring-cards/text-features), 18 Jun 2020
 - [Adaptive Cards Templating overview](https://learn.microsoft.com/en-us/adaptive-cards/templating/), 18 May 2020
 - [Adaptive Card Templating SDKs](https://learn.microsoft.com/en-us/adaptive-cards/templating/sdk), 15 May 2020
@@ -208,6 +228,7 @@ Other sources, read on 1 November 2026:
 | --- | --- | --- |
 | 1.0 | November 2026 | Initial release |
 | 1.1 | November 2026 | The Copilot Studio steps say they're for the standard harness, as the cited pages do |
+| 1.2 | November 2026 | GCC High and DoD tenants are pointed to a Teams bot, because Power Automate can't post the card there. Choose the right tool covers API plugins, the flow steps cover private channels and the Workflows webhook payload, the Copilot Studio steps quote the limit on reusing citations, and the `$schema` address, links and several citations are corrected |
 
 ## Help
 
