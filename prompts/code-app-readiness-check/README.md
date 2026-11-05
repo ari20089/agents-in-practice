@@ -89,7 +89,7 @@ After the fixes, the [Connector Call Wrapper Generator](../../agent-instructions
 
 ## Sources
 
-Microsoft Learn, with each page's `ms.date` when it was read on 31 October 2026:
+Microsoft Learn, with each page's `ms.date`, first read on 31 October 2026 and re-checked on 5 November 2026:
 
 - [Power Apps code apps overview](https://learn.microsoft.com/en-us/power-apps/developer/code-apps/overview), 23 Sep 2026
 - [Code apps architecture](https://learn.microsoft.com/en-us/power-apps/developer/code-apps/architecture), 12 Aug 2026
