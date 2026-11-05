@@ -123,7 +123,7 @@ How it decides, in order: note each harness documented as not supporting a state
 
 ## Sources
 
-Microsoft Learn, with each page's `ms.date` when it was read on 1 November 2026:
+Microsoft Learn, with each page's `ms.date`, first read on 1 November 2026 and re-checked on 5 November 2026:
 
 - [Harnesses in Copilot Studio](https://learn.microsoft.com/en-us/microsoft-copilot-studio/harnesses-overview), 19 Oct 2026
 - [Compare Copilot Studio agent harnesses](https://learn.microsoft.com/en-us/microsoft-copilot-studio/guidance/choose-harness), 30 Sep 2026
