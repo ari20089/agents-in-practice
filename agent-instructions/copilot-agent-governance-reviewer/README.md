@@ -86,7 +86,7 @@ Build the reviewer on the standard harness. Agents on the Microsoft Copilot harn
 
 ## Sources
 
-Microsoft documentation, with each page's `ms.date` when it was retrieved on 30 October 2026:
+Microsoft documentation, with each page's `ms.date`, first retrieved on 30 October 2026 and re-checked on 5 November 2026:
 
 **Declarative agents and Microsoft 365 Copilot**
 
@@ -169,7 +169,7 @@ Other sources, read on 1 November 2026:
 | --- | --- | --- |
 | 1.0 | October 2026 | Initial release |
 | 1.1 | November 2026 | Microsoft Copilot harness and DSPM names; the Copilot Studio billing rates are scoped to the standard harness, and LI2 covers Microsoft Copilot harness agents |
-| 1.2 | November 2026 | Copilot Studio setup now uses the standard harness and publishes to the Teams and Microsoft 365 channel, and behaviour rules moved from the knowledge file into the instructions. The knowledge file adds Customer Conversation harness, SharePoint agent, skills, memory, embedded file licensing, reasoning-model billing, audit, cost and sharing controls, narrows Q1 with Purview's agent pages, and updates page links and dates |
+| 1.2 | November 2026 | Copilot Studio setup now uses the standard harness and publishes to the Teams and Microsoft 365 channel, and behaviour rules moved from the knowledge file into the instructions. The knowledge file adds Customer Conversation harness, SharePoint agent, skills, memory, embedded file licensing, reasoning-model billing, audit, cost and sharing controls, narrows Q1 with Purview's agent pages, and updates page links and dates. The Restricted Content Discovery row now states what the page documents (search and Copilot responses, AI entry points) |
 
 ## Help
 

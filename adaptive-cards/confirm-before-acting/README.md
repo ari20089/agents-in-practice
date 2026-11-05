@@ -202,7 +202,7 @@ Run these in your tenant before relying on the card. None of them have been run 
 
 ## Sources
 
-Microsoft Learn, with each page's `ms.date` when it was read on 31 October or 1 November 2026:
+Microsoft Learn, with each page's `ms.date`, first read on 31 October or 1 November 2026 and re-checked on 5 November 2026:
 
 - [Add tools to custom agents (Copilot Studio)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/add-tools-custom-agent), 1 Oct 2026
 - [Ask questions with Adaptive Cards (Copilot Studio)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/authoring-ask-with-adaptive-card), 21 Oct 2026

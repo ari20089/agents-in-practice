@@ -65,7 +65,7 @@ The same fields as a skill's `metadata.json` (see [CONTRIBUTING.md](./CONTRIBUTI
 
 ## Sources
 
-Microsoft Learn, with each page's `ms.date` when it was read on 31 October 2026:
+Microsoft Learn, with each page's `ms.date`, first read on 31 October 2026 and re-checked on 5 November 2026:
 
 - [Ask questions with Adaptive Cards (Copilot Studio)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/authoring-ask-with-adaptive-card), 21 Oct 2026
 - [Connect and configure an agent for Teams and Microsoft Copilot](https://learn.microsoft.com/en-us/microsoft-copilot-studio/publication-add-bot-to-microsoft-teams), 29 Oct 2026
