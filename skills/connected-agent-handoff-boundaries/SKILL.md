@@ -16,7 +16,7 @@ Determine the following before proceeding. If the user has not supplied them, as
 3. **Action inventory** — the tools, flows and topics each agent can reach, with each tool's authentication (end-user or maker-provided) and whether **Ask the end user before running** is on. If unknown, classify from tool names and mark the classification provisional.
 4. **Delegators** — whether the parent is reached by users in chat, by an event or scheduled trigger, or both.
 5. **Artifact wanted** — boundary matrix (default), instruction blocks, handoff contract, review checklist, tenant test plan, or a design review of the whole set.
-6. **Documentation date** — if you have web access, re-check the Microsoft Learn pages in the guide's Sources list, compare each page's `ms.date` with the date listed, and say what changed. Otherwise, say you are relying on 30 October 2026.
+6. **Documentation date** — if you have web access, re-check the Microsoft Learn pages in the guide's Sources list, compare each page's `ms.date` with the date listed, and say what changed. Otherwise, say you are relying on the dates in that list (last re-read 5 November 2026).
 7. **Tenant observations** — any results the user already has from tests T1 to T10. Report these as *observed in tenant*, separate from *documented* and *not documented*, with the tenant type and date.
 
 ## Output Structure
@@ -44,9 +44,9 @@ Read [references/handoff-guide.md](references/handoff-guide.md) sections 1 and 2
 |---|---|---|
 | "Child agent" | Standard harness | Always receives parent context; no setting to exclude it |
 | "Sub-agent" | Customer Conversation harness (or loosely, any subagent) | Shares configuration, deployment and ALM with the primary agent |
-| "Connected agent" | Any harness | Standard: history toggle, same environment, one level. Microsoft Copilot harness: parent is the only communicator; no history setting documented. Customer Conversation: Microsoft Foundry agents only. |
+| "Connected agent" | Any harness | Standard: history toggle, same environment, one level. Microsoft Copilot harness: parent is the only communicator; no history setting named (Q3). Customer Conversation: Microsoft Foundry agents only. |
 | "A2A agent", "Foundry agent" | Standard or Microsoft Copilot harness | External: Microsoft puts responsibility for data flows and approvals on the maker |
-| "Hand off to a human", "escalate" | Standard harness, or Customer Conversation escalation paths | Full history and all user-defined topic variables go to the hub |
+| "Hand off to a human", "escalate" | Standard harness, or Customer Conversation escalation paths | Standard: full history and all user-defined topic variables go to the hub. Customer Conversation: payload not documented. |
 | "Agent handoff", "hub agent" | Employee Self-Service agent in Microsoft Copilot | Handoff passes history and the original prompt, can cross environments, and can target third-party agents |
 
 If the user mixes harnesses in one design, treat each delegation edge separately.
@@ -57,7 +57,7 @@ For each delegate, state from guide section 3 what it receives, what it returns,
 
 ## Step 3: Classify actions and set the tier where they execute
 
-Classify each delegate by the highest action type among the tools it can reach (guide section 6.1, A1 to A6). Map each type to Microsoft's three tiers (guide section 5): no confirmation, confirmation in the conversation, offline approval. The tier belongs to the agent that owns the tool. Read guide section 4 for where confirmation and credentials are set, and flag every delegate tool at A2 to A5 that uses maker-provided credentials.
+Classify each delegate by the highest action type among the tools it can reach (guide section 6.1, A1 to A6). Map each type to Microsoft's three tiers (guide section 5): no confirmation, confirmation in the conversation, offline approval. The tier belongs to the agent that owns the tool. Read guide section 4 for where confirmation and credentials are set, and flag every delegate tool at A2 to A5 that uses maker-provided credentials. Count MCP server tools as tools.
 
 ## Step 4: Check who may delegate what to whom
 
@@ -78,18 +78,18 @@ Every artifact carries the documentation date and the preview status of the mech
 
 ## Step 6: Recommend, then stop
 
-Give a clear position: ready, ready with listed fixes, or not ready. A design is not ready if any A5 action is reachable by generative routing, if any A2 to A5 delegate tool uses maker-provided credentials without a recorded exception, or if an external delegate receives chat history with no recorded data-sharing decision. Do not offer to change the agents.
+Give a clear position: ready, ready with listed fixes, or not ready. A design is not ready if any A5 action is reachable by generative routing, if any A2 to A5 delegate tool uses maker-provided credentials without a recorded exception (an autonomous delegator always needs one, because triggers run with the maker's credentials; guide sections 4 and 6.2), or if an external delegate receives chat history with no recorded data-sharing decision. Do not offer to change the agents.
 
 ## Rules
 
 - **Never** state that a parent's confirmation, credentials or data policy applies to a delegate's tools. Microsoft documents these per tool, in the agent that owns the tool.
 - **Never** state that a connected agent receives only the task, unless the user has confirmed that **Pass conversation history to this agent** is cleared on a standard-harness agent. Defaults pass history.
-- **Never** claim a history setting, a delegation depth, an admin block for agent connections, or a user-token pass-through exists where the guide says *not documented*. Answer "not documented as of <date>" and name the test that would establish it.
+- **Never** name a history setting, a delegation depth, an admin block for agent connections, or a user-token pass-through where the guide says *not documented*. Answer "not documented as of <date>" and name the test that would establish it. Do not deny one either: the FAQ says you "can configure if the full conversation history is passed" to external agents, though no page names the setting (guide Q3; test T6).
 - **Never** present the action types, delegation table, seven rules, `actionsTaken` output or *boundary* instruction lines as Microsoft guidance. They are this skill's pattern on top of Microsoft's facts; label them.
 - **Always** keep three classes of fact apart: *documented* (page and date), *observed in tenant* (whose test, when), and *not documented*.
 - **Always** quote Microsoft wording from the guide or a live fetch of the cited page, not from memory.
-- **Always** resolve the "only agent that talks to the user" conflict (Q6) in favour of the newer subagent page: instruct the subagent to stay silent; do not rely on a parent-only instruction.
-- **Always** use Microsoft's current names: standard harness; Microsoft Copilot harness (named the GitHub Copilot harness until 28 October 2026; keep the old name in Learn page titles and quotes; "a Microsoft Copilot Studio authoring and orchestration framework, not the GitHub Copilot service"; a Copilot Studio harness, not the Microsoft Copilot product); Customer Conversation harness, whose specialists are sub-agents; Microsoft Foundry (not Azure AI Foundry); Agent2Agent (A2A); Microsoft 365 Agents SDK; engagement hub; and, for the Employee Self-Service agent, Microsoft Copilot and Copilot Chat as its pages say.
+- **Always** resolve the "only agent that talks to the user" conflict (Q6) in favour of the subagent page, which the patterns page now defers to: instruct the subagent to stay silent; do not rely on a parent-only instruction.
+- **Always** use Microsoft's current names: standard harness; Microsoft Copilot harness (renamed from the GitHub Copilot harness on 28 October 2026; Learn and the product may still show the old name; keep the old name in Learn page titles and quotes; "a Microsoft Copilot Studio authoring and orchestration framework, not the GitHub Copilot service"; a Copilot Studio harness, not the Microsoft Copilot product); Customer Conversation harness, whose specialists are sub-agents; Microsoft Foundry (not Azure AI Foundry); Agent2Agent (A2A); Microsoft 365 Agents SDK; engagement hub; and, for the Employee Self-Service agent, Microsoft Copilot and Copilot Chat as its pages say.
 - **Always** keep tenant, agent, user and customer names the user shares out of reusable examples and paste-ready blocks.
 - If the design has no delegation, say this skill is the wrong tool and point to the guide's section 5 tiers for a single agent.
 
@@ -100,7 +100,7 @@ Give a clear position: ready, ready with listed fixes, or not ready. A design is
 **Output (abridged):**
 
 > **Handoff map:** Helpdesk → Facilities (connected Copilot Studio agent, standard); Helpdesk → Vendor orders (A2A, standard).
-> **Documented facts:** Facilities receives conversation history unless **Pass conversation history to this agent** is cleared; it "is enabled by default" (Design subagents, 27 Aug 2026). The A2A sample payload carries "Full chat history, not just the latest user utterance" (A2A, 26 Aug 2026). For external agents, "you're responsible for the use of such agents" (same page). Confirmation is per tool: **Ask the end user before running** "is set to No by default" (Add tools, 1 Oct 2026).
+> **Documented facts:** Facilities receives conversation history unless **Pass conversation history to this agent** is cleared; it "is enabled by default" (Design subagents, 4 Nov 2026). The A2A sample payload carries "Full chat history, not just the latest user utterance" (A2A, 26 Aug 2026). For external agents, "you're responsible for the use of such agents" (same page). Confirmation is per tool: **Ask the end user before running** "is set to No by default" (Add tools, 1 Oct 2026).
 > **Boundary matrix:** Facilities, A3 (drafts work orders), generative routing, history on (unknown why), end-user credentials, no confirmation, no outputs: *fails rule 4*. Vendor orders, A5 (cancels orders), generative routing, full chat history, OAuth 2.0 connection, no confirmation: *fails rules 1, 3 and 5*.
 > **Violations and fixes:**
 > - Rule 5: remove the vendor agent from generative routing. Reach it only through a "Cancel order" topic with a confirmation node and a redirect, passing a `scopedRequest` that holds the order number alone.
@@ -108,7 +108,7 @@ Give a clear position: ready, ready with listed fixes, or not ready. A design is
 > - Rule 4: add `answered`, `findings`, `openQuestions` and `actionsTaken` outputs to Facilities, and clear the history toggle.
 > **Open questions:** Q1, Q4, Q5.
 > **Recommendation:** not ready. Ship Facilities after the rule 4 fix; hold the vendor connection until the redirect topic exists and the data-sharing decision is signed.
-> **Sources and dates:** Multi-agent patterns (21 May 2026); Connect to an existing Copilot Studio agent (30 Mar 2026); A2A (26 Aug 2026); Design subagents (27 Aug 2026); Add tools (1 Oct 2026). Standard-harness "Add other agents" is preview documentation.
+> **Sources and dates:** Multi-agent patterns (4 Nov 2026); Connect to an existing Copilot Studio agent (30 Oct 2026); A2A (26 Aug 2026); Design subagents (4 Nov 2026); Add tools (1 Oct 2026). Standard-harness "Add other agents" is preview documentation.
 
 ## References
 

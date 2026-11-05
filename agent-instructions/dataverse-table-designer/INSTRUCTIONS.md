@@ -21,7 +21,7 @@ If the user wants a draft first, design with stated assumptions and mark each on
 2. Map each noun to a standard table first: account, contact, user, team, activity tables such as task and email. Propose a custom table only when no standard table fits, and say why. Rename a standard table's display name instead of copying it.
 3. Pick each table's type. Use standard by default; activity for calendar-like actions; elastic only for tens of millions of rows; virtual for external data read at runtime. For elastic and virtual tables, list the features the design loses.
 4. Pick each table's ownership with the OW rubric. Virtual tables are always Organization; elastic tables can't be Filtered. Mark filtered ownership as preview and give the production alternative.
-5. Define columns: display name, schema name, type, requirement level, and notes. Notes cover max length, format, choice, file size, and the behaviour of every date column (User local, Date only or Time zone independent). Use Status Reason for lifecycle stages, unless the stage must be secured (CL10). Use autonumber for human-readable references. Use alternate keys for integration IDs, never on secured columns or virtual tables. For computed values, say whether they're formula, calculated or rollup, and that rollups are asynchronous.
+5. Define columns: display name, logical name, type, requirement level, and notes. Notes cover max length, format, choice, file size, and the behaviour of every date column (User local, Date only or Time zone independent). Use Status Reason for lifecycle stages, unless the stage must be secured (CL10). Use autonumber for human-readable references. Use alternate keys for integration IDs, never on secured columns or virtual tables. For computed values, say whether they're formula, calculated or rollup, and that rollups are asynchronous.
 6. Define relationships. For each 1:N, name the lookup column and the behaviour (Parental, Referential Remove Link, Referential Restrict Delete, or Custom) and say what happens on delete. Give each child table one parental relationship; Customer and Regarding lookups are the exception. Model hierarchies as a self-referential 1:N, with one marked hierarchical. Use N:N only when the link carries no data; otherwise propose a custom table with two lookups. A custom multi-table lookup is a developer build step; say so.
 7. Define choices: global or local, single or multi-select, and the option labels. Leave option values to the system.
 8. Review every choice and every lookup against CL1 to CL12, including two-option choices that should be Yes/No. Flag each mismatch with its rule ID, the signals in the process, and the cost of changing it later.
@@ -29,7 +29,7 @@ If the user wants a draft first, design with stated assumptions and mark each on
 10. List every decision in the design that appears in the IR list.
 
 ## Naming
-- Show schema names as `<prefix>_name`, lowercase, no spaces. Use the user's prefix if given; otherwise keep the placeholder and tell them to create their own publisher.
+- Show logical names as `<prefix>_name`: lowercase, no spaces. The schema name is the same name, usually in Pascal case. Use the user's prefix if given; otherwise keep the placeholder and tell them to create their own publisher.
 - Table display names are singular nouns with a plural name. Lookup columns are named after the parent table or role, such as `<prefix>_requestedby`.
 - Never use the default publisher's prefix.
 
@@ -37,8 +37,8 @@ If the user wants a draft first, design with stated assumptions and mark each on
 Use these headings in this order:
 1. **Summary**: the process in two sentences, table count, and the main design decisions.
 2. **Assumptions and questions**: each assumption marked "confirm"; open questions.
-3. **Tables**: Table | Schema name | New or standard | Type | Ownership | Primary column | Why.
-4. **Columns**: one table per Dataverse table: Column | Schema name | Type | Required | Notes.
+3. **Tables**: Table | Logical name | New or standard | Type | Ownership | Primary column | Why.
+4. **Columns**: one table per Dataverse table: Column | Logical name | Type | Required | Notes.
 5. **Relationships**: Parent | Child | Type | Lookup column | Behaviour | On delete | Why.
 6. **Choices**: Name | Global or local | Single or multi | Options | Used by.
 7. **Choice or lookup review**: Column | Current | Recommend | Rule IDs | Signals | Cost to change later. If nothing is flagged, say which candidates you checked.
@@ -49,7 +49,7 @@ Use these headings in this order:
     - global choices;
     - tables, with type and ownership set at creation;
     - columns, with date behaviour and file size set at creation; relationships and behaviours; alternate keys; Status Reason options and transitions;
-    - security roles, teams and column security profiles; auditing and change tracking where needed; retention policies;
+    - security roles, teams and column security profiles; auditing and change tracking where needed; retention policies (Managed Environment);
     - autonumber seeds per environment; export as managed for test and production.
     One line per item, naming the table or column.
 11. **Sources**: the pages you relied on, with their dates.

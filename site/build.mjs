@@ -32,7 +32,7 @@ const SITE = {
 const TYPES = [
   { dir: "skills", label: "Skills", singular: "skill", install: ".github/skills/<slug>/", blurb: "Reusable instruction packages: a SKILL.md plus the references it needs, for any Agent Skills host." },
   { dir: "prompts", label: "Prompts", singular: "prompt", install: "", blurb: "Single instructions for a focused task or outcome." },
-  { dir: "agent-instructions", label: "Agent instructions", singular: "agent instruction", install: "", blurb: "Instructions and knowledge files that define an agent's role." },
+  { dir: "agent-instructions", label: "Agent instructions", singular: "agent instructions", noun: "agent instructions item", install: "", blurb: "Instructions and knowledge files that define an agent's role." },
   { dir: "adaptive-cards", label: "Adaptive Cards", singular: "Adaptive Card", install: "", blurb: "Card templates with sample data, for Copilot Studio, Power Automate and Teams bots." },
 ];
 
@@ -106,7 +106,7 @@ function cover(slug, name, description, body = "", file = body ? "INSTRUCTIONS.m
   const mono = "ui-monospace,SFMono-Regular,Menlo,Consolas,monospace";
   const desc = wrap(description || "", 40, 52, 5);
   const rows = body
-    ? wrap(body.replace(/^#+\s*/gm, ""), 54, 54, 7).map((l) => `<tspan fill="#cbd5e1">${esc(l)}</tspan>`)
+    ? wrap(body.replace(/^#+\s*/gm, ""), 54, 54, 7).map((l) => (l.length > 56 ? `${l.slice(0, 55)}…` : l)).map((l) => `<tspan fill="#cbd5e1">${esc(l)}</tspan>`)
     : [
         `<tspan fill="#64748b">---</tspan>`,
         `<tspan fill="#93c5fd">name:</tspan><tspan fill="#e2e8f0"> ${esc(slug.length > 46 ? slug.slice(0, 45) + "…" : slug)}</tspan>`,
@@ -167,6 +167,7 @@ function readItems() {
         type: type.dir,
         category: type.label,
         typeLabel: type.singular,
+        noun: type.noun || type.singular,
         subcategory: meta.subcategory ?? "",
         name: meta.name,
         description: meta.description,
@@ -352,7 +353,7 @@ function indexPage(items, catalog) {
     </div>
     <ol class="gs-steps">
       <li><span class="gs-num">01</span><div><h3>Find one</h3><p>Search or filter the catalog above, then open its page to read what it does and what it relies on.</p></div></li>
-      <li><span class="gs-num">02</span><div><h3>Copy it</h3><p>Download or copy the whole folder. Its README says where each file goes in your agent.</p></div></li>
+      <li><span class="gs-num">02</span><div><h3>Copy it</h3><p>Download it from its page, or copy the text from its tab. Its README says where each file goes in your agent.</p></div></li>
       <li><span class="gs-num">03</span><div><h3>Ask your agent</h3><p>Once it's in place, your agent uses it when your request calls for it.</p></div></li>
     </ol>
   </div>
@@ -482,16 +483,16 @@ function detailPage(s) {
         <ul class="works">${s.platforms.map((p) => `<li data-value="${slugify(p)}">${esc(p)}</li>`).join("")}</ul>
       </section>
       <section class="meta-sec">
-        <h2 class="meta-h">Add this ${esc(s.typeLabel)}</h2>
-        <p class="meta-p">${s.install ? `Download the folder and unzip it into your host's skills directory, such as <code>${esc(s.install.replace(`${s.slug}/`, ""))}</code>.` : s.prompt ? "Copy the prompt from the Prompt tab, or download it; its README says how to run it." : s.card ? "Copy the card from the Card tab, or download it; its README says how to use it in each host." : "Download the folder; its README says where each file goes."}</p>
+        <h2 class="meta-h">Add this ${esc(s.noun)}</h2>
+        <p class="meta-p">${s.install ? `Download the .zip. For Agent Builder, or a Copilot Studio agent on the Microsoft Copilot harness, upload it as it is: <code>SKILL.md</code> is at its root. For GitHub Copilot or another host that reads a skills folder, unzip it into a folder named after the skill, such as <code>${esc(s.install)}</code>.` : s.prompt ? "Copy the prompt from the Prompt tab, or download it; its README says how to run it." : s.card ? "Copy the card from the Card tab, or download it; its README says how to use it in each host." : "Download the folder; its README says where each file goes."}</p>
         <div class="trust">
           <svg class="trust-icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 2.5 4 5.5v6c0 5 3.4 8.9 8 10 4.6-1.1 8-5 8-10v-6Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 7.5v5.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="16.3" r="1.1" fill="currentColor"/></svg>
           <div>
             <p class="trust-title">Add only what you trust</p>
-            <label class="trust-check"><input type="checkbox" id="trust-ok"> <span>${s.card ? `I understand that this is a community-provided ${esc(s.typeLabel)}. My flow, topic or bot acts on what it sends back, so I should review it carefully and use it only if I trust the source.` : `I understand that this is a community-provided ${esc(s.typeLabel)}. It runs with my agent's permissions, so I should review it carefully and add it only if I trust the source.`}</span></label>
+            <label class="trust-check"><input type="checkbox" id="trust-ok"> <span>${s.card ? `I understand that this is a community-provided ${esc(s.noun)}. My flow, topic or bot acts on what it sends back, so I should review it carefully and use it only if I trust the source.` : `I understand that this is a community-provided ${esc(s.noun)}. It runs with my agent's permissions, so I should review it carefully and add it only if I trust the source.`}</span></label>
           </div>
         </div>
-        <a class="btn btn-primary btn-block" id="download" href="${esc(s.slug)}.zip" download><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 1.75a.75.75 0 0 1 .75.75v6.19l2.22-2.22a.75.75 0 1 1 1.06 1.06l-3.5 3.5a.75.75 0 0 1-1.06 0l-3.5-3.5a.75.75 0 0 1 1.06-1.06l2.22 2.22V2.5A.75.75 0 0 1 8 1.75ZM2.75 12.5a.75.75 0 0 0 0 1.5h10.5a.75.75 0 0 0 0-1.5Z"/></svg>Download ${esc(s.typeLabel)} (.zip)</a>
+        <a class="btn btn-primary btn-block" id="download" href="${esc(s.slug)}.zip" download><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 1.75a.75.75 0 0 1 .75.75v6.19l2.22-2.22a.75.75 0 1 1 1.06 1.06l-3.5 3.5a.75.75 0 0 1-1.06 0l-3.5-3.5a.75.75 0 0 1 1.06-1.06l2.22 2.22V2.5A.75.75 0 0 1 8 1.75ZM2.75 12.5a.75.75 0 0 0 0 1.5h10.5a.75.75 0 0 0 0-1.5Z"/></svg>Download ${esc(s.noun)} (.zip)</a>
       </section>
       <section class="meta-sec">
         <dl class="meta-facts">
@@ -501,7 +502,7 @@ function detailPage(s) {
         </dl>
       </section>
       <section class="meta-sec">
-        <p class="meta-note">This ${esc(s.typeLabel)} is provided as-is and is not a Microsoft product. See <a href="${REPO}/blob/main/SUPPORT.md">Support</a> for how to get help.</p>
+        <p class="meta-note">This ${esc(s.noun)} is provided as-is and is not a Microsoft product. See <a href="${REPO}/blob/main/SUPPORT.md">Support</a> for how to get help.</p>
       </section>
     </aside>
   </div>
@@ -562,12 +563,14 @@ for (const s of items) {
   const dir = join(OUT, s.type, s.slug);
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, "index.html"), detailPage(s));
-  // The download holds what the agent loads, inside a folder named after the slug.
+  // The download holds what the agent loads. A skill's files sit at the zip root, because Agent Builder wants
+  // SKILL.md at the root of the package it uploads; other items sit inside a folder named after the slug.
   const src = join(ROOT, s.type, s.slug);
-  writeFileSync(join(dir, `${s.slug}.zip`), zip(s.files.map((f) => ({ name: `${s.slug}/${f.path}`, data: readFileSync(join(src, f.path)) })), s.updatedAt));
+  const prefix = s.type === "skills" ? "" : `${s.slug}/`;
+  writeFileSync(join(dir, `${s.slug}.zip`), zip(s.files.map((f) => ({ name: `${prefix}${f.path}`, data: readFileSync(join(src, f.path)) })), s.updatedAt));
   const assets = join(ROOT, s.type, s.slug, "assets");
   if (existsSync(assets)) cpSync(assets, join(dir, "assets"), { recursive: true });
 }
 
-const summary = TYPES.map((t) => [t, items.filter((i) => i.type === t.dir).length]).filter(([, n]) => n > 0).map(([t, n]) => plural(n, t.singular)).join(", ");
+const summary = TYPES.map((t) => [t, items.filter((i) => i.type === t.dir).length]).filter(([, n]) => n > 0).map(([t, n]) => plural(n, t.noun || t.singular)).join(", ");
 console.log(`Built ${summary || "0 items"} into site/dist`);

@@ -25,9 +25,9 @@ The file holds exactly what goes into the agent's **Instructions** field, with n
 
 | Rule | Limit | Source |
 | --- | --- | --- |
-| Length | 8,000 characters or less | Declarative agent schema: the instructions "must contain at least one nonwhitespace character and be 8,000 characters or less" |
+| Length | 8,000 characters or less | Declarative agent schema: the instructions "must contain at least one nonwhitespace character and be 8,000 characters or less". Agent Builder gives the same "Character limit of 8,000 characters", and Copilot Studio on the standard harness says "The instructions can have up to 8,000 characters". A limit for the Microsoft Copilot harness isn't documented as of 5 November 2026 |
 | No frontmatter | The file must not start with `---` | This repository |
-| All behaviour lives here | Steps, rules, output format and refusal behaviour | Microsoft: don't "offload declarative agent instructions in SharePoint documents (or any other knowledge source) to work around the 8,000-character instruction limit" |
+| All behaviour lives here | Steps, rules, output format and refusal behaviour | Microsoft: don't "offload declarative agent instructions in SharePoint documents (or any other knowledge source) to work around the 8,000-character instruction limit". For longer task detail in a Microsoft 365 Copilot agent, Microsoft points to skills instead, which avoid "running into the 8,000-character limit on declarative agent instructions" (see [SKILL-SCHEMA.md](./SKILL-SCHEMA.md)) |
 
 Write it for the agent: second person, directive language, and Markdown headings and lists. Name each knowledge file the instructions depend on, and say what the agent should use it for.
 
@@ -38,8 +38,9 @@ Files the maker uploads as knowledge sources. They hold **reference data the age
 | Rule | Limit | Source |
 | --- | --- | --- |
 | File types | `.txt`, `.pdf`, `.docx`, `.doc`, `.pptx`, `.ppt`, `.xlsx`, `.xls` | Accepted by Agent Builder and as declarative agent embedded knowledge. Copilot Studio also accepts `.md`, but Agent Builder doesn't, so use `.txt` for Markdown text. |
-| Size | 1 MB or less per file | Declarative agent embedded knowledge limit. Agent Builder allows up to 512 MB for these types, so the manifest limit is the binding one |
+| Size | 1 MB or less per file | Declarative agent embedded knowledge limit. Agent Builder allows up to 512 MB for most of these types and 30 MB for `.xls` and `.xlsx`, so the manifest limit is the binding one |
 | Count | 10 files or fewer | Declarative agent embedded knowledge limit |
+| Cloud and location | Say in the README that uploaded files don't work in GCC, and give the alternative | Agent Builder: embedded file content "isn't supported in Microsoft 365 Government Community Cloud (GCC) environments", and embedded files are stored "in the default geography of the tenant, not in the user's preferred data location (PDL)" |
 | Content | No secrets, personal data, customer data or tenant identifiers | Everyone who can use an agent can get the content of its uploaded files |
 
 ## `README.md` (required)
@@ -57,7 +58,7 @@ The same fields as a skill's `metadata.json` (see [CONTRIBUTING.md](./CONTRIBUTI
 
 ## Validation
 
-`node scripts/validate-agent-instructions.mjs` enforces the layout, the 8,000-character limit, the knowledge file types, sizes and count, the `metadata.json` schema, the README `## Sources` section (present, with links, and the same links as any Sources list in `knowledge/`) and the catalog row. `npm test` runs it with the skill validator, and CI runs both on every pull request.
+`node scripts/validate-agent-instructions.mjs` enforces the layout, the 8,000-character limit, the knowledge file types, sizes and count, the `metadata.json` schema, the README `## Sources` section (present, with links, and the same links as any Sources list in `knowledge/`) and the catalog row (present, with the `metadata.json` `description` exactly). `npm test` runs it with the other three validators, and CI runs them on every pull request.
 
 ## Sources
 
@@ -65,3 +66,7 @@ The same fields as a skill's `metadata.json` (see [CONTRIBUTING.md](./CONTRIBUTI
 - [Write effective instructions for declarative agents](https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/declarative-agent-instructions), 11 Aug 2026
 - [Add knowledge sources to an agent in Agent Builder](https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/agent-builder-add-knowledge), 30 Sep 2026
 - [Upload files as a knowledge source (Copilot Studio)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/knowledge-add-file-upload), 29 Sep 2026
+- [Build agents in Agent Builder](https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/agent-builder-build-agents), 26 Oct 2026
+- [Create and delete agents (Copilot Studio)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/authoring-first-bot), 31 Aug 2026
+- [Configure agent details and instructions (Copilot Studio, Microsoft Copilot harness)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/authoring-instructions), 23 Jun 2026
+- [Skills in declarative agents](https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/declarative-agent-skills), 26 Oct 2026

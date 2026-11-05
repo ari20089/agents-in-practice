@@ -49,7 +49,7 @@ adaptive-cards/<slug>/
 ## Working rules
 
 - **One item per change.** Do not touch other items' folders while editing one.
-- **Agent-facing vs human-facing.** Nothing that only a person needs (setup narrative, attribution, disclaimers) goes into `SKILL.md` or `references/`; it goes in the skill's `README.md`. Nothing that only the agent needs goes into `README.md`.
+- **Agent-facing vs human-facing.** Nothing that only a person needs (setup narrative, attribution, disclaimers) goes into the agent-facing files (`SKILL.md`, `references/`, `scripts/`, `PROMPT.md`, `INSTRUCTIONS.md`, `knowledge/`, `card.json`, `data.json`); it goes in the item's `README.md`. Nothing that only the agent needs goes into `README.md`.
 - **Keep `SKILL.md` under 500 lines.** Move long material to `references/` and link it.
 - **Keep all behaviour in `INSTRUCTIONS.md`.** Knowledge files hold reference data only; Microsoft warns against moving instructions into knowledge to get around the 8,000-character limit.
 - **Keep a card portable.** `card.json` stays at schema version 1.5 with plain `${...}` bindings, so it works in Teams, Copilot Studio and Power Automate; the card's `README.md` cites a page and date for every host difference it relies on.

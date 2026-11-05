@@ -31,7 +31,7 @@ Two or three sentences on what the card shows, what it asks the user for, and wh
 1. The action to add, and where to paste `card.json`.
 2. How to replace the bindings with dynamic content.
 
-**Copilot Studio**
+**Copilot Studio (standard harness)**
 
 1. The node to add, and how to replace the bindings with variables in **Formula** mode.
 

@@ -2,7 +2,7 @@
 
 Thanks for helping grow **Agents in Practice**. A *skill* is a reusable instruction set for an AI agent, published here as an unpacked folder with optional `references/`, `scripts/` and `assets/`. A *prompt* is one self-contained instruction a person pastes into a Copilot chat; see [Prompts](#prompts) below. An *agent instructions* item is the instructions and knowledge files that define an agent's role; see [Agent instructions](#agent-instructions) below. An *Adaptive Card* is a card template with sample data that a maker pastes into Copilot Studio, Power Automate or a bot; see [Adaptive Cards](#adaptive-cards) below.
 
-You contribute by adding **one folder under [`skills/`](./skills/), [`prompts/`](./prompts/), [`agent-instructions/`](./agent-instructions/) or [`adaptive-cards/`](./adaptive-cards/)** and opening a pull request. CI validates the folder; nothing else is generated or edited by hand.
+You contribute by adding **one folder under [`skills/`](./skills/), [`prompts/`](./prompts/), [`agent-instructions/`](./agent-instructions/) or [`adaptive-cards/`](./adaptive-cards/)** and opening a pull request. CI validates the folder. The only other file you edit is the catalog table in the root [README.md](./README.md): add your item's row, with the `description` from its `metadata.json`, and update the count above the table.
 
 > [!NOTE]
 > This is a volunteer-maintained community project, not a Microsoft product. Reviews and assistance are best-effort. See [SUPPORT.md](./SUPPORT.md).
@@ -12,17 +12,17 @@ You contribute by adding **one folder under [`skills/`](./skills/), [`prompts/`]
 - Search the catalog in [README.md](./README.md), open issues and pull requests to avoid duplicating a skill.
 - For a significant new direction, open a skill request issue before investing in the full contribution.
 - Contribute only content you have the right to publish. Remove secrets, personal data, customer data, tenant identifiers and confidential content.
-- Keep one skill or one logical change per pull request. CI rejects pull requests that touch more than one skill folder.
+- Keep one item or one logical change per pull request. CI rejects pull requests that touch more than one item folder.
 - Follow the [Code of Conduct](./CODE_OF_CONDUCT.md).
 - By opening a pull request you confirm that you wrote the content or have the right to contribute it, and that it may be published in this repository and modified by its maintainers.
 
 ## How a contribution flows
 
-1. Fork the repository and create a branch (`skill/<slug>` for a new skill, `fix/<slug>-<what>` for a change).
-2. Make the change, run `npm test` (or `node scripts/validate-skills.mjs`), and commit.
+1. Fork the repository and create a branch (`<type>/<slug>` for a new item, such as `skill/<slug>` or `prompt/<slug>`, and `fix/<slug>-<what>` for a change).
+2. Make the change, run `npm test` (or the validator for your item type, such as `node scripts/validate-skills.mjs`), and commit.
 3. Open a pull request against `main`. The template asks what changed, how you verified it, and whether the catalog table was updated.
-4. CI runs the validator and checks that the PR touches one skill at most. Fix anything it reports; pushes to the branch re-run it.
-5. A code owner is requested for review automatically. Reviews check the things CI cannot: whether claims about Microsoft behaviour are cited and current, whether agent-facing and human-facing text are in the right files, and whether the skill does what its description says. Style is not reviewed.
+4. CI runs the validators and checks that the PR touches one item at most. Fix anything it reports; pushes to the branch re-run it.
+5. A code owner is requested for review automatically. Reviews check the things CI cannot: whether claims about Microsoft behaviour are cited and current, whether agent-facing and human-facing text are in the right files, and whether the item does what its description says. Style is not reviewed.
 6. Once CI is green and a code owner approves, the maintainer squash-merges. The PR title becomes the commit message, so write it as a one-line summary.
 
 Direct pushes to `main` are disabled for everyone, including the maintainer; every change goes through a pull request. The maintainer's own PRs still run CI but merge without a second reviewer, since GitHub does not allow self-approval. See [docs/maintaining.md](./docs/maintaining.md) for the repository settings behind this.
@@ -139,11 +139,12 @@ These jobs run on every pull request.
 - `SKILL.md` has no frontmatter, `name` does not match the folder, or `description` is missing or over 1024 characters;
 - `SKILL.md` is missing one of the required sections `## Before Starting`, `## Output Structure`, `## Step 1`, `## Rules` (see [SKILL-SCHEMA.md](./SKILL-SCHEMA.md));
 - `SKILL.md` exceeds 500 lines (move material to `references/`);
+- `metadata.json` lists Microsoft 365 Copilot and the `SKILL.md` body after the frontmatter is 20,000 characters or more (see [SKILL-SCHEMA.md](./SKILL-SCHEMA.md#host-limits));
 - `SKILL.md` or `README.md` links to a file that does not exist;
 - `README.md` has no `## Sources` section, the section links to no pages, or its links differ from a Sources list in `references/`;
 - `metadata.json` is invalid JSON, lacks a required field, names an unknown platform, or sets `category` (use `subcategory`);
 - the folder contains stray top-level files beyond the allowed set;
-- the root `README.md` catalog has no row linking to `skills/<slug>/`.
+- the root `README.md` catalog has no row linking to `skills/<slug>/`, or that row's description isn't exactly the `metadata.json` `description`.
 
 **Validate agent instructions** (`scripts/validate-agent-instructions.mjs`) fails when:
 
@@ -152,7 +153,7 @@ These jobs run on every pull request.
 - `INSTRUCTIONS.md` is empty, starts with frontmatter, or is over 8,000 characters;
 - a `knowledge/` file has an unsupported type, is over 1 MB, or there are more than 10;
 - `README.md` links to a file that does not exist, has no `## Sources` section with at least one link, has Sources links that differ from a Sources list in `knowledge/`, `metadata.json` breaks the rules above, or there are stray top-level files;
-- the root `README.md` catalog has no row linking to `agent-instructions/<slug>/`.
+- the root `README.md` catalog has no row linking to `agent-instructions/<slug>/`, or that row's description isn't exactly the `metadata.json` `description`.
 
 **Validate prompts** (`scripts/validate-prompts.mjs`) fails when:
 
@@ -161,7 +162,7 @@ These jobs run on every pull request.
 - `PROMPT.md` is empty, starts with frontmatter, or is over 8,000 characters;
 - the folder has anything other than those three files and `assets/`;
 - `README.md` links to a file that does not exist, has no `## Sources` section with at least one link, or `metadata.json` breaks the rules above;
-- the root `README.md` catalog has no row linking to `prompts/<slug>/`.
+- the root `README.md` catalog has no row linking to `prompts/<slug>/`, or that row's description isn't exactly the `metadata.json` `description`.
 
 **Validate Adaptive Cards** (`scripts/validate-adaptive-cards.mjs`) fails when:
 
@@ -174,7 +175,7 @@ These jobs run on every pull request.
 - an input has no `id` or `label`, two elements share an `id`, or an `Action.Submit` has no `data.actionSubmitId` or sets `isEnabled`;
 - the folder has anything other than those four files and `assets/`;
 - `README.md` links to a file that does not exist, has no `## Sources` section with at least one link, or `metadata.json` breaks the rules above;
-- the root `README.md` catalog has no row linking to `adaptive-cards/<slug>/`.
+- the root `README.md` catalog has no row linking to `adaptive-cards/<slug>/`, or that row's description isn't exactly the `metadata.json` `description`.
 
 **One skill per PR** (the check's name; it covers every kind of item) fails when the changed files span more than one `skills/<slug>/`, `prompts/<slug>/`, `agent-instructions/<slug>/` or `adaptive-cards/<slug>/` folder.
 
@@ -182,11 +183,11 @@ Run all four validators locally with `npm test`, or pass a slug to any of the sc
 
 ## Pre-submission checklist
 
-- [ ] Folder name and `SKILL.md` `name` match and are kebab-case
-- [ ] `description` is one line, trigger-focused, with an out-of-scope clause
-- [ ] `SKILL.md` follows [SKILL-SCHEMA.md](./SKILL-SCHEMA.md) and is under 500 lines; a prompt's `PROMPT.md` follows [PROMPT-SCHEMA.md](./PROMPT-SCHEMA.md) (no frontmatter, 8,000 characters or less, self-contained)
+- [ ] Folder name is kebab-case; for a skill, it matches the `SKILL.md` `name`
+- [ ] A skill's `description` is one line, trigger-focused, with an out-of-scope clause
+- [ ] `SKILL.md` follows [SKILL-SCHEMA.md](./SKILL-SCHEMA.md) and is under 500 lines; a prompt's `PROMPT.md` follows [PROMPT-SCHEMA.md](./PROMPT-SCHEMA.md) (no frontmatter, 8,000 characters or less, self-contained); an agent instructions item's `INSTRUCTIONS.md` follows [AGENT-INSTRUCTIONS-SCHEMA.md](./AGENT-INSTRUCTIONS-SCHEMA.md); a card's `card.json` follows [ADAPTIVE-CARD-SCHEMA.md](./ADAPTIVE-CARD-SCHEMA.md)
 - [ ] `metadata.json` is complete and valid
-- [ ] `README.md` has trigger phrases, prerequisites, limitations, sources, attribution, version history and disclaimer
+- [ ] `README.md` has trigger phrases (or, for other items, how to run or set it up), prerequisites, limitations, sources, attribution, version history and disclaimer
 - [ ] Any Microsoft feature described is labelled with its release state (preview, GA) and the documentation date relied on
 - [ ] Claims about Microsoft behaviour cite a Microsoft Learn page
 - [ ] No tenant names, user names, keys or other secrets

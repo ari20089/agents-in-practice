@@ -4,7 +4,7 @@
 
 Banks, insurers and investment firms are being asked to approve Microsoft agents that **drive a user interface** (Copilot Studio computer use, Cowork's browser, Foundry computer use) or **act on a trigger with nobody prompting them**. Microsoft's computer use FAQ says the tool "isn't intended for" **"Making financial transactions"** or **"Recommending or scoring in sensitive domains, such as hiring, healthcare, or finance"**, while naming data entry and invoice processing as intended uses. For triggered agents, Microsoft asks for "approval steps for high-impact actions, such as financial transactions".
 
-No financial regulator has a **binding** checklist for AI agents, and none addresses computer-using agents. Since mid-2026, though, OSFI, the FSB, MAS, the HKMA, APRA, the FCA and FINRA have published **non-binding** expectations that name agents, and all of them say existing obligations apply.
+No financial regulator has a **binding** checklist for AI agents, and none addresses computer-using agents. Since December 2025, though, OSFI, the FSB, MAS, the HKMA, APRA, the FCA and FINRA have published **non-binding** expectations that name agents, and all of them say existing obligations apply.
 
 This skill shows an agent where the line sits (at the **commit**: the moment money moves, a person's position is decided, or a control changes), maps the obligations that apply in each jurisdiction (in full for the UK, the EU and the US, including the US state laws on automated decisions), and produces the controls on either side, a risk committee paper, an inventory record and a tenant test plan.
 
@@ -38,7 +38,7 @@ The skill works through seven steps:
    - **US:** FINRA 3110 and 4511, SEC Rules 17a-4 and 15c3-5, Advisers Act Rules 204-2 and 206(4)-7, SR 26-2, the Interagency information security guidelines and FFIEC change management, Regulation B adverse action reasons, FCRA, Regulation E, UCC Article 4A for business payments, the NAIC bulletin and NYDFS guidance for insurers, and Colorado's and California's automated-decision rules (from 1 January 2027).
    - **Agent-specific publications** from OSFI, the FSB, MAS, the HKMA, APRA, the FCA and FINRA.
 5. **Select the controls**: a dedicated least-privilege identity per agent, where it runs, log retention and Purview audit, the inventory record, a tested stop, and the extra controls for triggered agents.
-6. **Produce the artifact**: placement assessment, control set, risk committee paper, inventory record, regulatory mapping, instruction block, or a ten-test tenant plan.
+6. **Produce the artifact**: placement assessment, control set, risk committee paper, inventory record, regulatory mapping, instruction block, or an eleven-test tenant plan.
 7. **Recommend, then stop.** It never changes settings, agents or entitlements.
 
 ## Prerequisites
@@ -53,9 +53,10 @@ The skill works through seven steps:
 - Written against documentation retrieved on **31 October 2026**. Several components are preview or experimental, and the regulator landscape is moving: MAS consults on agentic guidance in 2027, the FCA has promised a framework for agentic finance, the HKMA has promised a discussion paper, and HM Treasury has not responded on agentic payments.
 - Microsoft renamed the GitHub Copilot harness to the Microsoft Copilot harness on 28 October 2026, and says the product will show the new name "over the coming weeks". As of 1 November 2026 the Learn pages cited here still use the old name, so the skill uses the new name and keeps the old one in page titles and quotes.
 - Microsoft's own pages disagree in places, for example on whether the computer use allow list blocks navigation. The skill reports the conflict and assumes the weaker reading.
-- FCA Handbook provisions (SYSC 4.1.1R, SYSC 9, COBS 11.8) are cited as the FCA's own publications describe them, and SYSC 15A and the Consumer Duty rules are quoted as made in the FCA legal instruments, because the Handbook text could not be retrieved directly. FINRA pages and the FFIEC booklet were read from archived copies where the live site blocked retrieval.
+- FCA Handbook provisions (SYSC 4.1.1R, SYSC 9, COBS 11.8) are cited as the FCA's own publications describe them, and SYSC 15A and the Consumer Duty rules are quoted as made in the FCA legal instruments, because the Handbook text could not be retrieved directly. The FFIEC booklet was read from an archived copy where the live site blocked retrieval; the FINRA pages were re-read live on 5 November 2026.
 - EUR-Lex blocked retrieval. GDPR Article 22 is quoted from the Court of Justice judgment that reproduces it, and the Consumer Credit Directive and the DORA ICT risk RTS from secondary copies of the Official Journal text. Check them against EUR-Lex before relying on them.
 - The ICO website could not be reached, so the ICO's guidance on the new UK automated decision-making rules is not cited.
+- Copilot Studio in GCC and GCC High has no triggers or autonomous agents, and computer use is not documented there; the skill's autonomous designs assume a commercial cloud tenant.
 - US state law moves fast: Colorado's law faces a federal challenge (reported, not verified), the Attorney General's rules are due by 1 January 2027, and UCC Article 4A is enacted state by state. The reading of UCC 4A-202 for agent payments is an inference from the statute, not case law.
 - Whether an agent's UI actions are records, whether a payment an agent makes on someone's credentials is authorised, whether an agent that sets order parameters is algorithmic trading, and whether a person approving an agent's recommendation is meaningful human review, are open questions that no regulator has answered. The skill says so rather than guessing.
 - This is not legal advice. Verify against the cited sources before relying on the output for a compliance, legal or regulatory decision.
@@ -65,49 +66,53 @@ The skill works through seven steps:
 Microsoft documentation, with the date shown on the page when retrieved on 31 October 2026:
 
 - [FAQ for the computer use tool](https://learn.microsoft.com/en-us/microsoft-copilot-studio/faqs-computer-use), 23 Sep 2026
-- [Automate web and desktop apps with computer use](https://learn.microsoft.com/en-us/microsoft-copilot-studio/computer-use), 20 Oct 2026
+- [Automate web and desktop apps with computer use](https://learn.microsoft.com/en-us/microsoft-copilot-studio/computer-use), 20 Oct 2026 (re-read 5 Nov 2026)
 - [Human supervision of computer use](https://learn.microsoft.com/en-us/microsoft-copilot-studio/human-supervision-computer-use), 20 Oct 2026
 - [Configure where computer use runs](https://learn.microsoft.com/en-us/microsoft-copilot-studio/configure-where-computer-use-runs), 7 May 2026
-- [Use Cloud PC pool for computer use runs (preview)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/use-cloud-pc-pool), 7 May 2026
+- [Use Cloud PC pool for computer use runs (preview)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/use-cloud-pc-pool), 7 May 2026 (re-read 5 Nov 2026)
 - [Monitor computer use](https://learn.microsoft.com/en-us/microsoft-copilot-studio/monitor-computer-use), 7 May 2026
 - [Administer computer use](https://learn.microsoft.com/en-us/microsoft-copilot-studio/administer-computer-use), 7 May 2026
 - [Troubleshooting and limitations of computer use](https://learn.microsoft.com/en-us/microsoft-copilot-studio/troubleshooting-computer-use), 26 Aug 2026
-- [Computer use as a standalone tool (preview)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/computer-use-standalone), 4 Jun 2026
-- [What's new in Copilot Studio](https://learn.microsoft.com/en-us/microsoft-copilot-studio/whats-new), 5 Oct 2026
+- [Add standalone computer use tools to agents and agent flows (preview)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/computer-use-standalone), 4 Jun 2026 (re-read 5 Nov 2026)
+- [What's new in Copilot Studio](https://learn.microsoft.com/en-us/microsoft-copilot-studio/whats-new), 4 Nov 2026 (re-read 5 Nov 2026)
 - [Application Card for Microsoft Copilot Studio](https://learn.microsoft.com/en-us/microsoft-copilot-studio/system-service-card-copilot-studio), 17 Feb 2026
 - [Multistage and AI approvals in agent flows (preview)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/flows-advanced-approvals), 4 Sep 2025
 - [FAQ for AI approvals](https://learn.microsoft.com/en-us/microsoft-copilot-studio/faqs-ai-approvals), 1 Aug 2025
 - [Request information from human review in agent flows](https://learn.microsoft.com/en-us/microsoft-copilot-studio/flows-request-for-information), 18 Jun 2026
-- [Event triggers overview](https://learn.microsoft.com/en-us/microsoft-copilot-studio/authoring-triggers-about), 9 Sep 2026
+- [Event trigger overview](https://learn.microsoft.com/en-us/microsoft-copilot-studio/authoring-triggers-about), 3 Nov 2026 (re-read 5 Nov 2026)
 - [Add an event trigger](https://learn.microsoft.com/en-us/microsoft-copilot-studio/authoring-trigger-event), 9 Sep 2026
 - [FAQ for generative orchestration](https://learn.microsoft.com/en-us/microsoft-copilot-studio/faqs-generative-orchestration), 14 Oct 2026
 - [Add triggers to an agent (GitHub Copilot) (preview)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/authoring-add-event-trigger), 20 Oct 2026
-- [Give your agent an account (Frontier)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/authoring-agent-account), 15 Oct 2026
-- [Security and governance](https://learn.microsoft.com/en-us/microsoft-copilot-studio/security-and-governance), 24 Sep 2026
+- [Agents powered by the GitHub Copilot Harness overview](https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/overview), 19 Oct 2026 (read 5 Nov 2026)
+- [Give your agent an account (Frontier)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/authoring-agent-account), 15 Oct 2026 (re-read 5 Nov 2026)
+- [FAQ for agent accounts (Frontier)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/faq-agent-accounts), 14 Oct 2026 (read 5 Nov 2026)
+- [Agents overview](https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-overview), 9 Sep 2026 (read 5 Nov 2026)
+- [Key concepts - Copilot Studio security and governance](https://learn.microsoft.com/en-us/microsoft-copilot-studio/security-and-governance), 24 Sep 2026 (re-read 5 Nov 2026)
+- [Copilot Studio for US Government customers](https://learn.microsoft.com/en-us/microsoft-copilot-studio/requirements-licensing-gcc), 20 Jul 2026 (read 5 Nov 2026)
 - [Configure data policies for agents](https://learn.microsoft.com/en-us/microsoft-copilot-studio/admin-data-loss-prevention), 1 Oct 2026
 - [Automatic security scan](https://learn.microsoft.com/en-us/microsoft-copilot-studio/security-scan), 11 Nov 2024
-- [View Copilot Studio audit logs in Purview](https://learn.microsoft.com/en-us/microsoft-copilot-studio/admin-logging-copilot-studio), 18 Aug 2026
-- [Audit log activities](https://learn.microsoft.com/en-us/purview/audit-log-activities), 15 Oct 2026
+- [Audit logs for Copilot and AI applications](https://learn.microsoft.com/en-us/purview/audit-copilot), 26 Aug 2026 (read 5 Nov 2026)
+- [Audit log activities](https://learn.microsoft.com/en-us/purview/audit-log-activities), 3 Nov 2026 (re-read 5 Nov 2026)
 - [Enable external threat detection and protection for Copilot Studio custom agents (preview)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/external-security-provider), 1 Jun 2026
-- [Protect AI agents in real time using Microsoft Defender](https://learn.microsoft.com/en-us/defender-cloud-apps/real-time-agent-protection-during-runtime), 1 Jul 2026
-- [App registration, agent identities, and authentication](https://learn.microsoft.com/en-us/microsoft-copilot-studio/govern-agents-identities-overview), 21 Aug 2026
-- [Manage Entra Agent IDs](https://learn.microsoft.com/en-us/microsoft-copilot-studio/admin-use-entra-agent-identities), 21 Aug 2026
-- [Microsoft Agent 365 overview](https://learn.microsoft.com/en-us/microsoft-agent-365/overview), 19 Aug 2026
+- [Protect AI agents in real time using Microsoft Defender](https://learn.microsoft.com/en-us/defender-xdr/security-for-ai/ai-agent-real-time-protection), 1 Jul 2026 (re-read 5 Nov 2026)
+- [Agent identities and authentication for Copilot Studio](https://learn.microsoft.com/en-us/microsoft-copilot-studio/govern-agents-identities-overview), 21 Aug 2026 (re-read 5 Nov 2026)
+- [Microsoft Entra Agent IDs for Copilot Studio agents](https://learn.microsoft.com/en-us/microsoft-copilot-studio/admin-use-entra-agent-identities), 21 Aug 2026
+- [Overview of Microsoft Agent 365](https://learn.microsoft.com/en-us/microsoft-agent-365/overview), 19 Aug 2026 (re-read 5 Nov 2026)
 - [Agent Registry in Microsoft 365 admin center](https://learn.microsoft.com/en-us/microsoft-agent-365/admin/agent-registry-overview), 21 Sep 2026
 - [Managed environments overview](https://learn.microsoft.com/en-us/power-platform/admin/managed-environment-overview), 8 Oct 2026
 - [Share agents with other users](https://learn.microsoft.com/en-us/microsoft-copilot-studio/admin-share-bots), 30 Jul 2026
 - [Code of Conduct for Microsoft AI Services](https://learn.microsoft.com/en-us/legal/ai-code-of-conduct), 1 May 2026
 - [Transparency Note for Azure OpenAI in Microsoft Foundry Models](https://learn.microsoft.com/en-us/azure/foundry/responsible-ai/openai/transparency-note), 21 Sep 2026
 - [Use the computer use tool for agents (Foundry)](https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/computer-use), 21 Aug 2026
-- [Responsible AI FAQ for Cowork](https://learn.microsoft.com/en-us/copilot/cowork/responsible-ai/cowork-responsible-ai-faq), 5 Aug 2026
-- [Application card: Microsoft Copilot Cowork](https://learn.microsoft.com/en-us/copilot/cowork/responsible-ai/copilot-cowork-application-card), 22 Sep 2026
+- [Responsible AI FAQ for Copilot Cowork](https://learn.microsoft.com/en-us/copilot/cowork/responsible-ai/cowork-responsible-ai-faq), 4 Nov 2026 (re-read 5 Nov 2026)
+- [Application card: Microsoft Copilot Cowork](https://learn.microsoft.com/en-us/copilot/cowork/responsible-ai/copilot-cowork-application-card), 4 Nov 2026 (re-read 5 Nov 2026)
 - [Use the local browser with Copilot Cowork](https://learn.microsoft.com/en-us/copilot/cowork/cowork-local-browser), 22 Oct 2026
 - [Manage Copilot Cowork for your organization](https://learn.microsoft.com/en-us/copilot/cowork/cowork-admin-governance), 14 Sep 2026
-- [Copilot Cowork common questions](https://learn.microsoft.com/en-us/copilot/cowork/cowork-faq), 29 Sep 2026
-- [Browse with Copilot in Microsoft Edge](https://support.microsoft.com/en-us/microsoft-copilot/browse-with-copilot) (Microsoft Support, consumer), 12 Aug 2026
-- [Using Microsoft Copilot in Edge at work](https://support.microsoft.com/en-us/microsoft-copilot/using-microsoft-copilot-in-edge-at-work) (Microsoft Support), 14 Aug 2026
-- [Experimental agentic features](https://support.microsoft.com/en-us/windows/experimental-agentic-features-a25ede8a-e4c2-4841-85a8-44839191dfb3) (Microsoft Support), 15 Oct 2025, updated 28 Sep 2026
-- [Researcher with Computer Use frequently asked questions](https://learn.microsoft.com/en-us/microsoft-365/copilot/researcher-agent-computer-use-faq), 18 Nov 2025
+- [Copilot Cowork common questions](https://learn.microsoft.com/en-us/copilot/cowork/cowork-faq), 4 Nov 2026 (re-read 5 Nov 2026)
+- [Browse with Copilot in Microsoft Edge](https://support.microsoft.com/en-us/edge/copilot/browse-with-copilot) (Microsoft Support, consumer), 12 Aug 2026
+- [Using Microsoft Copilot in Edge at work](https://support.microsoft.com/en-us/edge/copilot/using-microsoft-copilot-in-edge-at-work) (Microsoft Support), 14 Aug 2026
+- [Experimental agentic features](https://support.microsoft.com/en-us/windows/ai/ai-features/experimental-agentic-features) (Microsoft Support), 15 Oct 2025, updated 28 Sep 2026
+- [Researcher with Computer Use frequently asked questions](https://learn.microsoft.com/en-us/copilot/manage/researcher-agent-computer-use-faq), 18 Nov 2025 (re-read 5 Nov 2026)
 - [Get started using Researcher with Computer Use in Microsoft Copilot (Frontier)](https://support.microsoft.com/en-us/microsoft-365-copilot/get-started-using-researcher-with-computer-use-in-microsoft-365-copilot-frontier) (Microsoft Support), 10 Feb 2026
 
 Regulators and legislation, with the publication date:
@@ -120,7 +125,7 @@ Regulators and legislation, with the publication date:
 - Bank of England, [Financial Policy Committee Record, April 2026](https://www.bankofengland.co.uk/financial-policy-committee-record/2026/april-2026), 1 Apr 2026
 - Bank of England, Sarah Breeden, [Agents of change](https://www.bankofengland.co.uk/speech/2026/june/sarah-breeden-panel-at-the-european-central-bank-forum-on-central-banking-2026), speech, 30 Jun 2026
 - Bank of England and FCA, [Artificial intelligence in UK financial services - 2026](https://www.bankofengland.co.uk/report/2026/artificial-intelligence-in-uk-financial-services-2026), 26 Oct 2026
-- PRA, [SS1/23 Model risk management principles for banks](https://www.bankofengland.co.uk/prudential-regulation/publication/2023/may/model-risk-management-principles-for-banks-ss), updated 16 Apr 2026
+- PRA, [SS1/23 Model risk management principles for banks](https://www.bankofengland.co.uk/prudential-regulation/publication/2023/may/model-risk-management-principles-for-banks-ss), current version published 23 Apr 2026 (re-read 5 Nov 2026)
 - PRA, [SS2/21 Outsourcing and third party risk management](https://www.bankofengland.co.uk/prudential-regulation/publication/2021/march/outsourcing-and-third-party-risk-management-ss), in force version 15 Nov 2024 (March 2026 version effective 18 Mar 2027)
 - HM Treasury, [Modernising payment services regulation](https://www.gov.uk/government/consultations/modernising-payment-services-regulation/modernising-payment-services-regulation-consultation), consultation, 14 Jul 2026
 - [Payment Services Regulations 2017, regulation 67](https://www.legislation.gov.uk/uksi/2017/752/regulation/67), [regulation 72](https://www.legislation.gov.uk/uksi/2017/752/regulation/72), [regulation 77](https://www.legislation.gov.uk/uksi/2017/752/regulation/77) and [regulation 100](https://www.legislation.gov.uk/uksi/2017/752/regulation/100), as in force
@@ -152,14 +157,16 @@ Regulators and legislation, with the publication date:
 - EBA, [Guidelines on loan origination and monitoring](https://www.eba.europa.eu/regulation-and-policy/credit-risk/guidelines-on-loan-origination-and-monitoring), EBA/GL/2020/06
 - EBA, EIOPA and ESMA, [ESA statement on ICT risks from frontier AI models, JC 2026 25](https://www.esma.europa.eu/sites/default/files/2026-07/JC_2026_25_ESA_statement_on_frontier_AI_models.pdf), 31 Jul 2026
 - ECB Banking Supervision, [Addressing AI-enabled cybersecurity threats, SSM-2026-0301](https://www.bankingsupervision.europa.eu/press/letterstobanks/shared/pdf/2026/ssm.2026_letter_on_AI_enabled_cybersecurity_threats.en.pdf), 7 Jul 2026
-- FINRA, [2026 Annual Regulatory Oversight Report: GenAI](https://www.finra.org/rules-guidance/guidance/reports/2026-finra-annual-regulatory-oversight-report/gen-ai), Dec 2025 (read from an archived copy)
+- EBA, [Work Programme 2027, EBA/REP/2026/18](https://www.eba.europa.eu/sites/default/files/2026-09/f6561915-4192-4d73-88ac-10f8bc09abca/EBA%20Work%20programme%202027.pdf), Sep 2026 (read 5 Nov 2026)
+- Council of the EU, statements of the Council's reasons on its first-reading positions on the [Payment Services Regulation, ST 8543/1/26 REV 1 ADD 1](https://data.consilium.europa.eu/doc/document/ST-8543-2026-REV-1-ADD-1/en/pdf) and [PSD3, ST 8535/1/26 REV 1 ADD 1](https://data.consilium.europa.eu/doc/document/ST-8535-2026-REV-1-ADD-1/en/pdf), adopted 29 Oct 2026, and the position texts [ST 8543/1/26 REV 1](https://data.consilium.europa.eu/doc/document/ST-8543-2026-REV-1/en/pdf) and [ST 8535/1/26 REV 1](https://data.consilium.europa.eu/doc/document/ST-8535-2026-REV-1/en/pdf), 4 Nov 2026 (read 5 Nov 2026)
+- FINRA, [2026 Annual Regulatory Oversight Report: GenAI](https://www.finra.org/rules-guidance/guidance/reports/2026-finra-annual-regulatory-oversight-report/gen-ai), 9 Dec 2025 (re-read live 5 Nov 2026)
 - FINRA, [Regulatory Notice 24-09](https://www.finra.org/rules-guidance/notices/24-09), 27 Jun 2024
 - FINRA, [Advertising Regulation FAQs](https://www.finra.org/rules-guidance/guidance/faqs/advertising-regulation), entries B.4 and D.8 posted 10 May 2024
 - FINRA, [Rule 3110 (Supervision)](https://www.finra.org/rules-guidance/rulebooks/finra-rules/3110) and [Rule 4511 (Books and Records)](https://www.finra.org/rules-guidance/rulebooks/finra-rules/4511)
 - SEC, [Exchange Act Rule 17a-4](https://www.ecfr.gov/current/title-17/chapter-II/part-240/section-240.17a-4), current eCFR
 - Federal Reserve, FDIC and OCC, [SR 26-2 Revised Guidance on Model Risk Management](https://www.federalreserve.gov/supervisionreg/srletters/SR2602.htm), 17 Apr 2026
-- OCC, [Bulletin 2026-13 Model Risk Management: Revised Guidance](https://www.occ.gov/news-issuances/bulletins/2026/bulletin-2026-13.html), 17 Apr 2026
-- Federal Reserve, FDIC and OCC, [Interagency Guidance on Third-Party Relationships: Risk Management](https://www.federalregister.gov/documents/2023/06/09/2023-12340/interagency-guidance-on-third-party-relationships-risk-management), 6 Jun 2023
+- OCC, [Bulletin 2026-13 Model Risk Management: Revised Guidance](https://www.occ.gov/news-issuances/bulletins/2026/bulletin-2026-13.html), 17 Apr 2026 (re-read 5 Nov 2026)
+- Federal Reserve, FDIC and OCC, [Interagency Guidance on Third-Party Relationships: Risk Management](https://www.federalregister.gov/documents/2023/06/09/2023-12340/interagency-guidance-on-third-party-relationships-risk-management), 6 Jun 2023, and OCC, Federal Reserve, FDIC and NCUA, [Proposed Third-Party Risk Management Guidance](https://www.federalregister.gov/documents/2026/09/15/2026-18859/proposed-third-party-risk-management-guidance), 15 Sep 2026 (read 5 Nov 2026)
 - CFPB, [Regulation E 12 CFR 1005.2](https://www.ecfr.gov/current/title-12/chapter-X/part-1005/section-1005.2), current eCFR, and [Official Interpretation of 1005.2](https://www.consumerfinance.gov/rules-policy/regulations/1005/interp-2/)
 - FINRA, [Emerging Trend in GenAI: Observations on AI Agents](https://www.finra.org/media-center/blog/observations-on-ai-agents), blog, 27 Jan 2026
 - FINRA, [Regulatory Notice 26-14](https://www.finra.org/rules-guidance/notices/26-14), 9 Jul 2026, and [Regulatory Notice 26-15](https://www.finra.org/rules-guidance/notices/26-15), 24 Jul 2026
@@ -177,7 +184,7 @@ Regulators and legislation, with the publication date:
 - Uniform Commercial Code, [§ 4A-202](https://www.law.cornell.edu/ucc/4A/4A-202) and [§ 4A-203](https://www.law.cornell.edu/ucc/4A/4A-203), official text (enacted state by state)
 - NAIC, [Model Bulletin: Use of Artificial Intelligence Systems by Insurers](https://content.naic.org/sites/default/files/cmte-h-big-data-artificial-intelligence-wg-ai-model-bulletin.pdf.pdf), 4 Dec 2023, and [implementation map](https://content.naic.org/sites/default/files/legal-adoption-map-ai-model-bulletin.pdf), status as of 8 Oct 2026
 - NYDFS, [Insurance Circular Letter No. 7 (2024)](https://www.dfs.ny.gov/industry-guidance/circular-letters/cl2024-07), 11 Jul 2024
-- Colorado General Assembly, [SB26-189](https://leg.colorado.gov/bills/sb26-189), signed 14 May 2026, applies to decisions from 1 Jan 2027
+- Colorado General Assembly, [SB26-189](https://leg.colorado.gov/bills/sb26-189), signed 14 May 2026, applies to decisions from 1 Jan 2027, and the [signed act](https://leg.colorado.gov/bill_files/116489/download) (re-read 5 Nov 2026)
 - California Privacy Protection Agency, [CCPA updates, cybersecurity audits, risk assessments and ADMT regulations](https://cppa.ca.gov/regulations/ccpa_updates.html), effective 1 Jan 2026, ADMT compliance by 1 Jan 2027
 - [Executive Order 14365, Ensuring a National Policy Framework for Artificial Intelligence](https://www.federalregister.gov/documents/2025/12/16/2025-23092/ensuring-a-national-policy-framework-for-artificial-intelligence), 11 Dec 2025, and [Executive Order 14434, Inaugurating the Era of Super Intelligence](https://www.federalregister.gov/documents/2026/10/02/2026-20321/inaugurating-the-era-of-super-intelligence), 29 Sep 2026
 - MAS, [Guidelines on Artificial Intelligence Risk Management](https://www.mas.gov.sg/regulation/guidelines/guidelines-on-artificial-intelligence-risk-management-for-financial-institutions), 7 Oct 2026, and [media release](https://www.mas.gov.sg/news/media-releases/2026/mas-sets-out-supervisory-expectations-on-responsible-ai-adoption-by-financial-institutions), 7 Oct 2026
@@ -197,7 +204,7 @@ Other sources, read on 1 November 2026:
 
 - [The GitHub Copilot harness is now the Microsoft Copilot harness](https://www.microsoft.com/en-us/copilot/blog/copilot-studio/the-github-copilot-harness-in-copilot-studio-is-now-the-microsoft-copilot-harness/), Microsoft Copilot Studio blog, 28 Oct 2026
 
-Every Microsoft page above was re-checked for its date on 31 October 2026. The agent reads the same list at the end of [`references/autonomy-line-guide.md`](./references/autonomy-line-guide.md).
+Every Microsoft page above was re-checked for its date on 31 October 2026; pages marked "re-read 5 Nov 2026" or "read 5 Nov 2026" were checked again on 5 November 2026. The agent reads the same list at the end of [`references/autonomy-line-guide.md`](./references/autonomy-line-guide.md).
 
 ## Contributors
 
@@ -211,6 +218,7 @@ Every Microsoft page above was re-checked for its date on 31 October 2026. The a
 | --- | --- | --- |
 | 1.0 | October 2026 | Initial release |
 | 1.1 | November 2026 | The GitHub Copilot harness is now the Microsoft Copilot harness; the skill uses the new name and keeps the old one in Learn page titles and quotes |
+| 1.2 | November 2026 | Re-checked against Microsoft Learn and the regulator sources on 5 November 2026: adds the build prerequisites and limits (standard harness only, generative orchestration, Copilot Credits, GCC), agent-account shared memory (control, test T11, decline condition 11), the Entra Agent ID as an identifier rather than a sign-in account, Cloud PC pool sharing, conflict D8 and open question Q12. Corrects the PRA SS1/23 wording, cites the PSR, PSD3, EBA, third-party risk and SR 26-2 scope sources, checks the Colorado SB26-189 quotes against the signed act, and moves two worked examples to guide section 15 to keep SKILL.md under the Microsoft 365 Copilot limit |
 
 ## Help
 

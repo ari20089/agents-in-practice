@@ -1,23 +1,26 @@
 ---
-name: Skill request
-about: Propose a new skill for the catalog
-title: "Skill request: short name"
+name: Item request
+about: Propose a new skill, prompt, agent instructions item or Adaptive Card for the catalog
+title: "Item request: short name"
 labels: enhancement
 ---
 
+**Type**
+<!-- Skill, prompt, agent instructions or Adaptive Card. -->
+
 **Scenario**
-<!-- What task should the agent be able to do, for whom, in which host? -->
+<!-- What should the agent or card do, for whom, in which host? -->
 
-**Why a skill**
-<!-- Why is this a repeatable multi-step task rather than a one-off prompt? -->
+**Why this type**
+<!-- A skill for a repeatable multi-step task; a prompt for a one-off task pasted into chat; agent instructions to define an agent's role; a card for a structured message or approval. -->
 
-**Trigger phrases**
-<!-- What would a user say to invoke it? -->
+**Trigger phrases or inputs**
+<!-- What would a user say to invoke it, or what data does the card bind to? -->
 
-**Inputs and outputs**
-<!-- What does the agent need from the user; what should it produce? -->
+**Outputs**
+<!-- What should the agent produce, or what should come back from the card? -->
 
 **Sources**
-<!-- Microsoft Learn pages or other references the skill would rely on. -->
+<!-- Microsoft Learn pages or other references the item would rely on. -->
 
 **Would you be willing to contribute it?** yes / no / with help

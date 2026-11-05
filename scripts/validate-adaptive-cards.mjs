@@ -77,6 +77,15 @@ function leaves(node, path = "", out = new Map()) {
   return out;
 }
 
+// The description cell of the root README catalog row that links to <dir>/<slug>/, or null if there is no row.
+function catalogDescription(readme, dir, slug) {
+  const link = `](./${dir}/${slug}/)`;
+  const row = readme.split(/\r?\n/).find((l) => l.startsWith("| [") && l.includes(link));
+  if (!row) return null;
+  const cells = row.replace(/^\|\s*/, "").replace(/\s*\|\s*$/, "").split(" | ");
+  return cells.slice(2).join(" | ");
+}
+
 function validateCard(card, data, fail) {
   if (!card || typeof card !== "object" || Array.isArray(card)) return fail("card.json must be a JSON object");
   if (card.type !== "AdaptiveCard") fail('card.json root "type" must be "AdaptiveCard"');
@@ -166,6 +175,7 @@ function validateItem(slug) {
     else if (!/\]\(https?:\/\//.test(sources)) fail('README.md "## Sources" section links to no pages');
   }
 
+  let metaDescription = null;
   // metadata.json
   const metaPath = join(dir, "metadata.json");
   if (!existsSync(metaPath)) {
@@ -173,6 +183,7 @@ function validateItem(slug) {
   } else {
     const meta = readJson(metaPath, fail);
     if (meta) {
+      if (typeof meta.description === "string") metaDescription = meta.description;
       for (const key of REQUIRED_METADATA) {
         if (meta[key] === undefined || meta[key] === "" || (Array.isArray(meta[key]) && meta[key].length === 0)) fail(`metadata.json is missing "${key}"`);
       }
@@ -191,6 +202,8 @@ function validateItem(slug) {
   if (existsSync(ROOT_README)) {
     const readme = readFileSync(ROOT_README, "utf8");
     if (!readme.includes(`${ITEMS_DIR}/${slug}/`)) fail(`no row in the root README.md catalog links to ${ITEMS_DIR}/${slug}/`);
+    const rowDescription = catalogDescription(readme, ITEMS_DIR, slug);
+    if (rowDescription !== null && metaDescription !== null && rowDescription !== metaDescription) fail("the root README.md catalog row's description differs from metadata.json description; copy it exactly");
   }
 
   checked += 1;

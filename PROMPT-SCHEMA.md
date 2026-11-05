@@ -53,9 +53,9 @@ The same fields as a skill's `metadata.json` (see [CONTRIBUTING.md](./CONTRIBUTI
 
 ## Validation
 
-`node scripts/validate-prompts.mjs` enforces the layout, the 8,000-character limit, the frontmatter rule, the `metadata.json` schema, README links, the README `## Sources` section and the catalog row. `npm test` runs it with the other validators, and CI runs all of them on every pull request.
+`node scripts/validate-prompts.mjs` enforces the layout, the 8,000-character limit, the frontmatter rule, the `metadata.json` schema, README links, the README `## Sources` section and the catalog row (present, with the `metadata.json` `description` exactly). `npm test` runs it with the other validators, and CI runs all of them on every pull request.
 
 ## Sources
 
-- [Use prompt files in VS Code](https://code.visualstudio.com/docs/copilot/customization/prompt-files), updated 28 Oct 2026
-- [Migrate customizations: replace tool sets](https://code.visualstudio.com/docs/agent-customization/migrate-customizations#_replace-tool-sets), updated 28 Oct 2026
+- [Use prompt files in VS Code](https://code.visualstudio.com/docs/agent-customization/prompt-files), updated 4 Nov 2026
+- [Migrate customizations: replace tool sets](https://code.visualstudio.com/docs/agent-customization/migrate-customizations#_replace-tool-sets), updated 4 Nov 2026

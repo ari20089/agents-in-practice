@@ -64,8 +64,8 @@ Each button also has an `id` (`approve`, `reject`). **Open the full request** op
 ### Power Automate: send the request to an approver in Teams
 
 1. Add the Microsoft Teams action **Post adaptive card and wait for a response**. The older per-channel and per-user versions are marked deprecated.
-2. Set **Post as** and **Post in** to the approver's chat or a channel.
-3. Paste `card.json` into **Message**. Replace each `${...}` with dynamic content from earlier steps, keeping the quotation marks. `${requestId}` appears three times: once in the facts and once in each button.
+2. Set **Post as** and **Post in** to the approver's chat or a channel. Not a private channel: "Posting a message or adaptive card to a private channel currently isn't supported" (Microsoft Teams connector reference).
+3. Paste `card.json` into **Message**. Replace each `${...}` with dynamic content from earlier steps, keeping the quotation marks. `${requestId}` appears four times: in `fallbackText`, in the facts and in each button. `${title}` and `${requestUrl}` are also in `fallbackText`.
 4. Escape any value that can contain a double quotation mark, a backslash, a tab or a line break, which is likely for `details`. Inserted as is, such a value breaks the JSON, and improperly formatted JSON is one of the most common problems Microsoft lists for a failed card (Create your first adaptive card). Learn doesn't give an escaping expression (as of 31 October 2026); this one works for a value `X`:
 
    ```text
@@ -73,7 +73,7 @@ Each button also has an `id` (`approve`, `reject`). **Open the full request** op
    ```
 
 5. Fill in **Update message** and set **Should update card** to Yes, for example "Thanks, your decision has been recorded." Without them the card "resets and then appears exactly the same" after a response, and Microsoft recommends update messages "to update others and prevent consumers from attempting to submit the card more than once".
-6. Plan for no answer. A run can last 30 days, and "after 30 days, any pending steps time out" (Power Automate limits). Add a branch after the action whose **Run after** setting covers the action timing out, to remind someone or escalate: Run after decides what happens "if an action fails, times out, is skipped, or is successful" (Error handling). A shorter timeout on the action itself isn't documented on the pages cited here (as of 31 October 2026); check the action's settings in your designer.
+6. Plan for no answer. A run can last 30 days, and "after 30 days, any pending steps time out" (Power Automate limits). Add a branch after the action whose **Run after** setting covers the action timing out, to remind someone or escalate: Run after decides what happens "if an action fails, times out, is skipped, or is successful" (Error handling). The limits page lists an "Outbound asynchronous request" as "Configurable up to 30 days"; whether that covers a shorter timeout on this action isn't documented (as of 5 November 2026), so check the action's settings in your designer.
 7. After the action, branch on the response. The comment comes back as dynamic content named after its input, `comment`, and "the user ID of the person submitting the card" is available too. The connector reference lists the action's outputs only as dynamic, and Learn doesn't document how the selected button appears in them (as of 31 October 2026). Run the flow once, open the run history and read the action's outputs before you build the condition: look for the `data` fields (`decision`, `requestId`, `actionSubmitId`) and for the button's `id` (`approve` or `reject`).
 
 The flow waits until someone responds, and a card can be submitted only once: "any further submissions are ignored". In a channel, anyone in it can answer, and the first answer decides.
@@ -83,7 +83,7 @@ The flow waits until someone responds, and a card can be submitted only once: "a
 These steps are for agents on the standard harness, which the Copilot Studio pages cited here describe; topics and the **Ask with Adaptive Card** node belong to it.
 
 1. In a topic, add an **Ask with Adaptive Card** node, open **Edit adaptive card**, and paste `card.json` into the card payload editor.
-2. In the node's properties, switch to **Formula**. Copilot Studio converts the card to a Power Fx formula. Replace each `"${...}"` string, quotation marks included, with a variable, for example `Topic.RequestTitle`. The card is then a Power Fx record rather than text, so a quotation mark in a variable doesn't break it. Once you edit the formula you can't go back to JSON, so keep `card.json`.
+2. In the node's properties, switch to **Formula**. Copilot Studio converts the card to a Power Fx formula. Replace each `"${...}"` string, quotation marks included, with a variable, for example `Topic.RequestTitle`. The card is then a Power Fx record rather than text, so a quotation mark in a variable shouldn't break it, but Learn doesn't say so (as of 5 November 2026): test it. Once you edit the formula you can't go back to JSON, so keep `card.json`.
 3. Check the output variables. Copilot Studio creates them from the card's inputs, so `comment` appears. Learn doesn't say whether the buttons' `data` fields are added too (as of 31 October 2026); if `decision`, `requestId` or `actionSubmitId` are missing, add them with **Edit Schema**.
 4. Add a condition on `decision`, after the checks in [Before you rely on a response](#before-you-rely-on-a-response). Earlier cards stay clickable, and a retry resends the card, so "users might select Submit on an earlier card".
 
@@ -103,12 +103,14 @@ import * as ACData from "adaptivecards-templating";
 const card = new ACData.Template(template).expand({ $root: request });
 ```
 
-The .NET package is `AdaptiveCards.Templating`. An `Action.Submit` comes back as an activity "with the Value property containing an object with all of the input data on it" (Adaptive Cards: Getting Started): the fields in [What comes back](#what-comes-back).
+The .NET package is `AdaptiveCards.Templating`. With Bot Framework bots, an `Action.Submit` makes the client "send an activity through the messaging medium to the bot" (Adaptive Cards 1.5 JSON schema); the Getting Started page's example, written for Skype, puts the inputs in the activity's Value property. That value holds the fields in [What comes back](#what-comes-back).
+
+Add the domain of `requestUrl` to the `validDomains` section of your app manifest. **Open the full request** is an `Action.OpenUrl`, and "if the domain isn't listed, Teams displays the message URL may lead to untrusted content" (Adaptive Card actions in Teams SDK).
 
 For a card sent only by a Teams bot, Teams recommends `Action.Execute` ("Prefer Action.Execute for new projects"). To switch:
 
 1. Change both buttons' `type` to `Action.Execute` and give each a `verb` (`approve`, `reject`). Leave the `data` as it is.
-2. Handle the `adaptiveCard/action` invoke. The Teams SDK surfaces it as a `card.action` activity with the inputs and the button's `data`, and your handler returns the card to show next.
+2. Handle the `adaptiveCard/action` invoke. The Teams SDK surfaces it as a `card.action` activity with the inputs and the button's `data`, and your handler returns a response; the Teams SDK examples return a message (Adaptive Card actions in Teams SDK).
 3. To show the decision to everyone in the conversation, edit the original message. Microsoft's approval example uses a bot message edit, which also refreshes the card for the users listed in its `refresh.userIds`, up to 60 (Up to date cards; Universal Actions).
 
 Keep `Action.Submit` if the same card is also used in Copilot Studio: Bot Framework Web Chat "doesn't support Action.Execute", and neither does Microsoft Copilot.
@@ -144,19 +146,21 @@ Run these in your tenant before relying on the card. None of them have been run 
 
 ## Prerequisites
 
-- **Power Automate:** the Workflows app installed in Teams and allowed in the Teams admin center. The Flow bot poster isn't available in GCC, GCCH or DoD tenants; post as a user there.
+- **Power Automate:** the Workflows app installed in Teams and allowed in the Teams admin center. The Flow bot poster isn't available in Government Cloud tenants; post as a user in GCC (Microsoft Teams connector reference). In GCC High and DoD, send the card from [a Teams bot](#a-teams-bot-or-custom-engine-agent) instead: Teams marks Workflows as unavailable in both (Teams for Government Clouds, 23 April 2026), and Power Automate's adaptive cards aren't available in DoD at all (Overview of adaptive cards for Microsoft Teams, 19 August 2026); see [Limitations](#limitations).
 - **Copilot Studio:** an agent on the standard harness with a topic you can add an Ask with Adaptive Card node to.
 - **A bot or agent:** the Microsoft 365 Agents SDK or the Teams SDK, and `adaptivecards-templating` 2.3.1 or `AdaptiveCards.Templating` to fill in the bindings.
 
 ## Limitations
 
-- **Schema version 1.5.** Copilot Studio supports 1.6 and earlier, but says Teams and the live chat widget are "limited to version 1.5" (21 October 2026). The Teams cards reference now says Teams supports 1.6 (13 October 2026). The card stays at 1.5 until the two pages agree, and it needs 1.5: the title's `"style": "heading"` is a 1.5 property. The `$schema` value is the one Copilot Studio's sample uses; the older `adaptivecards.io` address redirects to it.
+- **Schema version 1.5.** Copilot Studio supports 1.6 and earlier, but says Teams and the live chat widget are "limited to version 1.5" (21 October 2026). The Teams cards reference now says Teams supports 1.6 (13 October 2026). The card stays at 1.5 until the two pages agree, and it needs 1.5: the title's `"style": "heading"` is a 1.5 property. The `$schema` value is the `https` form of the address Copilot Studio's sample uses, which answers only over `https`; the older `adaptivecards.io` address redirects to it.
 - **Button colours.** `positive` and `destructive` make Approve and Reject stand out where the host supports action styles, as in the preview image. "Positive or destructive action styling is not supported in Adaptive Cards on the Teams platform", so in Teams both buttons look the same; the button text carries the meaning.
 - **The comment is always optional.** Inputs are validated when the user selects any `Action.Submit` that sends them (Input Validation), so marking the comment `isRequired` for Reject would make it required for Approve too, unless Approve stops sending the comment at all.
+- **No private channels from Power Automate.** The Teams connector's card actions can't post to a private channel (Microsoft Teams connector reference). Send the card to a standard channel or a chat.
 - **One approver, one decision.** The card has no stages, delegation, reassignment or reminders. Use the approvals action or multistage approvals for those.
 - **English labels, one language.** "Approval request", the fact titles, "Comment (optional)", "Approve" and "Reject" are hard-coded in English, and the root `lang` is `en`. For another audience, translate them in `card.json`; there is no per-user translation in a card.
 - **Dates are plain text.** `submittedOn` and `neededBy` are shown as you format them, in your time zone. Adaptive Cards can instead localise a time to the viewer's device: "Adaptive Cards offers DATE() and TIME() formatting functions to automatically localize the time on the target device", written as `{{DATE(2026-11-14T17:00:00Z, SHORT)}}` with an ISO 8601 UTC timestamp (Text features). That page shows it in a `TextBlock`; whether it works inside a `Fact.value` in Teams isn't documented, so test it before relying on it.
-- **Not for webhooks or Outlook.** Office 365 Connectors in Teams, "including connector-based Incoming Webhooks, were retired in May 2026"; post from a flow instead, which is what the Workflows app runs. Outlook actionable messages use a different action model (Outlook "used Action.Http"), so the card's buttons don't work in an email.
+- **No Power Automate route in GCC High or DoD.** Power Automate's overview says "Adaptive cards aren't available within the DoD (Department of Defense) environment" (Overview of adaptive cards for Microsoft Teams, 19 August 2026). Teams for Government Clouds (23 April 2026) marks **Workflows** as unavailable in GCC High and DoD and notes "GCC High supports Incoming Webhooks only", while the connector's card actions "require Workflows (formerly Power Automate) app availability". The Teams connector reference's Flow bot note, read on 5 November 2026, still tells every Government Cloud tenant, GCC High and DoD included, to "Use the **User** poster option instead of Flow Bot"; the pages disagree, and this card follows the stricter ones. Teams lists bots and Adaptive Cards as available in GCC High and DoD, so use a bot there, distributed as a custom app for your organization: the same page marks uploading a custom app as unavailable in both.
+- **Not for webhooks or Outlook.** Office 365 Connectors in Teams, "including connector-based Incoming Webhooks, were retired in May 2026"; post from a flow instead, which is what the Workflows app runs. Don't send the card by email: its buttons are `Action.Submit`, which "Teams or bots used", while "Outlook used Action.Http". Microsoft's cross-host action is `Action.Execute`, which "works across all hubs, including Teams and Outlook" (Universal Actions for Adaptive Cards overview).
 - **Size.** 2.6 KB filled in with the sample data. Power Automate's Teams actions fail above "approximately 28 KB", so long `details` text is the thing to watch.
 - **Templating is labelled preview.** The Adaptive Cards templating overview still describes the template language and SDKs as a preview, and those pages are dated May 2020. The card uses plain property bindings only, so it works the same once you replace them by hand.
 - **Not tested in a tenant.** The card was checked against the Adaptive Cards 1.5 JSON schema with the sample data filled in, and rendered with the Adaptive Cards JavaScript renderer 3.0.6 for the preview image. It hasn't been posted from a flow, a Copilot Studio agent or a bot; run the [test plan](#test-plan) first.
@@ -170,27 +174,28 @@ Microsoft Learn, with each page's `ms.date` when it was read on 31 October 2026:
 - [Connect and configure an agent for Teams and Microsoft Copilot](https://learn.microsoft.com/en-us/microsoft-copilot-studio/publication-add-bot-to-microsoft-teams), 29 Oct 2026
 - [Multistage and AI approvals in agent flows (preview)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/flows-advanced-approvals), 4 Sep 2025
 - [Get started with Power Automate approvals](https://learn.microsoft.com/en-us/power-automate/get-started-approvals), 29 Apr 2026
-- [Overview of adaptive cards for Microsoft Teams (Power Automate)](https://learn.microsoft.com/en-us/power-automate/overview-adaptive-cards), 19 Aug 2026
+- [Overview of adaptive cards for Microsoft Teams (Power Automate)](https://learn.microsoft.com/en-us/power-automate/overview-adaptive-cards), 19 Aug 2026 (re-read 5 Nov 2026)
 - [Create your first adaptive card (Power Automate)](https://learn.microsoft.com/en-us/power-automate/create-adaptive-cards), 19 Aug 2026
-- [Limits of automated, scheduled, and instant flows](https://learn.microsoft.com/en-us/power-automate/limits-and-config), 17 Jul 2026
+- [Limits of automated, scheduled, and instant flows](https://learn.microsoft.com/en-us/power-automate/limits-and-config), 17 Jul 2026 (re-read 5 Nov 2026)
 - [Error handling (Power Automate coding guidelines)](https://learn.microsoft.com/en-us/power-automate/guidance/coding-guidelines/error-handling), 10 Jul 2025
-- [Microsoft Teams connector reference](https://learn.microsoft.com/en-us/connectors/teams/), `ms.date` 1 Mar 2024; the generated reference's own updated date is 2 Oct 2026
+- [Microsoft Teams connector reference](https://learn.microsoft.com/en-us/connectors/teams/), `ms.date` 1 Mar 2024; the generated reference's own updated date is 5 Nov 2026 (re-read 5 Nov 2026)
+- [Teams for Government Clouds](https://learn.microsoft.com/en-us/microsoftteams/platform/concepts/cloud-overview), 23 Apr 2026 (read 5 Nov 2026): Workflows unavailable, bots and Adaptive Cards available, in GCC High and DoD
 - [Create and explore card types in Teams (Cards reference)](https://learn.microsoft.com/en-us/microsoftteams/platform/task-modules-and-cards/cards/cards-reference), 13 Oct 2026
-- [Adaptive Card actions in Teams SDK](https://learn.microsoft.com/en-us/microsoftteams/platform/task-modules-and-cards/cards/cards-actions), 10 Jun 2026
+- [Adaptive Card actions in Teams SDK](https://learn.microsoft.com/en-us/microsoftteams/platform/task-modules-and-cards/cards/cards-actions), 10 Jun 2026 (re-read 5 Nov 2026)
 - [Designing Adaptive Cards for your app](https://learn.microsoft.com/en-us/microsoftteams/platform/task-modules-and-cards/cards/design-effective-cards), 5 Aug 2026
 - [Format text in cards](https://learn.microsoft.com/en-us/microsoftteams/platform/task-modules-and-cards/cards/cards-format), 22 Oct 2026
 - [Webhooks and connectors in Teams](https://learn.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/what-are-webhooks-and-connectors), 23 Jan 2025
-- [Universal Actions for Adaptive Cards overview](https://learn.microsoft.com/en-us/microsoftteams/platform/task-modules-and-cards/cards/universal-actions-for-adaptive-cards/overview), 30 Sep 2026
+- [Universal Actions for Adaptive Cards overview](https://learn.microsoft.com/en-us/microsoftteams/platform/task-modules-and-cards/cards/universal-actions-for-adaptive-cards/overview), 30 Sep 2026 (re-read 5 Nov 2026)
 - [Use Universal Actions for Adaptive Cards](https://learn.microsoft.com/en-us/microsoftteams/platform/task-modules-and-cards/cards/universal-actions-for-adaptive-cards/work-with-universal-actions-for-adaptive-cards), 20 Dec 2022
 - [Up to date cards](https://learn.microsoft.com/en-us/microsoftteams/platform/task-modules-and-cards/cards/universal-actions-for-adaptive-cards/up-to-date-views), 16 Sep 2026
-- [Teams bots overview](https://learn.microsoft.com/en-us/microsoftteams/platform/bots/bot-features), 7 May 2025
+- [Teams SDK: Welcome](https://learn.microsoft.com/en-us/microsoftteams/platform/teams-sdk/welcome), 9 Oct 2026 (read 5 Nov 2026). It replaces the Teams bots overview, which now redirects to an archived page; What's new in the Bot Framework SDK names it "Teams SDK (Teams AI Library)"
 - [Azure Bot Framework SDK to Microsoft 365 Agents SDK migration guidance](https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/bf-migration-guidance), 28 Apr 2026
 - [What's new in the Bot Framework SDK](https://learn.microsoft.com/en-us/azure/bot-service/what-is-new?view=azure-bot-service-4.0), 9 Oct 2024
 - [Adaptive Cards Templating overview](https://learn.microsoft.com/en-us/adaptive-cards/templating/), 18 May 2020
 - [Adaptive Cards Template Language](https://learn.microsoft.com/en-us/adaptive-cards/templating/language), 18 May 2020
 - [Adaptive Card Templating SDKs](https://learn.microsoft.com/en-us/adaptive-cards/templating/sdk), 15 May 2020
 - [Input Validation (Adaptive Cards)](https://learn.microsoft.com/en-us/adaptive-cards/authoring-cards/input-validation), 24 Jul 2020
-- [Adaptive Cards: Getting Started](https://learn.microsoft.com/en-us/adaptive-cards/authoring-cards/getting-started), 9 Nov 2017
+- [Adaptive Cards: Getting Started](https://learn.microsoft.com/en-us/adaptive-cards/authoring-cards/getting-started), 9 Nov 2017: a Skype example
 - [Adaptive Cards: Text features](https://learn.microsoft.com/en-us/adaptive-cards/authoring-cards/text-features), 18 Jun 2020
 
 The Teams card pages above now carry a notice that they are "considered legacy" and point to the [Adaptive Cards documentation hub](https://adaptivecards.microsoft.com/) for the current schema reference, Designer and samples. The hub is a web app without dated pages, so the card's facts are cited from Learn and from the published schema below.
@@ -212,6 +217,7 @@ Other sources, read on 31 October 2026:
 | --- | --- | --- |
 | 1.0 | October 2026 | Initial release |
 | 1.1 | November 2026 | The Copilot Studio steps say they're for the standard harness, as the cited pages do |
+| 1.2 | November 2026 | GCC High and DoD tenants are pointed to a Teams bot, because Power Automate can't post the card there. The flow steps count every binding and rule out private channels, the bot steps add `validDomains`, and the `$schema` address, bots link and several citations are corrected |
 
 ## Help
 

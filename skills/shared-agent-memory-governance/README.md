@@ -4,7 +4,11 @@
 
 Copilot Studio agents that have their own account (Frontier preview) keep **one memory shared by every user who talks to them**. Microsoft documents that this memory has no privacy boundary between users, that any user can view or delete it, that users cannot opt out, and that admins cannot switch it off without switching off agent accounts. Microsoft Purview's documented coverage for Copilot Studio is built on prompts and responses stored in mailboxes; **no Microsoft page says where shared memory is stored or whether retention policies, holds, eDiscovery or audit reach it.**
 
-This skill gives an agent an accurate, dated picture of that gap and turns it into the artifacts admins, compliance, records, privacy and legal teams need.
+This skill gives an agent an accurate, dated picture of that gap and turns it into the artifacts admins, compliance, records, privacy and legal teams need. It is written for:
+
+- Microsoft 365 and Purview admins who are being asked to approve a Copilot Studio agent with its own account
+- Compliance, records, privacy and legal teams who own retention schedules, legal holds and data subject requests
+- Copilot Studio makers who want to know what they are signing their team up for
 
 ## Skill
 
@@ -25,9 +29,9 @@ The full skill definition is in [`SKILL.md`](./SKILL.md), which points the agent
 The skill works through six steps:
 
 1. **Identify which "memory" the user means.** Four features are called memory (Microsoft 365 Copilot memory, Copilot Studio per-user memory on two harnesses, and shared memory for agents with an account) and they behave differently. The skill refuses to let the answer slide between them.
-2. **State what is documented, with dates.** Shared across all users with no privacy boundary; surfaces content to users without permission to the source "regardless of sensitivity label"; viewable and deletable by any user; auto-deleted after 28 days with no interaction; no opt-out; no independent admin switch; an exclusion list whose enforcement is not documented; agent deletion removes the Entra Agent ID and says nothing about memory.
-3. **Map Purview coverage honestly** across three data types: prompts and responses (documented), the agent account's own mail and Teams traffic (documented, treat the agent as a user), and shared memory (not documented for any capability). "Not documented" is kept distinct from "not supported".
-4. **Surface the open questions** (Q1 to Q10: storage location, retention, holds, eDiscovery search, audit, deletion on agent removal, the 28-day clock for always-on agents, admin export, residency, and what happens when the maker leaves) that apply to the user's scenario. If the user has run any of the tenant tests, their results are reported as a separate class, "observed in tenant", never blended with what Microsoft documents.
+2. **State what is documented, with dates.** Shared across all users with no privacy boundary; surfaces content to users without permission to the source "regardless of sensitivity label"; viewable and deletable by any user; auto-deleted after 28 days with no interaction; no opt-out; no independent admin switch; an exclusion list whose enforcement is not documented; agent deletion removes the Entra Agent ID (documented for the standard harness, so inferred here) and no page says what happens to memory.
+3. **Map Purview coverage honestly** across three data types: prompts and responses (documented for Copilot Studio agents generally, not for the agent's own channels or trigger runs), the agent account's own mail and Teams traffic (documented, treat the agent as a user), and shared memory (not documented for any capability). "Not documented" is kept distinct from "not supported".
+4. **Surface the open questions** (Q1 to Q11: storage location, retention, holds, eDiscovery search, audit, deletion on agent removal, the 28-day clock for always-on agents, admin export, residency, what happens when the maker leaves, and whether trigger runs and the agent's email, Teams and Office-comment channels produce prompt/response copies) that apply to the user's scenario. If the user has run any of the tenant tests, their results are reported as a separate class, "observed in tenant", never blended with what Microsoft documents.
 5. **Produce the artifact requested:** governance assessment, instruction-level memory rules, legal-hold checklist, DSR access/erasure runbook, decommission plan, retention schedule entry, or the seven-test tenant plan.
 6. **Recommend, then stop.** It never changes settings, policies or agents.
 
@@ -39,9 +43,10 @@ The skill works through six steps:
 
 ## Limitations
 
-- Written against **Frontier preview** documentation: the agent-account pages are dated 14 and 15 October 2026, and every source was re-read on 30 October 2026. Agent accounts and shared memory are prerelease and Microsoft's pages carry the "subject to change" banner.
+- Written against **Frontier preview** documentation: the agent-account pages are dated 14 and 15 October 2026, every source was re-read on 30 October 2026, and every Learn page again on 5 November 2026. Agent accounts and shared memory are prerelease and Microsoft's pages carry the "subject to change" banner.
 - Microsoft renamed the GitHub Copilot harness to the Microsoft Copilot harness on 28 October 2026, and says the product will show the new name "over the coming weeks". As of 1 November 2026 the Learn pages cited here still use the old name, so the skill uses the new name and keeps the old one in page titles and quotes.
-- The Purview pages for Copilot Studio and Agent 365 are dated May 2026 and predate agent accounts; a revision there would change the coverage matrix.
+- The Purview pages for Copilot Studio and Agent 365 are dated May 2026 and predate Copilot Studio agent accounts; a revision there would change the coverage matrix.
+- Agent 365 is documented as generally available for the Commercial segment. None of the agent-account, FAQ or Purview pages mentions GCC, GCC High, DoD or other national clouds, so the skill treats availability there as not documented (as of 5 November 2026).
 - One source (Message Center notice MC1478965) was read from a public archive because the Message Center requires tenant sign-in.
 - The statement that deleting an agent deletes its Entra Agent ID comes from a Microsoft page scoped to the standard harness; agents with accounts run on the Microsoft Copilot harness. The skill reports it as inferred, not documented.
 - Purview terminology moves: the skill uses the current names (Data Security Posture Management, unified eDiscovery with cases and data sources, Agent Registry) and says so when an older name is still common.
@@ -60,7 +65,7 @@ Microsoft documentation, with the date shown on the page when retrieved on 30 Oc
 - [Use Microsoft Purview to manage data security and compliance for Microsoft Agent 365](https://learn.microsoft.com/en-us/purview/ai-agent-365), 1 May 2026
 - [Learn about retention for Copilot and AI apps](https://learn.microsoft.com/en-us/purview/retention-policies-copilot), 23 Sep 2025
 - [Search for and delete AI application data in eDiscovery](https://learn.microsoft.com/en-us/purview/edisc-search-copilot-data), 19 Jun 2026
-- [Manage Copilot personalization and memory](https://learn.microsoft.com/en-us/microsoft-365/copilot/copilot-personalization-memory), 2 Sep 2026
+- [Manage Copilot personalization and memory](https://learn.microsoft.com/en-us/copilot/manage/copilot-personalization-memory), 2 Sep 2026
 - [Microsoft Agent 365 overview](https://learn.microsoft.com/en-us/microsoft-agent-365/overview), 19 Aug 2026
 - [Agent Registry in Microsoft 365 admin center](https://learn.microsoft.com/en-us/microsoft-agent-365/admin/agent-registry-overview), 21 Sep 2026
 - [Harnesses in Copilot Studio](https://learn.microsoft.com/en-us/microsoft-copilot-studio/harnesses-overview), 19 Oct 2026
@@ -69,6 +74,14 @@ Microsoft documentation, with the date shown on the page when retrieved on 30 Oc
 - [MC1478965: Microsoft Purview Data Lifecycle Management, retention for Copilot memory](https://mc.merill.net/message/MC1478965) (archived copy), published 24 Sep 2026, updated 22 Oct 2026
 - [Delegate shared business processes to agents that are more persistent and proactive with Microsoft Copilot Studio](https://www.microsoft.com/en-us/copilot/blog/copilot-studio/delegate-shared-business-processes-to-agents-that-are-more-persistent-and-proactive-with-microsoft-copilot-studio/), Microsoft Copilot Blog, 15 Oct 2026
 - [The GitHub Copilot harness is now the Microsoft Copilot harness](https://www.microsoft.com/en-us/copilot/blog/copilot-studio/the-github-copilot-harness-in-copilot-studio-is-now-the-microsoft-copilot-harness/), Microsoft Copilot Studio blog, 28 Oct 2026
+- [Learn about the default sensitivity labels and policies to protect your data](https://learn.microsoft.com/en-us/purview/default-sensitivity-labels-policies), 1 May 2026, read on 5 November 2026
+- [Export data to respond to requests for copies of personal data](https://learn.microsoft.com/en-us/microsoft-copilot-studio/personal-data-export) (Copilot Studio), 1 Apr 2024, read on 5 November 2026
+- [Responding to personal data delete requests from data subjects](https://learn.microsoft.com/en-us/microsoft-copilot-studio/personal-data-delete) (Copilot Studio), 6 Sep 2024, read on 5 November 2026
+- [Office 365 Data Subject Requests Under the GDPR and CCPA](https://learn.microsoft.com/en-us/compliance/regulatory/gdpr-dsr-office365), 27 Jul 2026, read on 5 November 2026
+
+Every Learn page above was re-read on 5 November 2026 and showed the date listed. The agent reads the same list at the end of [`references/governance-guide.md`](./references/governance-guide.md).
+
+## Acknowledgements
 
 Commentary that identified parts of the gap before this skill:
 
@@ -76,8 +89,6 @@ Commentary that identified parts of the gap before this skill:
 - Rajesh Beri, [Copilot Studio Agents Keep Shared Memory, No User Opt-Out](https://www.beri.net/article/copilot-studio-agent-accounts-frontier-shared-memory-no-permission-boundary-entra-identity-ai-teammates-license), 19 Oct 2026
 - EDRM, [Ransomware logs and Copilot memory put AI agent records on the eDiscovery agenda](https://edrm.net/2026/10/ransomware-logs-and-copilot-memory-put-ai-agent-records-on-the-ediscovery-agenda/), Oct 2026
 - [New in Frontier: Delegate Business Processes to Copilot Studio Agents](https://futurework.blog/2026/10/16/new-in-frontier-delegate-business-processes-to-copilot-studio-agents/), 16 Oct 2026
-
-Every Learn page above still showed the same date on 31 October 2026. The agent reads the same list at the end of [`references/governance-guide.md`](./references/governance-guide.md).
 
 ## Contributors
 
@@ -91,6 +102,7 @@ Every Learn page above still showed the same date on 31 October 2026. The agent 
 | --- | --- | --- |
 | 1.0 | October 2026 | Initial release |
 | 1.1 | November 2026 | The GitHub Copilot harness is now the Microsoft Copilot harness; the skill uses the new name and keeps the old one in Learn page titles and quotes. The gallery image no longer calls per-user memory a "standard agent" feature: it belongs to the Microsoft Copilot harness |
+| 1.2 | November 2026 | Corrected the agent-account settings (documented only to stop new agents getting an account), prompt/response coverage (documented for Copilot Studio agents generally, not for the agent's own channels or trigger runs: new Q11, wider T1 and T6) and the label guidance (encryption must grant the agent VIEW and EXTRACT; agent-created content does not inherit labels). The DSR runbook now cites the Copilot Studio and Office 365 DSR pages, the Purview roles and the US Government cloud note, cloud availability, DLP, DSPM and ownerless-agent statements match their pages, and the audience and acknowledgements moved to this README |
 
 ## Help
 

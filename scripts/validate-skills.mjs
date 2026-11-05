@@ -14,6 +14,8 @@ const SLUG_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const MAX_NAME = 64;
 const MAX_DESCRIPTION = 1024;
 const MAX_LINES = 500;
+// Microsoft 365 Copilot: "Skill instructions, which must be under 20,000 characters" (Skills in declarative agents, 26 Oct 2026).
+const MAX_M365_INSTRUCTIONS = 20000;
 const ALLOWED_TOP_LEVEL_FILES = new Set(["SKILL.md", "README.md", "metadata.json"]);
 const ALLOWED_TOP_LEVEL_DIRS = new Set(["references", "scripts", "assets"]);
 const REQUIRED_SECTIONS = ["## Before Starting", "## Output Structure", "## Step 1", "## Rules"];
@@ -58,6 +60,15 @@ function brokenLinks(filePath, text) {
   return broken;
 }
 
+// The description cell of the root README catalog row that links to <dir>/<slug>/, or null if there is no row.
+function catalogDescription(readme, dir, slug) {
+  const link = `](./${dir}/${slug}/)`;
+  const row = readme.split(/\r?\n/).find((l) => l.startsWith("| [") && l.includes(link));
+  if (!row) return null;
+  const cells = row.replace(/^\|\s*/, "").replace(/\s*\|\s*$/, "").split(" | ");
+  return cells.slice(2).join(" | ");
+}
+
 function validateSkill(slug) {
   const dir = join(SKILLS_DIR, slug);
   const fail = (msg) => errors.push(`${slug}: ${msg}`);
@@ -73,6 +84,7 @@ function validateSkill(slug) {
 
   // SKILL.md
   const skillPath = join(dir, "SKILL.md");
+  let skillBodyChars = null;
   if (!existsSync(skillPath)) {
     fail("missing SKILL.md");
   } else {
@@ -89,6 +101,7 @@ function validateSkill(slug) {
       if (!fm.description) fail("frontmatter is missing description (it must be on a single line)");
       else if (fm.description.length > MAX_DESCRIPTION) fail(`description is ${fm.description.length} chars; max ${MAX_DESCRIPTION}`);
     }
+    skillBodyChars = [...text.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/, "")].length;
     const lines = text.split(/\r?\n/).length;
     if (lines > MAX_LINES) fail(`SKILL.md is ${lines} lines; max ${MAX_LINES} (move material to references/)`);
     for (const section of REQUIRED_SECTIONS) {
@@ -120,6 +133,7 @@ function validateSkill(slug) {
     }
   }
 
+  let metaDescription = null;
   // metadata.json
   const metaPath = join(dir, "metadata.json");
   if (!existsSync(metaPath)) {
@@ -132,12 +146,16 @@ function validateSkill(slug) {
       fail(`metadata.json is not valid JSON: ${e.message}`);
     }
     if (meta) {
+      if (typeof meta.description === "string") metaDescription = meta.description;
       for (const key of REQUIRED_METADATA) {
         if (meta[key] === undefined || meta[key] === "" || (Array.isArray(meta[key]) && meta[key].length === 0)) fail(`metadata.json is missing "${key}"`);
       }
       if (meta.category !== undefined) fail('metadata.json has "category"; the category comes from the folder (skills/ → Skills). Use "subcategory" instead');
       if (Array.isArray(meta.platforms)) {
         for (const p of meta.platforms) if (!KNOWN_PLATFORMS.has(p)) fail(`metadata.json platform "${p}" is not one of ${[...KNOWN_PLATFORMS].join(", ")}`);
+        if (meta.platforms.includes("Microsoft 365 Copilot") && skillBodyChars !== null && skillBodyChars >= MAX_M365_INSTRUCTIONS) {
+          fail(`SKILL.md instructions are ${skillBodyChars} characters; Microsoft 365 Copilot needs under ${MAX_M365_INSTRUCTIONS} (move material to references/ or drop the platform)`);
+        }
       } else if (meta.platforms !== undefined) fail("metadata.json platforms must be an array");
       if (meta.tags !== undefined && !Array.isArray(meta.tags)) fail("metadata.json tags must be an array");
       for (const key of ["createdAt", "updatedAt"]) {
@@ -150,6 +168,8 @@ function validateSkill(slug) {
   if (existsSync(ROOT_README)) {
     const readme = readFileSync(ROOT_README, "utf8");
     if (!readme.includes(`skills/${slug}/`)) fail(`no row in the root README.md catalog links to skills/${slug}/`);
+    const rowDescription = catalogDescription(readme, "skills", slug);
+    if (rowDescription !== null && metaDescription !== null && rowDescription !== metaDescription) fail("the root README.md catalog row's description differs from metadata.json description; copy it exactly");
   }
 
   checked += 1;

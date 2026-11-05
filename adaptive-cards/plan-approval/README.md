@@ -2,7 +2,7 @@
 
 ## Summary
 
-A card that asks a reviewer to approve an implementation plan before any code is written. It is shaped for plans from the Research, Plan, Implement (RPI) workflow in [HVE Core](https://github.com/microsoft/hve-core), Microsoft's HyperVelocity Engineering framework for GitHub Copilot, and works for any plan with phases and a review. It shows:
+A card that asks a reviewer to approve an implementation plan before any code is written. It is shaped for plans from the Research, Plan, Implement (RPI) workflow in [HVE Core](https://github.com/microsoft/hve-core), Microsoft's Hypervelocity Engineering framework for GitHub Copilot, and works for any plan with phases and a review. It shows:
 
 - the plan's title and its executive summary;
 - the repository and branch, who prepared it, when, its scope, the files it touches, the plan file and the revision being approved;
@@ -38,15 +38,15 @@ HVE Core's RPI lifecycle runs "Task context and evidence → Research when neede
 
 The plan "presents its Executive Summary, What You May Not Know, and Phase Checklist before user direction", phases have stable `Pxx` IDs and tasks `Pxx-Txx` IDs (`rpi-plan` skill; RPI documentation). The card maps onto that: `summary` from the Executive Summary, `whatYouMayNotKnow` from What You May Not Know, the phases from the Phase Checklist.
 
-The critique returns one of three dispositions (`rpi-plan-critique` skill):
+The critique returns one of three verdicts (`rpi-plan-critique` skill):
 
-| Disposition | HVE Core's definition |
+| Verdict | HVE Core's definition |
 |---|---|
 | `Pass` | "the plan is credible for implementation, no Critical or High finding applies, and any residual risks are explicitly accepted" |
 | `Revise` | "substantive findings require a plan change; the parent disposes the findings" |
 | `Blocked` | "supplied evidence cannot support a decision-critical assessment" |
 
-Send the card when the critique is `Pass`. The critique can also be skipped with `critique=skip` (RPI documentation; `rpi-plan` skill), and for RPI "a skipped or absent critique is not a blocker" (`rpi-implement` skill); whether a reviewer may approve an unreviewed plan is your team's call, so the card shows `Skipped` rather than hiding it. Don't send it for `Revise` or `Blocked`: the planner revises first.
+Send the card when the critique is `Pass`. The critique can also be skipped with `critique=skip` (RPI documentation; the `rpi-plan` skill takes it as `critique={standard|deep|skip}`), and for RPI "a skipped or absent critique is not a blocker" (`rpi-implement` skill); whether a reviewer may approve an unreviewed plan is your team's call, so the card shows `Skipped` rather than hiding it. Don't send it for `Revise` or `Blocked`: the planner revises first. Don't send it either when the critique produced no verdict: the critique skill records that as execution "Not produced and verdict unavailable", and `rpi-plan` says "a critique that returned no result is never treated as a Pass".
 
 ### Make RPI wait for the approval
 
@@ -104,7 +104,7 @@ In Teams, every binding shown on the card is rendered as Markdown: "Markdown is 
 
 ## What comes back
 
-**Approve** is a submit button on the card itself. **Request changes** and **Reject** are `Action.ShowCard` buttons: each opens a small card under the buttons with a required box and its own submit button, **Send change request** or **Reject plan**. A submit sends the inputs on its own card and its parent cards, but "Inputs will **not** be validated or submitted if they are on a card that is a child or sibling card of the card containing the Action.Submit" (Input Validation). So Approve never waits for, or sends, the text boxes, and each form sends only its own box.
+**Approve** is a submit button on the card itself. **Request changes** and **Reject** are `Action.ShowCard` buttons: each opens a small card under the buttons with a required box and its own submit button, **Send change request** or **Reject plan**. A submit sends the inputs on its own card and its parent cards, but "Inputs will **not** be validated or submitted if they are on a card that is a child or sibling card of the card containing the Action.Submit" (Input Validation). The same note says this "is a change in behavior from renderer versions prior to 2.0", and the host pages cited here don't say which renderer Teams, Copilot Studio or Power Automate uses (as of 5 November 2026). So with a 2.0 or later renderer, Approve doesn't wait for, or send, the text boxes, and each form sends only its own box. Whatever the renderer, the host ignores a `changes` or `reason` that comes with the wrong decision (check 4).
 
 The inputs are merged with the button's `data` (Action.Submit "gathers input fields, merges with optional data field, and sends an event to the client", Adaptive Cards schema 1.5):
 
@@ -129,7 +129,7 @@ Use this when a plan is ready and a named person has to approve it before implem
 
 1. Start the flow from whatever knows the plan is ready: a manual trigger the engineer runs with the plan's path and revision, or a trigger on your repository. The card needs only the values in [The bindings](#the-bindings).
 2. Resolve the reviewer to their user ID, for example with the Office 365 Users action **Get user profile (V2)**, and save it with `planPath` and `planRevision` where the flow can read them back.
-3. Add the Microsoft Teams action **Post adaptive card and wait for a response** and post it to the reviewer's chat. The action "waits for a response from any user" (Microsoft Teams connector reference), and in a channel "the flow continues once anyone in the Teams channel responds" (Overview of adaptive cards for Microsoft Teams), so post to a channel only if anyone in it may approve. The older per-user and per-channel actions are marked deprecated.
+3. Add the Microsoft Teams action **Post adaptive card and wait for a response** and post it to the reviewer's chat. The action "waits for a response from any user" (Microsoft Teams connector reference), and in a channel "the flow continues once anyone in the Teams channel responds" (Overview of adaptive cards for Microsoft Teams), so post to a channel only if anyone in it may approve. The older per-user and per-channel actions are marked deprecated (Microsoft Teams connector reference). The connector reference lists the action's **Post as** and **Post in** parameters only as "Select an option", so their choices aren't documented there (as of 5 November 2026); pick the ones that send the card to the reviewer directly. In a commercial tenant, post as **Flow bot**, which posts the card to that person's own chat (Overview of adaptive cards for Microsoft Teams). In GCC, "The **Flow Bot** poster option is available only in commercial tenants", so post as **User** (Microsoft Teams connector reference). Which account then posts, and who else is in that chat, isn't documented (as of 5 November 2026); assume the account the flow's Teams connection signs in with can answer too, so the responder check in [Before you rely on a response](#before-you-rely-on-a-response) is what stops anyone but the reviewer from approving.
 4. Paste `card.json` into the action's card field and replace each `${...}` with dynamic content, keeping the quotation marks. Escape any value that can contain a double quotation mark, a backslash or a line break, which is likely for `summary`, `whatYouMayNotKnow` and `critiqueNote`: improperly formatted JSON is one of the most common problems Microsoft lists for a failed card (Create your first adaptive card). The [Approval Request](../approval-request/README.md#power-automate-send-the-request-to-an-approver-in-teams) card gives an expression that does this.
 5. Fill in **Update message** and set **Should update card** to Yes, for example "Thanks, your decision on revision 7c41e2a has been recorded." Without them the card "resets and then appears exactly the same" (Overview of adaptive cards for Microsoft Teams).
 6. Plan for no answer: a run can last 30 days, and "after 30 days, any pending steps time out" (Limits of automated, scheduled, and instant flows). Add a branch that reminds or reassigns once your own deadline passes.
@@ -142,26 +142,26 @@ A wait-for-response card "can only be submitted once per card", and "any further
 
 ### Copilot Studio: review plans in a topic
 
-These steps are for agents on the standard harness, which the Copilot Studio pages cited here describe; topics and the **Ask with Adaptive Card** node belong to it.
+These steps are for agents on the standard harness, which the Copilot Studio pages cited here describe; topics and the **Ask with Adaptive Card** node belong to it. They don't carry over to the Microsoft Copilot harness, which Microsoft renamed from the GitHub Copilot harness on 28 October 2026 (The GitHub Copilot harness in Copilot Studio is now the Microsoft Copilot harness). Learn's overview still uses the old name, doesn't mention Adaptive Cards, and marks topics "Replaced by Hooks in the GitHub Copilot harness" (Agents powered by the GitHub Copilot harness overview, as of 5 November 2026).
 
-The card goes to whoever is chatting with the agent, so this suits an agent that a reviewer talks to, such as "show me the plans waiting for my approval". To send a plan to someone else, call a flow from the topic and follow the Power Automate steps.
+The card goes to whoever is chatting with the agent, so this suits an agent that a reviewer talks to, such as "show me the plans waiting for my approval". To send a plan to someone else, call an agent flow from the topic and follow the Power Automate steps, with two changes. The flow starts with the **When an agent calls the flow** trigger, and it must "Respond to the agent within the 100-second action limit", with **Asynchronous response** set to Off (Add an agent flow as a tool to an agent); a longer run fails with `FlowActionTimedOut` (Resolve agent error codes in Copilot Studio). So put **Respond to the agent** first, with a message such as "I've sent the plan to the reviewer in Teams", and post the card after it, as Microsoft advises for logic that "can continue to run after a result is sent to the agent" (same page). The reviewer's answer then reaches the flow, not the topic.
 
-1. Load the plan's values into topic variables, for example from a Dataverse table or SharePoint list where your process keeps plans waiting for review. Save the revision and path you're showing as `Topic.PendingRevision` and `Topic.PendingPlanPath`.
+1. Load the plan's values into topic variables, for example from a Dataverse table or SharePoint list where your process keeps plans waiting for review. Save the revision and path you're showing as `Topic.PendingRevision` and `Topic.PendingPlanPath`, and the user principal names of the reviewer you assigned and of the person who ran the Plan phase as `Topic.AssignedReviewer` and `Topic.PlanAuthor`.
 2. Add an **Ask with Adaptive Card** node, open **Edit adaptive card**, and paste `card.json` into the card payload editor.
 3. In the node's properties, switch to **Formula** and replace each `"${...}"` string, quotation marks included, with a variable. `fallbackText`, the footer and the critique heading hold bindings inside longer text, so join them with `&`. Once you edit the formula, "you can't go back to the original JSON code", so keep `card.json` (Ask questions with Adaptive Cards).
 4. Copilot Studio "automatically creates output variables based on the inputs specified in the code". Learn doesn't say whether that includes inputs inside an `Action.ShowCard` form or the buttons' `data` (as of 4 November 2026). If `changes`, `reason`, `decision`, `planPath`, `planRevision` or `actionSubmitId` are missing, add them as text with **Edit Schema**.
 5. Add a **Condition** node, select **Change to formula**, and enter:
 
    ```power
-   StartsWith(Topic.actionSubmitId, "plan_approval_") And Topic.planRevision = Topic.PendingRevision And Topic.planPath = Topic.PendingPlanPath
+   StartsWith(Topic.actionSubmitId, "plan_approval_") And Topic.planRevision = Topic.PendingRevision And Topic.planPath = Topic.PendingPlanPath And Lower(System.User.PrincipalName) = Lower(Topic.AssignedReviewer) And Lower(System.User.PrincipalName) <> Lower(Topic.PlanAuthor)
    ```
 
-   The formula "must return a Boolean (true or false) value" (Add conditions to topics). In the other branch, say the card is out of date and show the current one. Then check that the signed-in user may approve plans for this repository, and isn't the plan's author.
+   The formula "must return a Boolean (true or false) value" (Add conditions to topics). `System.User.PrincipalName` is "The user principal name of the user currently talking to the agent", one of the variables "available for agents configured to authenticate with Microsoft", which is "the default for new agents"; agents using manual authentication with Microsoft Entra ID have it too (Variables overview). `Lower` applies to Copilot Studio (Lower, Upper, and Proper functions), so a difference in case doesn't reject the reviewer. In the other branch, say the card is out of date or isn't theirs to answer; if the user is the assigned reviewer, show them the current card again. If your process lets the author approve their own plan, drop the last comparison.
 6. Branch on `Topic.decision`. If `changes` or `reason` is empty for `request_changes` or `reject`, ask for it with a question node before you record anything.
 
 "Some chat clients keep earlier cards clickable", and "for each retry, the card is resent to the user" (Ask questions with Adaptive Cards), which is why step 5 compares the revision with the one still waiting.
 
-In the Teams and Microsoft Copilot channels, Microsoft Copilot doesn't support "Adaptive Cards with `Action.Execute`" (this card uses `Action.Submit`) and "might remove embedded URLs" (Connect and configure an agent for Teams and Microsoft Copilot), so check that **Open the plan** still opens there (test 10). If you turn on **Use this agent for group and meeting chats** or **Users can add this agent to a team**, everyone in that conversation sees the card and can answer it; keep plan approval in one-to-one chats.
+In the Teams and Microsoft Copilot channels, Microsoft Copilot doesn't support "Adaptive Cards with `Action.Execute`" (this card uses `Action.Submit`) and "might remove embedded URLs" (Connect and configure an agent for Teams and Microsoft Copilot), so check that **Open the plan** still opens there (test 10). If you turn on **Use this agent for group and meeting chats** or **Users can add this agent to a team**, others in the conversation can see the card: for a team, "all teammates see the responses from the agent", and for group and meeting chats the page doesn't say who sees them (as of 5 November 2026). Assume anyone there could answer it, and keep plan approval in one-to-one chats.
 
 ### A Teams bot or custom engine agent
 
@@ -175,7 +175,7 @@ const card = new ACData.Template(template).expand({ $root: plan });
 
 The .NET package is `AdaptiveCards.Templating`. The fields in [What comes back](#what-comes-back) arrive in the activity's value. Add the domain of the plan links to `validDomains` in your app manifest: if it isn't listed, "Teams displays the message **URL may lead to untrusted content**" (Adaptive Card actions in Teams SDK).
 
-For a card sent only by a Teams bot, Teams lists `Action.Submit` as a "Legacy action type. Prefer `Action.Execute` for new projects" (Adaptive Card actions in Teams SDK). To switch, change the three submit buttons (`approve`, `sendChanges`, `confirmReject`) to `Action.Execute` with the verbs `approve`, `request_changes` and `reject`, and handle the `card.action` activity; the [Approval Request](../approval-request/README.md#a-teams-bot-or-custom-engine-agent) card gives the steps. Keep `Action.Submit` if the same card is also used in Copilot Studio: Bot Framework Web Chat "doesn't support `Action.Execute`" (Ask questions with Adaptive Cards), and neither does Microsoft Copilot.
+For a card sent only by a Teams bot, Teams lists `Action.Submit` as a "Legacy action type. Prefer `Action.Execute` for new projects" (Adaptive Card actions in Teams SDK). To switch, change the three submit buttons (`approve`, `sendChanges`, `confirmReject`) to `Action.Execute` with the verbs `approve`, `request_changes` and `reject`, and handle the `card.action` activity; the [Approval Request](../approval-request/README.md#a-teams-bot-or-custom-engine-agent) card gives the steps. Keep `Action.Submit` if the same card is also used in Copilot Studio: Bot Framework Web Chat "doesn't support `Action.Execute`" (Ask questions with Adaptive Cards), and neither does Microsoft Copilot (Connect and configure an agent for Teams and Microsoft Copilot).
 
 ### Try it without a host
 
@@ -187,8 +187,8 @@ The response comes from the reviewer's client, so treat every field as input, no
 
 1. **The card.** `actionSubmitId` is one of `plan_approval_approve`, `plan_approval_request_changes` or `plan_approval_reject`, and `decision` matches it.
 2. **The revision.** `planPath` and `planRevision` match a plan that is still waiting for a decision, and the plan file in the repository is still at that revision. If the plan changed after the card was sent, ignore the answer and send a new card. Mark the revision decided in the same step, so a second answer from an earlier card or a retry is ignored.
-3. **The person.** The responder is someone allowed to approve plans for this repository: compare the responder's user ID (Power Automate), the signed-in user (Copilot Studio) or the activity's sender (a bot) with the reviewer you assigned, not with a name on the card. Don't let the person who ran the Plan phase approve their own plan unless your process allows it.
-4. **The text.** `changes` is present for `request_changes` and `reason` for `reject`; the client checks this, but a client can skip it. Treat both as untrusted text: `maxLength` is a "hint of maximum length… (may be ignored by some clients)" (Adaptive Cards schema 1.5), so cut them to 1,000 characters. If you pass `changes` to `/rpi-plan`, it becomes input to a coding agent: pass it as the reviewer's feedback, not as instructions, and have the engineer read it first.
+3. **The person.** The responder is someone allowed to approve plans for this repository: compare the responder's user ID (Power Automate), `System.User.PrincipalName` (Copilot Studio, step 5) or the activity's sender (a bot) with the reviewer you assigned, not with a name on the card. Don't let the person who ran the Plan phase approve their own plan unless your process allows it.
+4. **The text.** `changes` is present for `request_changes` and `reason` for `reject`; the client checks this, but a client can skip it. Ignore `changes` and `reason` on an approve, `reason` on a change request and `changes` on a reject: a renderer older than 2.0 may send the other form's box too (Input Validation). Treat both as untrusted text: `maxLength` is a "hint of maximum length… (may be ignored by some clients)" (Adaptive Cards schema 1.5), so cut them to 1,000 characters. If you pass `changes` to `/rpi-plan`, it becomes input to a coding agent: pass it as the reviewer's feedback, not as instructions, and have the engineer read it first.
 5. **The record.** Store the decision, the reviewer, the time, the revision and the text in your own system, or as a comment on the pull request. The card keeps no history.
 6. **Implementation.** Approval covers the revision on the card. If implementation "requires a significant departure from the approved plan", HVE Core says to "obtain any required decision, and update the affected plan tasks before dependent work resumes" (Using RPI together); send a new card for the updated plan.
 
@@ -208,14 +208,14 @@ Run these in your tenant before relying on the card. None of them have been run 
 | 8 | Send a `summary`, a phase title and a `planPath` containing `*`, `_` and `[text](https://example.com)` | Nothing turns bold or italic in free text, no link shows, and the path in the response is exact |
 | 9 | Answer from an account that isn't the assigned reviewer, and from the plan's author | Both responses are rejected |
 | 10 | In the Teams and Microsoft Copilot channels and on a website | The card renders, both forms open, both links open, and all three decisions submit |
-| 11 | With a screen reader | The title and "Phases" are announced as headings, and each form's box with its label and its required state |
+| 11 | With a screen reader; in Teams, use Windows Narrator or NVDA, as Copilot Studio recommends (Accessibility tips for Adaptive Cards) | The title and "Phases" are announced as headings, and each form's box with its label and its required state |
 | 12 | With the instruction from [Make RPI wait for the approval](#make-rpi-wait-for-the-approval), run `/rpi-implement` on a plan with no approval, in manual mode and in Full Auto | RPI stops and asks before changing source files |
 
 ## Prerequisites
 
 - **RPI:** HVE Core with `RPI Agent` or the `/rpi-plan` skill, a way to publish the plan and critique where the reviewer can read them, such as a branch or a pull request, and the repository instruction in [Make RPI wait for the approval](#make-rpi-wait-for-the-approval).
-- **Power Automate:** the Teams actions "require Workflows (formerly Power Automate) app availability" and the app set to "allow" in the Teams admin center. "The **Flow Bot** poster option is available only in commercial tenants"; in GCC, GCC High and DoD tenants, post as a user (Microsoft Teams connector reference).
-- **Copilot Studio:** an agent on the standard harness with a topic you can add an Ask with Adaptive Card node to, and somewhere it can read the plans waiting for review.
+- **Power Automate:** the Teams actions "require Workflows (formerly Power Automate) app availability" and the app set to "allow" in the Teams admin center. "The **Flow Bot** poster option is available only in commercial tenants"; in GCC tenants, post as a user (Microsoft Teams connector reference). In GCC High and DoD, send the card from [a Teams bot](#a-teams-bot-or-custom-engine-agent) instead: Teams marks Workflows as unavailable in both (Teams for Government Clouds, 23 April 2026), and Power Automate's adaptive cards aren't available in DoD at all (Overview of adaptive cards for Microsoft Teams, 19 August 2026); see [Limitations](#limitations).
+- **Copilot Studio:** an agent on the standard harness that authenticates with Microsoft (the default) or with Microsoft Entra ID, so the topic can read `System.User.PrincipalName`, with a topic you can add an Ask with Adaptive Card node to, and somewhere it can read the plans waiting for review.
 - **A bot or agent:** the Microsoft 365 Agents SDK or the Teams SDK, and `adaptivecards-templating` 2.3.1 or `AdaptiveCards.Templating` to fill in the bindings.
 
 ## Limitations
@@ -226,12 +226,13 @@ Run these in your tenant before relying on the card. None of them have been run 
 - **Four phases, fixed.** The repository's cards use plain bindings so they can be filled in by hand, which rules out a row per phase from a list. Add rows, or summarise the rest and link to the plan. Tasks (`Pxx-Txx`) aren't shown; the reviewer reads them in the plan.
 - **Approves the whole plan.** `/rpi-implement` can run "the full plan, one `Pxx` phase, or one `Pxx-Txx` task" (`rpi-implement` skill), but the card approves all of it. To approve phase by phase, add an `Input.ChoiceSet` with the phase IDs on the card and treat its value as the approved scope.
 - **No link to RPI's own state.** HVE Core doesn't document an approval hook or a way for `RPI Agent` to wait for a Teams answer (as of 4 November 2026). The repository instruction makes the agent ask; the engineer or your automation acts on the decision.
-- **HVE Core moves fast.** It calls itself "a highly opinionated, rapidly evolving agentic SDLC framework", "best treated as a source of patterns and learning rather than a stable platform, foundation, or production dependency". The paths, section names and dispositions here follow its RPI documentation dated 28 October 2026 and its RPI skills as read on 4 November 2026; check them against the version you use.
+- **HVE Core moves fast.** It calls itself "a highly opinionated, rapidly evolving agentic SDLC framework", "best treated as a source of patterns and learning rather than a stable platform, foundation, or production dependency". The paths, section names and verdicts here follow its RPI documentation dated 28 October 2026 and its RPI skills as read on 4 November 2026; check them against the version you use.
 - **Schema version 1.5.** Copilot Studio supports 1.6 and earlier but says Teams is "limited to version 1.5" (Ask questions with Adaptive Cards, 21 October 2026), while the Teams Cards reference says Teams "supports v1.6 or earlier" for bot-sent cards (13 October 2026). The card stays at 1.5, which both accept. It needs 1.3 or later for `label`, `isRequired` and `errorMessage` (Input Validation) and 1.5 for `"style": "heading"`.
-- **Button colours depend on the host.** "Positive or destructive action styling is not supported in Adaptive Cards on the Teams platform" (Cards reference), so in Teams the buttons look alike; their titles carry the meaning. The critique block uses the `emphasis` style whatever the result, because a plain binding can't pick a style per value. The amber note uses the 1.5 `warning` container style, whose colour each host chooses.
+- **Button colours depend on the host.** "Positive or destructive action styling is not supported in Adaptive Cards on the Teams platform" (Cards reference), so in Teams the buttons look alike; their titles carry the meaning. The critique block uses the `emphasis` style whatever the result, because a plain binding can't pick a style per value. The amber note uses the `warning` container style, added in schema 1.2, whose colour each host chooses.
 - **English only.** The headings, fact titles, form labels and error messages, footer, button titles and `fallbackText` are in English, and the root `lang` is `en`. Translate them for another audience.
+- **No Power Automate route in GCC High or DoD.** Power Automate's overview says "Adaptive cards aren't available within the DoD (Department of Defense) environment" (Overview of adaptive cards for Microsoft Teams, 19 August 2026). Teams for Government Clouds (23 April 2026) marks **Workflows** as unavailable in GCC High and DoD and notes "GCC High supports Incoming Webhooks only", while the connector's card actions "require Workflows (formerly Power Automate) app availability". The Teams connector reference, read on 5 November 2026, offers a GCC High sign-in and still tells every Government Cloud tenant, GCC High and DoD included, to "Use the **User** poster option instead of Flow Bot"; the pages disagree, and this card follows the stricter ones. Teams lists bots, Adaptive Cards and custom apps built for your organisation as available in GCC High and DoD, but not uploading a custom app (Teams for Government Clouds), so use a bot there, distributed as an app for your organisation.
 - **Not for webhooks or Outlook.** A card posted without waiting can't collect a response: "Adaptive cards that don't wait return an error for all button actions except OpenURL" (Overview of adaptive cards for Microsoft Teams).
-- **Size.** 7.3 KB filled in with the sample data, far below the "approximately 28 KB" at which Power Automate's Teams actions fail with "Request Entity too large" (Microsoft Teams connector reference). Keep `summary` to the Executive Summary, not the whole plan.
+- **Size.** 7.3 KB filled in with the sample data, far below the "approximately 28 KB" at which Power Automate's Teams actions fail with "Request Entity too large" (Microsoft Teams connector reference), and the "100 KB for a bot message" Teams gives for a bot (Format text in cards). Keep `summary` to the Executive Summary, not the whole plan.
 - **Not tested in a tenant.** The card passes the Adaptive Cards 1.5 JSON schema with the sample data filled in, and was rendered with the Adaptive Cards JavaScript renderer 3.0.6 for the preview image, including the required-field error. It hasn't been posted from a flow, a Copilot Studio agent or a bot; run the [test plan](#test-plan) first.
 
 ## Sources
@@ -241,19 +242,27 @@ Read on 4 November 2026, with each page's date:
 - [Ask questions with Adaptive Cards (Copilot Studio)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/authoring-ask-with-adaptive-card), 21 Oct 2026
 - [Use Adaptive Cards in Copilot Studio](https://learn.microsoft.com/en-us/microsoft-copilot-studio/adaptive-cards-overview), 21 Oct 2026
 - [Connect and configure an agent for Teams and Microsoft Copilot](https://learn.microsoft.com/en-us/microsoft-copilot-studio/publication-add-bot-to-microsoft-teams), 29 Oct 2026
-- [Overview of adaptive cards for Microsoft Teams (Power Automate)](https://learn.microsoft.com/en-us/power-automate/overview-adaptive-cards), 19 Aug 2026
-- [Microsoft Teams connector reference](https://learn.microsoft.com/en-us/connectors/teams/), `ms.date` 1 Mar 2024; the generated reference's own updated date is 2 Oct 2026
+- [Overview of adaptive cards for Microsoft Teams (Power Automate)](https://learn.microsoft.com/en-us/power-automate/overview-adaptive-cards), 19 Aug 2026 (re-read 5 Nov 2026)
+- [Microsoft Teams connector reference](https://learn.microsoft.com/en-us/connectors/teams/), `ms.date` 1 Mar 2024; the generated reference's own updated date is 5 Nov 2026 (re-read 5 Nov 2026)
+- [Teams for Government Clouds](https://learn.microsoft.com/en-us/microsoftteams/platform/concepts/cloud-overview), 23 Apr 2026 (read 5 Nov 2026): Workflows unavailable, bots and Adaptive Cards available, in GCC High and DoD
 - [Create and explore card types in Teams (Cards reference)](https://learn.microsoft.com/en-us/microsoftteams/platform/task-modules-and-cards/cards/cards-reference), 13 Oct 2026
 - [Adaptive Card actions in Teams SDK](https://learn.microsoft.com/en-us/microsoftteams/platform/task-modules-and-cards/cards/cards-actions), 10 Jun 2026
 - [Designing Adaptive Cards for your app](https://learn.microsoft.com/en-us/microsoftteams/platform/task-modules-and-cards/cards/design-effective-cards), 5 Aug 2026
-- [Input Validation (Adaptive Cards)](https://learn.microsoft.com/en-us/adaptive-cards/authoring-cards/input-validation), 24 Jul 2020
+- [Input Validation (Adaptive Cards)](https://learn.microsoft.com/en-us/adaptive-cards/authoring-cards/input-validation), 24 Jul 2020 (re-read 5 Nov 2026)
+- [Add an agent flow as a tool to an agent (Copilot Studio)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/flow-agent), 18 Jun 2026 (read 5 Nov 2026)
+- [Resolve agent error codes in Copilot Studio](https://learn.microsoft.com/en-us/troubleshoot/power-platform/copilot-studio/authoring/error-codes), 28 Oct 2026 (read 5 Nov 2026): `FlowActionTimedOut`
+- [Variables overview (Copilot Studio)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/authoring-variables-about), 30 Jun 2026 (read 5 Nov 2026)
+- [Lower, Upper, and Proper functions (Power Fx)](https://learn.microsoft.com/en-us/power-platform/power-fx/reference/function-lower-upper-proper), 10 Jun 2024 (read 5 Nov 2026)
+- [Accessibility tips for Adaptive Cards (Copilot Studio)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/adaptive-card-accessibility-tips), 20 Mar 2026 (read 5 Nov 2026)
+- [Agents powered by the GitHub Copilot harness overview (Copilot Studio)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/overview), 19 Oct 2026 (read 5 Nov 2026)
+- [The GitHub Copilot harness in Copilot Studio is now the Microsoft Copilot harness](https://www.microsoft.com/en-us/copilot/blog/copilot-studio/the-github-copilot-harness-in-copilot-studio-is-now-the-microsoft-copilot-harness/), Microsoft Copilot Studio blog, 28 Oct 2026 (read 5 Nov 2026): the harness's new name
 - [HVE Core RPI documentation](https://github.com/microsoft/hve-core/blob/main/docs/rpi/README.md), 28 Oct 2026
 - [Using RPI together (HVE Core)](https://github.com/microsoft/hve-core/blob/main/docs/rpi/using-together.md), 28 Oct 2026
 - [Using the HVE Core extension](https://github.com/microsoft/hve-core/blob/main/docs/getting-started/methods/extension.md), 7 Oct 2026: the `.gitignore` guidance
 - HVE Core's RPI skills, undated: [`rpi-plan`](https://github.com/microsoft/hve-core/blob/main/.github/skills/rpi/rpi-plan/SKILL.md), [`rpi-plan-critique`](https://github.com/microsoft/hve-core/blob/main/.github/skills/rpi/rpi-plan-critique/SKILL.md) and [`rpi-implement`](https://github.com/microsoft/hve-core/blob/main/.github/skills/rpi/rpi-implement/SKILL.md)
 - [microsoft/hve-core](https://github.com/microsoft/hve-core) (MIT licence): the README's description of the project
-- [Adding repository custom instructions for GitHub Copilot](https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-repository-instructions), undated: the instruction file locations
-- [Use custom instructions in VS Code](https://code.visualstudio.com/docs/copilot/customization/custom-instructions), undated: which harness reads which file
+- [Adding repository custom instructions for GitHub Copilot](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions), undated (re-read 5 Nov 2026): the instruction file locations
+- [Use custom instructions in VS Code](https://code.visualstudio.com/docs/agent-customization/custom-instructions), 4 Nov 2026 (read 5 Nov 2026): which harness reads which file
 
 Microsoft Learn, as read for the [Approval Request](../approval-request/README.md#sources) and [Confirm Before Acting](../confirm-before-acting/README.md#sources) cards on 31 October and 1 November 2026, with each page's `ms.date`:
 
@@ -262,7 +271,7 @@ Microsoft Learn, as read for the [Approval Request](../approval-request/README.m
 - [Limits of automated, scheduled, and instant flows](https://learn.microsoft.com/en-us/power-automate/limits-and-config), 17 Jul 2026
 - [Add conditions to topics (Copilot Studio)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/authoring-using-conditions), 11 Oct 2024
 - [EndsWith and StartsWith functions (Power Fx)](https://learn.microsoft.com/en-us/power-platform/power-fx/reference/function-startswith), 10 Jun 2024
-- [Format text in cards](https://learn.microsoft.com/en-us/microsoftteams/platform/task-modules-and-cards/cards/cards-format), 22 Oct 2026
+- [Format text in cards](https://learn.microsoft.com/en-us/microsoftteams/platform/task-modules-and-cards/cards/cards-format), 22 Oct 2026 (re-read 5 Nov 2026): the bot message size limit
 - [Adaptive Card Templating SDKs](https://learn.microsoft.com/en-us/adaptive-cards/templating/sdk), 15 May 2020
 
 Other sources:
@@ -281,6 +290,7 @@ Other sources:
 | Version | Date | Comments |
 | --- | --- | --- |
 | 1.0 | November 2026 | Initial release |
+| 1.1 | November 2026 | GCC High and DoD tenants are sent to a Teams bot instead of Power Automate, the Power Automate steps say which poster to use, a flow called from a topic answers the agent before it posts the card, and the Copilot Studio condition checks the reviewer and the author. Smaller fixes cover the renderer-dependent form behaviour, a critique with no verdict, HVE Core's wording, the Microsoft Copilot harness, group-chat wording, redirected links, the bot size limit, the `warning` style's schema version and the screen-reader test |
 
 ## Help
 

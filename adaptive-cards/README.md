@@ -17,7 +17,7 @@ adaptive-cards/<slug>/
 | Host | How |
 | --- | --- |
 | Power Automate | Paste `card.json` into a Microsoft Teams card action, and replace each `${...}` with dynamic content |
-| Copilot Studio | Paste `card.json` into an Adaptive Card node, switch to **Formula** and replace each `"${...}"` with a variable |
+| Copilot Studio (standard harness) | Paste `card.json` into an Adaptive Card node, switch to **Formula** and replace each `"${...}"` with a variable. The node is documented for agents on the standard harness; an equivalent on the Microsoft Copilot harness isn't documented as of 5 November 2026 ([Ask questions with Adaptive Cards](https://learn.microsoft.com/en-us/microsoft-copilot-studio/authoring-ask-with-adaptive-card), 21 Oct 2026) |
 | A bot | Expand `card.json` with your data using the Adaptive Cards templating SDK, then send it |
 | Adaptive Cards Designer | Paste `card.json` and `data.json` and switch to preview mode, to see it without a host |
 

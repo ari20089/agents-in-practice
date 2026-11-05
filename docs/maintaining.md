@@ -22,7 +22,7 @@ The files in the repo describe the process; these settings enforce it. Set them 
 - Restrict deletions
 - Bypass list: add **Repository admin** with mode **For pull requests only**. GitHub does not let an author approve their own pull request, so with a single maintainer this is the only way the maintainer's own PRs can merge. The mode matters: "for pull requests only" still blocks direct pushes to `main`; "Always" would not. Maintainer merges show as "bypassed" in the PR timeline, which is the audit trail.
 
-The two check names are the `name:` values of the jobs in [`.github/workflows/validate-skills.yml`](../.github/workflows/validate-skills.yml). They only appear in the picker after the workflow has run at least once on `main`.
+These check names are the `name:` values of the jobs in [`.github/workflows/validate-skills.yml`](../.github/workflows/validate-skills.yml). They only appear in the picker after the workflow has run at least once on `main`.
 
 ### Pull requests
 
@@ -41,20 +41,20 @@ The two check names are the `name:` values of the jobs in [`.github/workflows/va
 ### GitHub Pages (the gallery)
 
 - **Settings → Pages → Build and deployment → Source: GitHub Actions.** Until this is set, the `Deploy site` workflow's deploy job fails with a "Pages not enabled" error. The build job still runs.
-- The site publishes to `https://ari20089.github.io/agents-in-practice/`. The workflow deploys on every push to `main` that touches `skills/`, `site/` or the package files, and can be run by hand from the Actions tab (`workflow_dispatch`).
+- The site publishes to `https://ari20089.github.io/agents-in-practice/`. The workflow deploys on every push to `main` that touches `skills/`, `prompts/`, `agent-instructions/`, `adaptive-cards/`, `site/`, the package files or the workflow itself, and can be run by hand from the Actions tab (`workflow_dispatch`).
 - Add `Build site` to the ruleset's required checks alongside the two validator checks, so a PR that breaks the site build cannot merge.
-- `site/README.md` explains the build. There is nothing to configure in the site itself; it reads the skill folders.
+- `site/README.md` explains the build. There is nothing to configure in the site itself; it reads the item folders.
 
 ### Labels
 
-Create these so issue templates and triage line up: `bug`, `enhancement`, `skill: <slug>` per skill as they arrive, `good first issue`, `needs-info`. Dependabot PRs are identified by their author and carry no label.
+Create these so issue templates and triage line up: `bug`, `enhancement`, a `<type>: <slug>` label per item as they arrive (such as `skill: <slug>` or `prompt: <slug>`), `good first issue`, `needs-info`. Dependabot PRs are identified by their author and carry no label.
 
 ## Reviewing a pull request
 
 CI covers layout and metadata. The review covers what CI cannot:
 
-1. **Facts.** Open every Microsoft Learn page the skill cites. If the page's `ms.date` is newer than the date the skill quotes, ask for a re-verify. If a claim has no citation, ask for one.
-2. **Agent-facing versus human-facing.** Setup narrative, credits and disclaimers belong in the skill's `README.md`; nothing a person wouldn't say to an agent belongs in `SKILL.md` or `references/`.
+1. **Facts.** Open every Microsoft Learn page the item cites. If the page's `ms.date` is newer than the date the item quotes, ask for a re-verify. If a claim has no citation, ask for one.
+2. **Agent-facing versus human-facing.** Setup narrative, credits and disclaimers belong in the item's `README.md`; nothing a person wouldn't say to an agent belongs in `SKILL.md`, `references/`, `PROMPT.md`, `INSTRUCTIONS.md` or `knowledge/`.
 3. **Does it do what the description says.** Try the trigger phrases in at least one host, or ask the author for evidence that they did.
 4. **Scripts.** If the skill ships `scripts/`, read them. No remote code execution, no writes outside the working directory, no elevated privileges without a note in the README.
 5. **Secrets and identifiers.** None, even in examples.
@@ -63,7 +63,7 @@ Style, wording and heading choices are the author's. Don't comment on them. The 
 
 ## Merging
 
-Squash-merge with the PR title as the message. Bump `metadata.json` `updatedAt` on skill changes if the author didn't. After merge, confirm the root README catalog renders, the `Validate skills` badge is green, and the gallery shows the change once `Deploy site` finishes (a minute or two).
+Squash-merge with the PR title as the message. Bump `metadata.json` `updatedAt` on item changes if the author didn't. After merge, confirm the root README catalog renders, the `Validate skills` badge is green, and the gallery shows the change once `Deploy site` finishes (a minute or two).
 
 ## Adding a co-owner for a skill
 
@@ -71,4 +71,4 @@ When an external author contributes a skill they will keep maintaining, add a li
 
 ## Releasing
 
-There are no releases. Each skill carries its own `version` and `updatedAt` in `metadata.json` and a version history table in its README. Hosts install skills by copying the folder from `main`.
+There are no releases. Each item carries its own `version` and `updatedAt` in `metadata.json` and a version history table in its README. People install items by copying the folder from `main` or downloading it from the gallery.
