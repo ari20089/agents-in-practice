@@ -482,7 +482,7 @@ Decline, or keep the agent in its pilot, when any of these is true:
 
 ## Sources
 
-Microsoft documentation, with the date shown on the page when retrieved on 31 October 2026:
+Microsoft documentation, with the date shown on the page, first retrieved on 31 October 2026 and re-checked on 5 November 2026:
 
 - [Give your agent an account (Frontier)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/authoring-agent-account), 15 Oct 2026 (re-read 5 November 2026)
 - [FAQ for agent accounts (Frontier)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/faq-agent-accounts), 14 Oct 2026 (re-read 5 November 2026)
