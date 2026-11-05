@@ -1,13 +1,13 @@
 {
   "name": "Plan Approval",
   "description": "A card that asks a reviewer to approve an implementation plan from HVE Core's Research, Plan, Implement (RPI) workflow before any code is written: the executive summary, repository, scope, files touched, what the reviewer may not know, the first four phases and the critique result, with links to the plan and the critique. Approve is one click; Request changes and Reject open a short form that requires a reason. It returns the decision, the plan file and the revision it applies to, from a Power Automate flow in Teams, a Copilot Studio topic or a Teams bot, with a repository instruction that stops RPI implementing an unapproved plan and the checks to run before acting.",
-  "platforms": ["Copilot Studio", "Microsoft Teams", "Power Automate"],
+  "platforms": ["Copilot Studio", "GitHub Copilot", "Microsoft Teams", "Power Automate"],
   "tags": ["adaptive-cards", "approvals", "rpi", "hve-core", "human-in-the-loop", "planning", "teams", "power-automate", "copilot-studio", "action-submit", "action-showcard", "input-validation", "templating"],
   "subcategory": "Approvals & workflows",
   "author": "Arindam Choudhury",
   "authorGithub": "ari20089",
   "authorUrl": "https://www.linkedin.com/in/arindam-choudhury/",
-  "version": "1.0",
+  "version": "1.1",
   "createdAt": "2026-11-04",
-  "updatedAt": "2026-11-04"
+  "updatedAt": "2026-11-05"
 }

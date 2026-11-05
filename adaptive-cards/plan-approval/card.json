@@ -1,5 +1,5 @@
 {
-  "$schema": "http://adaptivecards.microsoft.com/schemas/adaptive-card.json",
+  "$schema": "https://adaptivecards.microsoft.com/schemas/adaptive-card.json",
   "type": "AdaptiveCard",
   "version": "1.5",
   "lang": "en",
