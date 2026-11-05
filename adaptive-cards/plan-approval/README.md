@@ -237,7 +237,7 @@ Run these in your tenant before relying on the card. None of them have been run 
 
 ## Sources
 
-Read on 4 November 2026, with each page's date:
+Read on 4 November 2026 and re-checked on 5 November 2026, with each page's date:
 
 - [Ask questions with Adaptive Cards (Copilot Studio)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/authoring-ask-with-adaptive-card), 21 Oct 2026
 - [Use Adaptive Cards in Copilot Studio](https://learn.microsoft.com/en-us/microsoft-copilot-studio/adaptive-cards-overview), 21 Oct 2026
@@ -264,7 +264,7 @@ Read on 4 November 2026, with each page's date:
 - [Adding repository custom instructions for GitHub Copilot](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/add-custom-instructions/add-repository-instructions), undated (re-read 5 Nov 2026): the instruction file locations
 - [Use custom instructions in VS Code](https://code.visualstudio.com/docs/agent-customization/custom-instructions), 4 Nov 2026 (read 5 Nov 2026): which harness reads which file
 
-Microsoft Learn, as read for the [Approval Request](../approval-request/README.md#sources) and [Confirm Before Acting](../confirm-before-acting/README.md#sources) cards on 31 October and 1 November 2026, with each page's `ms.date`:
+Microsoft Learn, as read for the [Approval Request](../approval-request/README.md#sources) and [Confirm Before Acting](../confirm-before-acting/README.md#sources) cards on 31 October and 1 November 2026 and re-checked on 5 November 2026, with each page's `ms.date`:
 
 - [Get started with Power Automate approvals](https://learn.microsoft.com/en-us/power-automate/get-started-approvals), 29 Apr 2026
 - [Create your first adaptive card (Power Automate)](https://learn.microsoft.com/en-us/power-automate/create-adaptive-cards), 19 Aug 2026
