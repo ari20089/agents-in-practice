@@ -63,7 +63,7 @@ The skill works through seven steps:
 
 ## Sources
 
-Microsoft documentation, with the date shown on the page when retrieved on 31 October 2026:
+Microsoft documentation, with the date shown on the page, first retrieved on 31 October 2026 and re-checked on 5 November 2026:
 
 - [FAQ for the computer use tool](https://learn.microsoft.com/en-us/microsoft-copilot-studio/faqs-computer-use), 23 Sep 2026
 - [Automate web and desktop apps with computer use](https://learn.microsoft.com/en-us/microsoft-copilot-studio/computer-use), 20 Oct 2026 (re-read 5 Nov 2026)
@@ -133,7 +133,7 @@ Regulators and legislation, with the publication date:
 - FCA, [Payments Regulatory Priorities](https://www.fca.org.uk/publication/regulatory-priorities/payments-report.pdf), Mar 2026
 - FCA, Nikhil Rathi, [Rethinking regulation for the age of AI](https://www.fca.org.uk/news/speeches/rethinking-regulation-age-ai), speech, 24 Jun 2026
 - FCA, [PS21/3 Building operational resilience](https://www.fca.org.uk/publication/policy/ps21-3-operational-resilience.pdf), Mar 2021 (SYSC 15A rule text as made)
-- FCA, [FCA 2022/31 Consumer Duty Instrument 2022](https://www.handbook.fca.org.uk/instrument/2022/FCA_2022_31.pdf), Jul 2022 (Principle 12 and PRIN 2A rule text as made)
+- FCA, [FCA 2022/31 Consumer Duty Instrument 2022](https://api-handbook.fca.org.uk/files/instrument/2022/FCA_2022_31.pdf), Jul 2022 (Principle 12 and PRIN 2A rule text as made)
 - PRA, [SS1/21 Operational resilience: Impact tolerances for important business services](https://www.prarulebook.co.uk/guidance/supervisory-statements/ss01-21---operational-resilience-impact-tolerances-for-important-business-services/05-08-2026), version shown as at 5 Aug 2026
 - PRA and FCA, [PS16/24 Operational resilience: Critical third parties to the UK financial sector](https://www.bankofengland.co.uk/prudential-regulation/publication/2024/november/operational-resilience-critical-third-parties-to-the-uk-financial-sector-policy-statement), 12 Nov 2024
 - [The Critical Third Parties (Designation) Regulations 2026, S.I. 2026/777](https://www.legislation.gov.uk/uksi/2026/777/made), in force 13 Jul 2026, and HM Treasury, [UK financial system strengthened with new safeguards for major technology providers](https://www.gov.uk/government/news/uk-financial-system-strengthened-with-new-safeguards-for-major-technology-providers), 10 Jul 2026
@@ -146,15 +146,15 @@ Regulators and legislation, with the publication date:
 - [Regulation (EU) 2026/1744 (Digital Omnibus on AI)](https://eur-lex.europa.eu/eli/reg/2026/1744/oj/eng), OJ 24 Jul 2026
 - [Regulation (EU) 2022/2554 (DORA)](https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32022R2554), applies from 17 Jan 2025
 - [Regulation (EU) 2016/679 (GDPR)](https://eur-lex.europa.eu/eli/reg/2016/679/oj/eng), Article 22 (read from the text quoted in the C-634/21 judgment, because EUR-Lex blocked retrieval)
-- Court of Justice, Case C-634/21 *SCHUFA Holding (Scoring)*, 7 Dec 2023: [press release 186/23](https://curia.europa.eu/jcms/upload/docs/application/pdf/2023-12/cp230186en.pdf) and [judgment](https://collab.dpa.gr/wp-content/uploads/2023/12/CJEU-C-634-21.en_.pdf) (curia text hosted by the Hellenic Data Protection Authority)
-- Court of Justice, Case C-203/22 *Dun & Bradstreet Austria*, 27 Feb 2025: [press release 22/25](https://curia.europa.eu/jcms/upload/docs/application/pdf/2025-02/cp250022en.pdf)
+- Court of Justice, Case C-634/21 *SCHUFA Holding (Scoring)*, 7 Dec 2023: [press release 186/23](https://curia.europa.eu/site/upload/docs/application/pdf/2023-12/cp230186en.pdf) and [judgment](https://collab.dpa.gr/wp-content/uploads/2023/12/CJEU-C-634-21.en_.pdf) (curia text hosted by the Hellenic Data Protection Authority)
+- Court of Justice, Case C-203/22 *Dun & Bradstreet Austria*, 27 Feb 2025: [press release 22/25](https://curia.europa.eu/site/upload/docs/application/pdf/2025-02/cp250022en.pdf)
 - [Directive (EU) 2023/2225 (Consumer Credit Directive)](https://eur-lex.europa.eu/eli/dir/2023/2225/oj/eng), applies from 20 Nov 2026 (Articles 18 and 48 read from a secondary copy because EUR-Lex blocked retrieval), and European Commission, [Consumer protection in financial services](https://commission.europa.eu/topics/consumers/consumer-rights-and-complaints/consumer-financial-products-and-services/consumer-protection-financial-services_en)
 - ESMA, Interactive Single Rulebook, [MiFID II Article 4 (definitions)](https://www.esma.europa.eu/publications-and-data/interactive-single-rulebook/mifid-ii/article-4-definitions) and [Article 17 (algorithmic trading)](https://www.esma.europa.eu/publications-and-data/interactive-single-rulebook/mifid-ii/article-17-algorithmic-trading)
 - [Commission Delegated Regulation (EU) 2024/1774 (DORA RTS on the ICT risk management framework)](https://eur-lex.europa.eu/eli/reg_del/2024/1774/oj/eng), Articles 17, 20 and 21 (read from a secondary copy at [springlex.eu](https://www.springlex.eu/en/packages/dora/rts-rmf-regulation/article-21/) because EUR-Lex blocked retrieval)
 - European Commission, AI Act Service Desk, [Article 4](https://ai-act-service-desk.ec.europa.eu/en/ai-act/article-4), [Article 27](https://ai-act-service-desk.ec.europa.eu/en/ai-act/article-27) and [Article 86](https://ai-act-service-desk.ec.europa.eu/en/ai-act/article-86), consolidated as at 27 Jul 2026
 - ESMA, [Public Statement on the use of AI in the provision of retail investment services](https://www.esma.europa.eu/sites/default/files/2024-05/ESMA35-335435667-5924__Public_Statement_on_AI_and_investment_services.pdf), 30 May 2024
 - EIOPA, [Opinion on Artificial Intelligence governance and risk management](https://www.eiopa.europa.eu/publications/opinion-artificial-intelligence-governance-and-risk-management_en), EIOPA-BoS-25-360, 6 Aug 2025
-- EBA, [Guidelines on loan origination and monitoring](https://www.eba.europa.eu/regulation-and-policy/credit-risk/guidelines-on-loan-origination-and-monitoring), EBA/GL/2020/06
+- EBA, [Guidelines on loan origination and monitoring](https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/credit-risk/guidelines-loan-origination-and-monitoring), EBA/GL/2020/06
 - EBA, EIOPA and ESMA, [ESA statement on ICT risks from frontier AI models, JC 2026 25](https://www.esma.europa.eu/sites/default/files/2026-07/JC_2026_25_ESA_statement_on_frontier_AI_models.pdf), 31 Jul 2026
 - ECB Banking Supervision, [Addressing AI-enabled cybersecurity threats, SSM-2026-0301](https://www.bankingsupervision.europa.eu/press/letterstobanks/shared/pdf/2026/ssm.2026_letter_on_AI_enabled_cybersecurity_threats.en.pdf), 7 Jul 2026
 - EBA, [Work Programme 2027, EBA/REP/2026/18](https://www.eba.europa.eu/sites/default/files/2026-09/f6561915-4192-4d73-88ac-10f8bc09abca/EBA%20Work%20programme%202027.pdf), Sep 2026 (read 5 Nov 2026)
@@ -189,7 +189,7 @@ Regulators and legislation, with the publication date:
 - [Executive Order 14365, Ensuring a National Policy Framework for Artificial Intelligence](https://www.federalregister.gov/documents/2025/12/16/2025-23092/ensuring-a-national-policy-framework-for-artificial-intelligence), 11 Dec 2025, and [Executive Order 14434, Inaugurating the Era of Super Intelligence](https://www.federalregister.gov/documents/2026/10/02/2026-20321/inaugurating-the-era-of-super-intelligence), 29 Sep 2026
 - MAS, [Guidelines on Artificial Intelligence Risk Management](https://www.mas.gov.sg/regulation/guidelines/guidelines-on-artificial-intelligence-risk-management-for-financial-institutions), 7 Oct 2026, and [media release](https://www.mas.gov.sg/news/media-releases/2026/mas-sets-out-supervisory-expectations-on-responsible-ai-adoption-by-financial-institutions), 7 Oct 2026
 - HKMA, [Responsible Adoption of Artificial Intelligence](https://brdr.hkma.gov.hk/eng/doc-ldg/current/20261015-4-EN), circular, and [Concept Note on Governance of Agentic Artificial Intelligence](https://brdr.hkma.gov.hk/eng/doc-ldg/docId/20261015-1-EN), 15 Oct 2026
-- APRA, [Letter to industry on artificial intelligence](https://www.apra.gov.au/apra-letter-to-industry-on-artificial-intelligence-ai), 30 Apr 2026
+- APRA, [Letter to industry on artificial intelligence](https://www.apra.gov.au/news-and-publications/apra-letter-industry-artificial-intelligence-ai), 30 Apr 2026
 - OSFI, [Generative and Agentic Artificial Intelligence: Implications for Technology, Cyber Security, and Operational Resilience](https://www.osfi-bsif.gc.ca/en/risks/technology-cyber-risk-management/technology-risk-bulletin/generative-agentic-artificial-intelligence-implications-technology-cyber-security-operational), Jul 2026
 - FSB, [Sound Practices for Responsible Adoption of Artificial Intelligence (AI): Final report](https://www.fsb.org/2026/10/sound-practices-for-responsible-adoption-of-artificial-intelligence-ai-final-report/), 15 Oct 2026
 - IOSCO, [Supervisory Toolkit for AI Use in Capital Markets, FR/02/2026](https://www.iosco.org/library/pubdocs/pdf/IOSCOPD823.pdf), May 2026
