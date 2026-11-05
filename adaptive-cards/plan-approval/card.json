@@ -1,0 +1,247 @@
+{
+  "$schema": "http://adaptivecards.microsoft.com/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.5",
+  "lang": "en",
+  "fallbackText": "Plan approval: ${planTitle}, revision ${planRevision}. Nothing is implemented until the plan is approved. This app can't show the card, so review the plan at ${planUrl} and answer from an app that can.",
+  "body": [
+    {
+      "type": "Container",
+      "style": "emphasis",
+      "bleed": true,
+      "items": [
+        {
+          "type": "TextBlock",
+          "text": "Plan approval · Research, Plan, Implement",
+          "size": "Small",
+          "weight": "Bolder",
+          "color": "Accent",
+          "wrap": true
+        },
+        {
+          "type": "TextBlock",
+          "text": "${planTitle}",
+          "style": "heading",
+          "size": "Large",
+          "weight": "Bolder",
+          "spacing": "Small",
+          "wrap": true
+        }
+      ]
+    },
+    {
+      "type": "TextBlock",
+      "text": "${summary}",
+      "wrap": true
+    },
+    {
+      "type": "FactSet",
+      "facts": [
+        {
+          "title": "Repository",
+          "value": "${repository}"
+        },
+        {
+          "title": "Prepared by",
+          "value": "${preparedBy}"
+        },
+        {
+          "title": "Planned on",
+          "value": "${createdOn}"
+        },
+        {
+          "title": "Scope",
+          "value": "${scope}"
+        },
+        {
+          "title": "Files touched",
+          "value": "${filesTouched}"
+        },
+        {
+          "title": "Plan file",
+          "value": "${planPath}"
+        },
+        {
+          "title": "Revision",
+          "value": "${planRevision}"
+        }
+      ]
+    },
+    {
+      "type": "Container",
+      "style": "warning",
+      "spacing": "Medium",
+      "items": [
+        {
+          "type": "TextBlock",
+          "text": "What you may not know",
+          "weight": "Bolder",
+          "wrap": true
+        },
+        {
+          "type": "TextBlock",
+          "text": "${whatYouMayNotKnow}",
+          "spacing": "Small",
+          "wrap": true
+        }
+      ]
+    },
+    {
+      "type": "TextBlock",
+      "text": "Phases",
+      "style": "heading",
+      "size": "Default",
+      "weight": "Bolder",
+      "spacing": "Medium",
+      "separator": true,
+      "wrap": true
+    },
+    {
+      "type": "FactSet",
+      "spacing": "Small",
+      "facts": [
+        {
+          "title": "${phase1Id}",
+          "value": "${phase1Title}"
+        },
+        {
+          "title": "${phase2Id}",
+          "value": "${phase2Title}"
+        },
+        {
+          "title": "${phase3Id}",
+          "value": "${phase3Title}"
+        },
+        {
+          "title": "${phase4Id}",
+          "value": "${phase4Title}"
+        }
+      ]
+    },
+    {
+      "type": "Container",
+      "style": "emphasis",
+      "spacing": "Medium",
+      "items": [
+        {
+          "type": "TextBlock",
+          "text": "Plan critique: ${critiqueResult}",
+          "weight": "Bolder",
+          "wrap": true
+        },
+        {
+          "type": "TextBlock",
+          "text": "${critiqueNote}",
+          "spacing": "Small",
+          "wrap": true
+        }
+      ]
+    },
+    {
+      "type": "ActionSet",
+      "actions": [
+        {
+          "type": "Action.OpenUrl",
+          "id": "openPlan",
+          "title": "Open the plan",
+          "url": "${planUrl}"
+        },
+        {
+          "type": "Action.OpenUrl",
+          "id": "openCritique",
+          "title": "Open the critique",
+          "url": "${critiqueUrl}"
+        }
+      ]
+    },
+    {
+      "type": "TextBlock",
+      "text": "Approve covers revision ${planRevision} only. If the plan changes, it needs a new approval.",
+      "size": "Small",
+      "isSubtle": true,
+      "spacing": "Medium",
+      "wrap": true
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.Submit",
+      "id": "approve",
+      "title": "Approve",
+      "style": "positive",
+      "data": {
+        "actionSubmitId": "plan_approval_approve",
+        "decision": "approve",
+        "planPath": "${planPath}",
+        "planRevision": "${planRevision}"
+      }
+    },
+    {
+      "type": "Action.ShowCard",
+      "id": "requestChanges",
+      "title": "Request changes",
+      "card": {
+        "type": "AdaptiveCard",
+        "body": [
+          {
+            "type": "Input.Text",
+            "id": "changes",
+            "label": "What should change",
+            "placeholder": "Name the phase or task, such as P02-T03, and the change",
+            "isMultiline": true,
+            "isRequired": true,
+            "errorMessage": "Say what should change before you send the request.",
+            "maxLength": 1000
+          }
+        ],
+        "actions": [
+          {
+            "type": "Action.Submit",
+            "id": "sendChanges",
+            "title": "Send change request",
+            "data": {
+              "actionSubmitId": "plan_approval_request_changes",
+              "decision": "request_changes",
+              "planPath": "${planPath}",
+              "planRevision": "${planRevision}"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "Action.ShowCard",
+      "id": "reject",
+      "title": "Reject",
+      "card": {
+        "type": "AdaptiveCard",
+        "body": [
+          {
+            "type": "Input.Text",
+            "id": "reason",
+            "label": "Why the plan is rejected",
+            "placeholder": "For example: the change belongs in another service",
+            "isMultiline": true,
+            "isRequired": true,
+            "errorMessage": "Give a reason before you reject the plan.",
+            "maxLength": 1000
+          }
+        ],
+        "actions": [
+          {
+            "type": "Action.Submit",
+            "id": "confirmReject",
+            "title": "Reject plan",
+            "style": "destructive",
+            "data": {
+              "actionSubmitId": "plan_approval_reject",
+              "decision": "reject",
+              "planPath": "${planPath}",
+              "planRevision": "${planRevision}"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
