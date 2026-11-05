@@ -4,7 +4,7 @@
 
 Copilot Studio agents can hand work to child agents, connected agents, external agents (A2A, Microsoft Foundry, Microsoft 365 Agents SDK), people through an engagement hub, and, through the Employee Self-Service agent in Microsoft Copilot, other agents. Microsoft's guidance for this is **spread across three pages** (multi-agent patterns, live-agent handoff, Employee Self-Service handoff). The decision tiers (no confirmation, confirmation in the conversation, offline approval) are on a fourth page, scoped to one agent. **No page defines who may delegate which kind of action to whom, or what survives the handoff.**
 
-This skill gathers the documented mechanics into one dated reference and adds a decision-boundary pattern per action type. Makers, architects and reviewers can then approve a multi-agent design with the gaps in view.
+This skill gathers the documented mechanics into one dated reference and adds a decision-boundary pattern per action type. Makers, architects and reviewers can then approve a multi-agent design with the gaps in view. Power Platform and Microsoft 365 admins who own data policies, sharing and credentials, and contact-centre and Employee Self-Service owners who configure handoff, can use the same reference.
 
 ## Skill
 
@@ -46,65 +46,70 @@ The action types, delegation table, seven rules and `actionsTaken` output are th
 
 ## Limitations
 
-- Written against Microsoft Learn pages dated between September 2025 and 28 October 2026, all re-read on 30 October 2026. Several mechanisms are preview or prerelease: standard-harness "Add other agents", the Foundry, Fabric and Agents SDK connections, the Microsoft Copilot harness, and the Customer Conversation harness.
-- Microsoft renamed the GitHub Copilot harness to the Microsoft Copilot harness on 28 October 2026, and says the product will show the new name "over the coming weeks". As of 1 November 2026 the Learn pages cited here still use the old name, so the skill uses the new name and keeps the old one in page titles and quotes.
+- Written against Microsoft Learn pages dated between September 2025 and 4 November 2026, all re-read on 5 November 2026. Several mechanisms are preview or prerelease: standard-harness "Add other agents", the Foundry, Fabric and Agents SDK connections, the Microsoft Copilot harness, and the Customer Conversation harness.
+- Microsoft renamed the GitHub Copilot harness to the Microsoft Copilot harness on 28 October 2026, and says the product will show the new name "over the coming weeks". As of 5 November 2026 the Learn pages cited here still use the old name, so the skill uses the new name and keeps the old one in page titles and quotes.
 - Ten questions are not answered by the documentation, including:
   - whose identity a connected agent's tools use at runtime;
   - whether a delegate's confirmation prompt reaches the user on the Microsoft Copilot harness;
   - whether admins can block connections between agents.
   
   The skill reports these as *not documented* and gives a test for each.
-- Two Microsoft pages conflict on whether telling the parent "only you talk to the user" works. The skill follows the newer page and says so.
+- Two Microsoft pages conflict on whether telling the parent "only you talk to the user" works. The skill follows the subagent page, which the patterns page now defers to, and says so.
 - The boundary pattern is a design recommendation, not a Microsoft control. Test it in your tenant before relying on it.
 - This is not security or legal advice. Verify against the cited pages before relying on the output for an approval decision.
 
 ## Sources
 
-Microsoft documentation, with each page's `ms.date` when it was retrieved on 30 October 2026:
+Microsoft documentation, with each page's `ms.date` when it was last re-read on 5 November 2026 (the "Last updated on" footer of a page can show a different date):
 
 **Handoff guidance (the three pages)**
 
-- [Multi-agent orchestration patterns and best practices](https://learn.microsoft.com/en-us/microsoft-copilot-studio/guidance/multi-agent-patterns), 21 May 2026
+- [Multi-agent orchestration patterns and best practices](https://learn.microsoft.com/en-us/microsoft-copilot-studio/guidance/multi-agent-patterns), 4 Nov 2026
 - [Hand off to a live agent](https://learn.microsoft.com/en-us/microsoft-copilot-studio/advanced-hand-off), 30 Apr 2026
-- [Agent handoff for Employee Self-Service agent](https://learn.microsoft.com/en-us/microsoft-365/copilot/employee-self-service/agent-handoff), 15 May 2026
+- [Agent handoff for Employee Self-Service agent](https://learn.microsoft.com/en-us/copilot/employee-self-service/agent-handoff), 15 May 2026
 
 **Decision tiers**
 
-- [Apply generative orchestration capabilities](https://learn.microsoft.com/en-us/microsoft-copilot-studio/guidance/generative-orchestration), 18 Sep 2026
+- [Apply generative orchestration capabilities](https://learn.microsoft.com/en-us/microsoft-copilot-studio/guidance/generative-orchestration), 4 Nov 2026
 - [FAQ for generative orchestration](https://learn.microsoft.com/en-us/microsoft-copilot-studio/faqs-generative-orchestration), 14 Oct 2026
 
 **Mechanics: standard harness**
 
-- [Add other agents overview](https://learn.microsoft.com/en-us/microsoft-copilot-studio/authoring-add-other-agents) (preview), 15 May 2026
+- [Add other agents overview](https://learn.microsoft.com/en-us/microsoft-copilot-studio/authoring-add-other-agents) (preview), 30 Oct 2026
 - [Add a child agent](https://learn.microsoft.com/en-us/microsoft-copilot-studio/add-agent-child-agent), 25 Aug 2026
-- [Connect to an existing Copilot Studio agent](https://learn.microsoft.com/en-us/microsoft-copilot-studio/add-agent-copilot-studio-agent), 30 Mar 2026
+- [Connect to an existing Copilot Studio agent](https://learn.microsoft.com/en-us/microsoft-copilot-studio/add-agent-copilot-studio-agent), 30 Oct 2026
 - [Connect to an agent over the Agent2Agent (A2A) protocol](https://learn.microsoft.com/en-us/microsoft-copilot-studio/add-agent-agent-to-agent), 26 Aug 2026
-- [Context distribution in the standard harness](https://learn.microsoft.com/en-us/microsoft-copilot-studio/guidance/generative-orchestration-context-design), 27 Aug 2026
-- [Design subagents that avoid duplicate messages](https://learn.microsoft.com/en-us/microsoft-copilot-studio/guidance/generative-orchestration-subagents), 27 Aug 2026
+- [Connect to a Microsoft Foundry agent](https://learn.microsoft.com/en-us/microsoft-copilot-studio/add-agent-foundry-agent) (preview), 26 Aug 2026
+- [Context distribution in the standard harness](https://learn.microsoft.com/en-us/microsoft-copilot-studio/guidance/generative-orchestration-context-design), 4 Nov 2026
+- [Design subagents that avoid duplicate messages](https://learn.microsoft.com/en-us/microsoft-copilot-studio/guidance/generative-orchestration-subagents), 4 Nov 2026
 - [Configure handoff to any generic engagement hub](https://learn.microsoft.com/en-us/microsoft-copilot-studio/configure-generic-handoff), 16 Sep 2026
+- [Configure handoff to Dynamics 365 Customer Service](https://learn.microsoft.com/en-us/microsoft-copilot-studio/configuration-hand-off-omnichannel), 25 Nov 2025
+- [Connect to a Microsoft 365 Agents SDK agent](https://learn.microsoft.com/en-us/microsoft-copilot-studio/add-agent-microsoft-365-agents-sdk-agent) (preview), 13 Feb 2026
 
 **Mechanics: Microsoft Copilot harness (formerly GitHub Copilot harness)**
 
 - [Connected agents overview (GitHub Copilot)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/authoring-add-other-agents), 6 Oct 2026
-- [Add a Copilot Studio agent as a connected agent (GitHub Copilot)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/add-agent-connected), 14 Oct 2026
+- [Add a connected agent to an agent (GitHub Copilot)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/add-agent-connected), 14 Oct 2026
 - [Manage connected agents in an agent (GitHub Copilot)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/manage-connected-agents), 14 Oct 2026
 - [Add an Agent2Agent (A2A) agent as a connected agent (GitHub Copilot)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/add-agent-to-agent), 14 Oct 2026
 - [Add a Foundry agent as a connected agent (GitHub Copilot)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/add-agent-foundry), 14 Oct 2026
+- [Add a Microsoft 365 Agents SDK agent as a connected agent (GitHub Copilot)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/add-agent-m-365-sdk), 14 Oct 2026
 
 **Mechanics: Customer Conversation harness (prerelease)**
 
-- [Sub-agents overview (Customer Conversation)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/sub-agents-overview-customer-conversation), 8 Oct 2026
-- [Add a connected agent (Customer Conversation)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/add-agent-connected-customer-conversation), 23 Oct 2026
+- [Sub-agents overview (Customer Conversation) (preview)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/sub-agents-overview-customer-conversation), 8 Oct 2026
+- [Add a connected agent (Customer Conversation) (preview)](https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/add-agent-connected-customer-conversation), 23 Oct 2026
 
 **Harnesses**
 
 - [Harnesses in Copilot Studio](https://learn.microsoft.com/en-us/microsoft-copilot-studio/harnesses-overview), 19 Oct 2026
 - [Compare Copilot Studio agent harnesses](https://learn.microsoft.com/en-us/microsoft-copilot-studio/guidance/choose-harness), 30 Sep 2026
+- [Copilot Studio for US Government customers](https://learn.microsoft.com/en-us/microsoft-copilot-studio/requirements-licensing-gcc), 20 Jul 2026
 
 **Employee Self-Service agent (Microsoft Copilot)**
 
-- [Connecting agents overview](https://learn.microsoft.com/en-us/microsoft-365/copilot/employee-self-service/connecting-agents-overview), 10 Jun 2026
-- [Set up the Employee Self-Service hub for custom engine agents](https://learn.microsoft.com/en-us/microsoft-365/copilot/employee-self-service/multi-agent-hub), 2 Oct 2026
+- [Connecting agents overview](https://learn.microsoft.com/en-us/copilot/employee-self-service/connecting-agents-overview), 10 Jun 2026
+- [Set up the Employee Self-Service hub for custom engine agents](https://learn.microsoft.com/en-us/copilot/employee-self-service/multi-agent-hub), 2 Oct 2026
 
 **Credentials, confirmation and admin controls**
 
@@ -117,7 +122,7 @@ Other sources, read on 1 November 2026:
 
 - [The GitHub Copilot harness is now the Microsoft Copilot harness](https://www.microsoft.com/en-us/copilot/blog/copilot-studio/the-github-copilot-harness-in-copilot-studio-is-now-the-microsoft-copilot-harness/), Microsoft Copilot Studio blog, 28 Oct 2026
 
-Every Learn page above still showed the same date on 31 October 2026. The agent reads the same list at the end of [`references/handoff-guide.md`](./references/handoff-guide.md).
+Changed since the first reading on 30 October 2026: multi-agent orchestration patterns (from 21 May 2026), Apply generative orchestration capabilities (from 18 Sep 2026), context distribution and designing subagents (from 27 Aug 2026), Add other agents overview (from 15 May 2026) and Connect to an existing Copilot Studio agent (from 30 Mar 2026); the quotes used here still hold. Added on 5 November 2026: the two Agents SDK pages, the Dynamics 365 Customer Service handoff page, the standard-harness Foundry page and the US Government page. The Employee Self-Service pages moved to `learn.microsoft.com/en-us/copilot/employee-self-service/`; the old `microsoft-365/copilot/` addresses redirect. The agent reads the same list at the end of [`references/handoff-guide.md`](./references/handoff-guide.md).
 
 ## Contributors
 
@@ -131,6 +136,7 @@ Every Learn page above still showed the same date on 31 October 2026. The agent 
 | --- | --- | --- |
 | 1.0 | October 2026 | Initial release |
 | 1.1 | November 2026 | The GitHub Copilot harness is now the Microsoft Copilot harness; the skill uses the new name and keeps the old one in Learn page titles and quotes |
+| 1.2 | November 2026 | Cites the multi-agent patterns, generative orchestration, context distribution and subagent pages at their 4 November 2026 revisions, with Q3 and Q6 rewritten to match, and no longer denies a history setting for external agents. Adds the trade-off that restricting maker-provided credentials stops triggered agents, the full connected-agent authentication rule, Agents SDK authentication, Dynamics 365 Customer Service handoff, MCP, Foundry, Fabric, billing and US Government caveats, and updates links and page titles |
 
 ## Help
 
