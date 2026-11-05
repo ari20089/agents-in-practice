@@ -1,0 +1,13 @@
+{
+  "name": "OWASP Risks to Copilot Studio Controls",
+  "description": "Maps every OWASP Top 10 for Agentic Applications (2026) and LLM Applications (2025) risk to the Copilot Studio settings and controls that address it: which agent setting, tool property, Power Platform admin center, Purview, Defender, Agent 365 or Entra control, its default, which harness it exists on, whether it blocks or only detects, and what no control covers. Checks Microsoft's March 2026 OWASP one-pager against current docs. Builds on HVE Core's generic owasp-agentic and owasp-llm skills.",
+  "platforms": ["GitHub Copilot", "Microsoft 365 Copilot", "Copilot Studio", "Any coding agent"],
+  "tags": ["owasp", "owasp-agentic", "owasp-llm", "copilot-studio", "threat-modeling", "prompt-injection", "excessive-agency", "data-policies", "defender", "purview", "microsoft-copilot-harness", "security-review", "hve-core"],
+  "subcategory": "Governance & compliance",
+  "author": "Arindam Choudhury",
+  "authorGithub": "ari20089",
+  "authorUrl": "https://www.linkedin.com/in/arindam-choudhury/",
+  "version": "1.0",
+  "createdAt": "2026-11-04",
+  "updatedAt": "2026-11-04"
+}
