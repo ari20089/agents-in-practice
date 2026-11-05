@@ -18,7 +18,7 @@ If the generated files don't exist yet, give the `pa app add data-source`, `pa a
 4. Write `src/data/<name>/<name>Repository.ts`: one function per operation the screen needs, each going through `run()`, with typed column constants.
 5. Write `src/data/<name>/use<Name>.ts` with the template hooks. For Vue, write a composable with the same states; with no framework, export the repository only. If the project already uses TanStack Query or SWR, wrap the repository functions with that library instead, and keep error and empty separate.
 6. Show one component that handles all four states.
-7. If the project has a test runner, add tests for success, `success: false`, a thrown error, and an empty list.
+7. If the project has a test runner, add tests for success, `success: false`, a thrown error, a 429, and an empty list.
 
 ## Rules for every call
 - ALWAYS check `success`. A failed call can come back as `success: false` with `error` set instead of throwing, so try/catch alone shows a failure as an empty list. Catch thrown errors too. `run()` does both.
@@ -28,8 +28,8 @@ If the generated files don't exist yet, give the `pa app add data-source`, `pa a
 - ALWAYS pass `select` with only the columns the screen uses, as a constant typed with `satisfies readonly (keyof Model)[]`.
 - Filter, sort and limit on the server with `filter`, `orderBy`, `top` or `maxPageSize`. NEVER fetch everything and filter in the browser.
 - Put string values into `filter` only through `odataString()`, which doubles single quotes. NEVER concatenate raw input, and don't URL-encode values; the client library does that.
-- Read choice, lookup, date and money labels with `formattedValue()`; the record already carries them. Don't query labels separately.
-- Page with `skipToken` and `maxPageSize`. Offer "load more" only when a result has a `skipToken`.
+- Read choice, lookup, date and money labels with `formattedValue()`; the record already carries them. For a lookup, pass `_<lookup>_value`. Don't query labels separately.
+- Page with `skipToken` and `maxPageSize`. Offer "load more" only when a result has a `skipToken`. A saved query (`getSavedQuery`) pages with `nextLink` instead; use the saved query template.
 - Drop responses that arrive after the query changes or the component unmounts. The generated calls take no AbortSignal.
 - Updates send only changed columns, through `changedFields()`. NEVER send back a whole record you read.
 - Creates leave out the primary key and system-managed or read-only columns, such as owner and created or modified columns.
@@ -41,6 +41,9 @@ If the generated files don't exist yet, give the `pa app add data-source`, `pa a
 - If the reference lists the scenario as unsupported (Excel Online connectors, FetchXML, alternate keys, polymorphic lookups), say so and point to the documented alternative. NEVER work around it by calling the Web API or a connector directly.
 - No secrets, connection IDs, environment IDs, tenant names or real record data in code, comments or examples. The compiled app is served from a public endpoint.
 - Users see a plain-language message and a retry; `status` and `requestId` go to logs.
+- A `status` of 429 means throttled: show that the service is busy (`isThrottled()`), keep the trigger disabled until the request finishes, and NEVER retry in a loop. The client library exposes no `Retry-After`.
+- Dataverse file and image upload and download are preview; say so when you wrap them.
+- If the generated file has `getSavedQuery`, `expand`, `apply` or `nextLink`, use them as generated and say Learn doesn't document them yet.
 
 ## Output
 1. **Plan**: data source, its type, the generated methods you'll use with their signatures, and assumptions to verify.

@@ -2,7 +2,7 @@
 
 **Reference data for the Connector Call Wrapper Generator: generated files, service signatures, result and option types, documented data rules, unsupported scenarios, wrapper templates and open questions**
 
-> **Status:** Compiled 31 October 2026 from the Microsoft Learn pages listed under Sources, each read that day, and from the published packages `@microsoft/power-apps` 1.5.0 (29 Sep 2026) and `@microsoft/power-apps-cli` 1.3.0 (13 Oct 2026). Code apps, the CLI and the client library change often. Where Learn and the packages differ, this file says so. The wrapper templates in section 7 are this item's pattern, not Microsoft guidance; they compile under TypeScript strict mode against `@microsoft/power-apps` 1.5.0.
+> **Status:** Compiled 31 October 2026 from the Microsoft Learn pages listed under Sources, each read that day (the environment, licensing and plugin sources were added on 5 November 2026), and from the published packages `@microsoft/power-apps` 1.5.0 (29 Sep 2026) and `@microsoft/power-apps-cli` 1.3.0 (13 Oct 2026). On 5 November 2026 it was re-checked against `@microsoft/power-apps` 1.6.0 and `@microsoft/power-apps-cli` 1.4.1, both published 4 Nov 2026; sections 2, 3.1, 4, 7.8, 8 and 9 say what they add. Code apps, the CLI and the client library change often. Where Learn and the packages differ, this file says so. The wrapper templates in section 7 are this item's pattern, not Microsoft guidance; they compile under TypeScript strict mode against `@microsoft/power-apps` 1.5.0 and 1.6.0 (section 7.8 needs 1.6.0).
 
 ## 1. Names
 
@@ -26,9 +26,11 @@ Version 1.0 of the client library removed `initialize`: "Apps must no longer imp
 
 "When you add the data sources to the app, the process automatically generates a typed TypeScript model and service file in the repo." (Connect to data)
 
-The generated files are rewritten by the CLI. If the schema changes, use `pa app refresh data-source --name <data-source-name>` "to refresh the generated model and service files", and running `pa app add dataverse-api` or `pa app add flow` again regenerates that operation's files. Keep wrapper code outside `src/generated/`.
+The generated files are rewritten by the CLI. If the schema changes, use `pa app refresh data-source --name <data-source-name>` "to refresh the generated model and service files", and running `pa app add dataverse-api` or `pa app add flow` again regenerates that operation's files. Code outside `src/generated/` isn't rewritten.
 
 Each generated service (CLI 1.3.0) imports `getClient` and `IOperationResult` from `@microsoft/power-apps/data`, holds `private static readonly client = getClient(dataSourcesInfo)`, and exposes `public static async` methods.
+
+CLI 1.4.1 changes the native Dataverse service: `get` and `getAll` are declared with a type parameter, `get<TResult = <Model>>(...)` and `getAll<TResult = <Model>>(...)`, so a caller can type the rows a `select` returns, and a new `getSavedQuery` method imports `IDataverseQueryOptions` from `@microsoft/power-apps/data`. The client library exports `IDataverseQueryOptions` from 1.6.0, not 1.5.0.
 
 ## 3. Service methods by data source type
 
@@ -39,18 +41,19 @@ Each generated service (CLI 1.3.0) imports `getClient` and `IOperationResult` fr
 | `create(record: Omit<T, '<primary key>'>)` | `Promise<IOperationResult<T>>` |
 | `update(id: string, changedFields: Partial<Omit<T, '<primary key>'>>, partitionId?: string)` | `Promise<IOperationResult<T>>` |
 | `delete(id: string, partitionId?: string)` | `Promise<IOperationResult<void>>` |
-
-`partitionId` (for elastic tables) is only on the Dataverse `update` and `delete` templates; SQL and SharePoint tables generate the same methods without it.
 | `get(id: string, options?: IGetOptions)` | `Promise<IOperationResult<T>>` |
 | `getAll(options?: IGetAllOptions)` | `Promise<IOperationResult<T[]>>` |
+| `getSavedQuery<TResult>(savedQueryId: string, options?: IDataverseQueryOptions)` (Dataverse, CLI 1.4.1) | `Promise<IOperationResult<TResult[]>>`: the rows of a saved query (view), by its GUID |
 | `getMetadata(options?: GetEntityMetadataOptions<T>)` (Dataverse) | `Promise<IOperationResult<Partial<EntityMetadata>>>` |
-| `upload`, `downloadFile`, `downloadImage`, `deleteFileOrImage` (Dataverse tables with file or image columns) | `IOperationResult<void>` or `IOperationResult<Uint8Array>` |
+| `upload`, `downloadFile`, `downloadImage`, `deleteFileOrImage` (Dataverse tables with file or image columns; preview: Connect to Dataverse lists "Image and file upload and download (preview)") | `IOperationResult<void>` or `IOperationResult<Uint8Array>` |
 | `getReferencedEntity(search, entityName)` (SharePoint) | Possible values for choice, lookup or person columns |
 
-Some connector tables generate `<Name>Read`, `<Name>Write` or `<Name>Base` model types instead of one type. Use the types the generated service declares.
+`partitionId` (for elastic tables) is only on the Dataverse `update` and `delete` templates; SQL and SharePoint tables generate the same methods without it.
 
-Add commands:
-- Dataverse: `pa app add data-source --connector dataverse --table <table-logical-name>`
+Some connector tables generate `<Name>Read`, `<Name>Write` or `<Name>Base` model types instead of one type. The generated service declares which type each method takes.
+
+Add commands (CLI reference):
+- Dataverse: `pa app add data-source --connector dataverse --table <table-logical-name>`; `--org-url` is "The Dataverse organization URL used to retrieve native Dataverse table metadata", prompted for in interactive mode if not given
 - SQL or SharePoint: `pa app add data-source --connector <connector-id> --connection-id <connection-id> --dataset <dataset> --table <table>`
 - With a connection reference: `--connection-ref <logical-name> --solution-id <solution-id>` in place of `--connection-id`
 
@@ -58,7 +61,9 @@ Add commands:
 
 One static method per operation, named after the operation ID, for example `Office365UsersService.MyProfile_V2(...)` and `UserPhoto_V2(...)` (Connect to data). Parameters and return type come from the connector definition; read them in the generated file.
 
-Add: `pa app add data-source --connector <connector-id> --connection-id <connection-id>`. For connectors with both tables and actions (SharePoint, SQL Server), add `--as action` for the actions.
+Add command: `pa app add data-source --connector <connector-id> --connection-id <connection-id>`. For connectors with both tables and actions (SharePoint, SQL Server), `--as action` adds the actions.
+
+The Microsoft Copilot Studio connector (`shared_microsoftcopilotstudio`) is added the same way, and its generated `CopilotStudioService.ExecuteCopilotAsyncV2(...)` invokes a published agent; the action "returns agent responses synchronously" (Connect to Copilot Studio).
 
 Some connectors return `{ value: [...] }` and others return the array: "some connectors return a structure in the format `{ value: [] }`, while others provide the array directly." (SharePoint operations)
 
@@ -78,11 +83,11 @@ GUID parameters are `string`; lookup parameters are `Record<string, unknown>`.
 
 `pa app list-flows`, then `pa app add flow --flow-id <flow-id>`. Requires `@microsoft/power-apps` 1.1.1 or later. "The generated service class provides a static `Run` method." The result has `success`, `data` and `error`.
 
-"Code apps support only solution-aware instant flows that use the Power Apps trigger." End users "need sufficient Dataverse permissions to invoke the flow."
+"Code apps support only solution-aware instant flows that use the Power Apps trigger." End users "need sufficient Dataverse permissions to invoke the flow. Assign the App Opener security role or an equivalent role."
 
 ## 4. Types
 
-From `@microsoft/power-apps` 1.5.0 (`import type { IOperationResult } from '@microsoft/power-apps/data'`):
+From `@microsoft/power-apps` 1.5.0 and 1.6.0 (`import type { IOperationResult } from '@microsoft/power-apps/data'`):
 
 ```ts
 interface IOperationResult<TResponse> {
@@ -90,24 +95,29 @@ interface IOperationResult<TResponse> {
   data: TResponse;
   error?: Error | PowerDataRuntimeHttpError;
   skipToken?: string;   // next page
+  nextLink?: string;    // 1.6.0: the full @odata.nextLink URL; a saved query's next page
   count?: number;       // when the request sets count: true
   fileName?: string;    // file and image downloads
 }
 ```
 
-`PowerDataRuntimeHttpError` has `message`, `status?`, `requestId?` and `stack?`. The package marks it private and doesn't export it, so read `status` and `requestId` by checking the object's shape.
+`PowerDataRuntimeHttpError` has `message`, `status?`, `requestId?` and `stack?`. The package marks it private and doesn't export it, so `status` and `requestId` are read by checking the object's shape. It carries no response headers. Neither 1.5.0 nor 1.6.0 contains code that handles status 429 or reads a `Retry-After` header.
 
 The package comment on `count`: "For Dataverse this comes from the `@odata.count` annotation, which the platform caps at 5000; result sets larger than 5000 report 5000."
 
 `IGetAllOptions` as generated by CLI 1.3.0 in `CommonModels.ts`: `maxPageSize`, `partitionId`, `select`, `filter` (OData string), `orderBy`, `top`, `skip`, `count`, `skipToken`. `IGetOptions`: `partitionId`, `select`. Learn's Dataverse page lists the same options without `partitionId` and `count`.
 
-What the client library 1.5.0 does with the options, from its source:
+CLI 1.4.1 adds `expand` (`string[]`) and `apply` (`string`) to `IGetAllOptions`, and `expand` to `IGetOptions`. `IDataverseQueryOptions` (1.6.0), used only by `getSavedQuery`, has `maxPageSize` and `nextLink`.
 
-- It URL-encodes `select`, `filter` and `orderBy` with `encodeURIComponent` before sending them. Don't encode values yourself; only double single quotes inside string literals.
+What the client library 1.5.0 and 1.6.0 do with the options, from their source:
+
+- It URL-encodes `select`, `filter` and `orderBy` with `encodeURIComponent` before sending them, so values passed in these options are encoded once by the library. Single quotes inside string literals still need doubling (section 5).
+- 1.6.0 also encodes `expand` and `apply` and sends them as `$expand` and `$apply`.
+- 1.6.0 returns `nextLink` beside `skipToken` on Dataverse lists. `getSavedQuery` rejects a `savedQueryId` that isn't a GUID, and a `nextLink` that isn't an absolute URL for the same table in the current environment.
 - For Dataverse, `maxPageSize` defaults to 500 when not set, sent as `Prefer: odata.maxpagesize=<n>`.
 - For Dataverse reads, creates and updates it also sends `odata.include-annotations=*`, so each record carries annotations such as formatted values (section 5).
 
-The `DataClient` methods behind the services take no AbortSignal, so a call can't be cancelled. Ignore late responses instead.
+The `DataClient` methods behind the services take no AbortSignal, so a call can't be cancelled; a late response can only be ignored.
 
 ## 5. Documented data rules
 
@@ -117,24 +127,26 @@ The `DataClient` methods behind the services take no AbortSignal, so a call can'
 | Server-side query | Connect to Dataverse lists delegation for `Filter`, `Sort` and `Top` queries, and "Paging support." |
 | Create without system columns | "When creating a record, exclude system-managed or read-only columns such as primary keys and ownership fields." Example for accounts: `accountid`, `ownerid`, `owneridname`, `owneridtype`, `owneridyominame` (Connect to Dataverse) |
 | Update only what changed | "When you update a record, only include the properties you're changing in the request." Sending unchanged values can "trigger business logic that expects the values changed, or can corrupt auditing data" (Connect to Dataverse) |
-| Formatted values | Labels for choice, lookup, date and money columns arrive on the record as annotations. "The formatted value is returned with the record by using an annotation that follows this convention" (Select columns using OData): `<property name>@OData.Community.Display.V1.FormattedValue`. The client library requests them (section 4); the generated model doesn't declare them, so read them with `formattedValue()` |
+| Formatted values | Labels for choice, lookup, date and money columns arrive on the record as annotations. "The formatted value is returned with the record by using an annotation that follows this convention" (Select columns using OData): `<property name>@OData.Community.Display.V1.FormattedValue`. For a lookup the annotation is on the `_<lookup>_value` property, for example `_primarycontactid_value@OData.Community.Display.V1.FormattedValue` (Select columns using OData). The client library requests them (section 4); the generated model doesn't declare them, so `formattedValue()` (section 7.1) reads them |
 | Quotes in filters | "If the filter is for a single value, replace the single quote character with two consecutive single quote characters" (Filter rows using OData) |
-| Lookups | Code apps point to the Web API guidance to "associate with a single-valued navigation property" or "associate records on create" (Connect to Dataverse). Use the `@odata.bind` annotation: `"primarycontactid@odata.bind": "/contacts(<id>)"` (Create a table row) |
+| Lookups | Code apps point to the Web API guidance to "associate with a single-valued navigation property" or "associate records on create" (Connect to Dataverse). The Web API sets a lookup with the `@odata.bind` annotation: `"primarycontactid@odata.bind": "/contacts(<id>)"` (Create a table row) |
 | SharePoint payloads | Generated models "might include internal property names with `#` (for example: `Choices1#Id`) that are used for binding in forms but shouldn't be included in the payload". When you create or update a row, "the SharePoint API expects you to provide the expanded object for referenced columns (author, editor, person/group columns, and so on) rather than just the IDs." (SharePoint operations) |
 | SharePoint IDs | "Ensure `recordId` is the string ID the service expects. This is often a numeric item ID converted to string." (SharePoint operations) |
-| Metadata | "Metadata calls can be heavy. Cache at app start or per session." Prefer a column list over `"all"`. (Get metadata for Dataverse tables) |
+| Metadata | "Metadata calls can be heavy. Cache at app start or per session." "Prefer a column list over "all" for performance." (Get metadata for Dataverse tables) |
 | Hosting | Compiled assets are on "a publicly accessible endpoint". "Don't store sensitive user or organizational data in the app." (System configuration) |
+| Throttling (Dataverse) | "With the Web API, Dataverse returns a 429 Too Many Requests error." "When a 429 error is returned from the Web API, the response includes a Retry-After header with number of seconds." For an interactive application: "display a message that the server is busy while you retry the request the user made" and "Don't allow users to submit more requests until the previous request you sent is complete." "The error message isn't intended for end users." (Service protection API limits) |
+| Throttling (connectors) | Each connector's reference page lists its throttling limits. Office 365 Users: "API calls per connection", 1000 calls per 60 seconds (Office 365 Users connector reference) |
 | Current user | `getContext()` from `@microsoft/power-apps/app` returns `ctx.user.systemUserId`, "the ID of the current user's `systemuser` row", without a separate query (Get context data) |
 
 ## 6. Unsupported and limits
 
 | Scenario | Status | Alternative |
 |---|---|---|
-| Excel Online (Business), Excel Online (OneDrive) connectors | "Connectors that aren't yet supported" (Connect to data) | Move the data to Dataverse, SharePoint or SQL |
-| Dataverse polymorphic lookups, FetchXML, alternate keys, table definition CRUD | "The following features aren't yet supported" (Connect to Dataverse) | OData `filter` on the generated service; set lookups by GUID with `@odata.bind` |
-| SharePoint Document Processing APIs, item synchronization, permission changes | Not supported by the client library and CLI; Learn suggests "creating a custom service file" (SharePoint operations) | Name it as a gap; don't generate a direct REST call |
-| Scheduled or automated flows, instant flows with other triggers | Not supported (Add flows) | Use a solution-aware instant flow with the Power Apps trigger |
-| Native Dataverse tables or SQL stored procedures | One per `pa app add data-source` command (CLI reference) | Run the command once per table |
+| Excel Online (Business), Excel Online (OneDrive) connectors | "Connectors that aren't yet supported" (Connect to data) | None documented. Dataverse, SharePoint and SQL are supported data sources |
+| Dataverse polymorphic lookups, FetchXML, alternate keys, schema definition (entity metadata) CRUD | "The following features aren't yet supported" (Connect to Dataverse) | OData `filter` on the generated service; lookups set by GUID with `@odata.bind` |
+| SharePoint Document Processing APIs, item synchronization, permission changes | Not supported by the client library and CLI; Learn suggests "creating a custom service file" (SharePoint operations) | A custom service file, which the client library and CLI don't generate |
+| Scheduled or automated flows, instant flows with other triggers | Not supported (Add flows) | A solution-aware instant flow with the Power Apps trigger |
+| Native Dataverse tables or SQL stored procedures | One per `pa app add data-source` command (CLI reference) | One command per table |
 
 ## 7. Wrapper templates
 
@@ -151,11 +163,11 @@ src/data/
 
 States: lists and single records are `loading`, `error`, `empty` or `success`; writes are `idle`, `saving`, `saved` or `error`. A list's "load more" failure keeps the loaded rows and sets `loadMoreError`.
 
-`useDataQuery` and `useListQuery` reload when the `load` function changes, so build it with `useCallback` from the query's primitive values, and keep `isEmpty` at module level.
+`useDataQuery` and `useListQuery` reload when the `load` function (or `isEmpty`) changes. The hook templates build `load` with `useCallback` from the query's primitive values and define `isEmpty` at module level, so they load once per query.
 
 ### 7.1 Shared result module
 
-`src/data/dataResult.ts`. Add once. Every repository function goes through `run()`.
+`src/data/dataResult.ts`. One per app; every repository function in these templates goes through `run()`.
 
 ```ts
 import type { IOperationResult } from '@microsoft/power-apps/data';
@@ -168,7 +180,7 @@ export interface DataError {
 }
 
 export type DataResult<T> =
-  | { ok: true; data: T; skipToken?: string; count?: number }
+  | { ok: true; data: T; skipToken?: string; nextLink?: string; count?: number }
   | { ok: false; error: DataError };
 
 function toDataError(e: unknown): DataError {
@@ -191,10 +203,16 @@ export async function run<T>(call: () => Promise<IOperationResult<T>>): Promise<
   try {
     const r = await call();
     if (!r.success) return { ok: false, error: toDataError(r.error) };
-    return { ok: true, data: r.data, skipToken: r.skipToken, count: r.count };
+    const { nextLink } = r as { nextLink?: string }; // @microsoft/power-apps 1.6.0 and later
+    return { ok: true, data: r.data, skipToken: r.skipToken, nextLink, count: r.count };
   } catch (e) {
     return { ok: false, error: toDataError(e) };
   }
+}
+
+/** Dataverse returns 429 when service protection limits are hit. The client library exposes no Retry-After. */
+export function isThrottled(error: DataError): boolean {
+  return error.status === 429;
 }
 
 /** Quotes a string for an OData filter, doubling single quotes: O'Bryan -> 'O''Bryan'. */
@@ -231,7 +249,7 @@ export function asArray<T>(data: T[] | { value?: T[] } | null | undefined): T[] 
 
 ### 7.2 Shared React hooks
 
-`src/data/useData.ts`. Add once. For Vue, write composables with the same states.
+`src/data/useData.ts`. One per app. A Vue version is a set of composables with the same states.
 
 ```ts
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -453,9 +471,10 @@ export function getMyProfile(): Promise<DataResult<MyProfile>> {
 
 ### 7.6 Component
 
-`src/AccountsList.tsx`. Every screen handles all four states.
+`src/AccountsList.tsx`. The component handles all four states.
 
 ```tsx
+import { isThrottled } from './data/dataResult';
 import { useAccountList } from './data/accounts/useAccounts';
 
 export function AccountsList({ search }: { search: string }) {
@@ -467,7 +486,11 @@ export function AccountsList({ search }: { search: string }) {
     case 'error':
       return (
         <div role="alert">
-          <p>Couldn't load accounts. {state.error.message}</p>
+          <p>
+            {isThrottled(state.error)
+              ? 'The service is busy. Try again in a moment.'
+              : `Couldn't load accounts. ${state.error.message}`}
+          </p>
           <button onClick={retry}>Try again</button>
         </div>
       );
@@ -495,11 +518,11 @@ export function AccountsList({ search }: { search: string }) {
 
 ### 7.7 Tests
 
-`src/data/dataResult.test.ts`. Vitest. The cases every data source needs: success, `success: false`, a thrown error, an empty list, formatted values, and the exact options sent to the service.
+`src/data/dataResult.test.ts`. Vitest. The cases covered: success, `success: false`, a thrown error, an empty list, a 429, `nextLink`, formatted values, and the exact options sent to the service.
 
 ```ts
 import { describe, expect, it, vi } from 'vitest';
-import { asArray, bindLookup, changedFields, formattedValue, odataString, run } from './dataResult';
+import { asArray, bindLookup, changedFields, formattedValue, isThrottled, odataString, run } from './dataResult';
 
 vi.mock('../generated/services/AccountsService', () => ({
   AccountsService: { getAll: vi.fn() },
@@ -523,6 +546,16 @@ describe('run', () => {
   it('keeps an empty list as success', async () => {
     const r = await run(async () => ({ success: true, data: [] }));
     expect(r.ok && r.data).toEqual([]);
+  });
+  it('passes nextLink through', async () => {
+    const next = 'https://org.example.invalid/api/data/v9.2/accounts?$skiptoken=t';
+    const r = await run(async () => ({ success: true, data: [1], nextLink: next }));
+    expect(r.ok && r.nextLink).toBe(next);
+  });
+  it('flags a 429 as throttled', async () => {
+    const r = await run(async () => ({ success: false, data: undefined as unknown as number[], error: { message: 'Too many requests', status: 429 } }));
+    expect(!r.ok && isThrottled(r.error)).toBe(true);
+    expect(isThrottled({ message: 'Forbidden', status: 403 })).toBe(false);
   });
 });
 
@@ -558,23 +591,42 @@ describe('listAccounts', () => {
 });
 ```
 
+### 7.8 Saved query repository (CLI 1.4.1 and `@microsoft/power-apps` 1.6.0)
+
+`src/data/accounts/accountsViewRepository.ts`. A saved query (view) pages with `nextLink`, not `skipToken`. The function returns `nextLink` as the page token, so `useListQuery` follows it unchanged. The view, not `select`, decides the columns returned. Not documented on Learn as of 5 November 2026 (section 8).
+
+```ts
+import { AccountsService } from '../../generated/services/AccountsService';
+import { run, type DataResult } from '../dataResult';
+import type { AccountRow } from './accountsRepository';
+
+// Dataverse saved query (view), by its GUID. The view's columns must match AccountRow.
+export async function listAccountsInView(savedQueryId: string, nextLink?: string): Promise<DataResult<AccountRow[]>> {
+  const r = await run(() => AccountsService.getSavedQuery<AccountRow>(savedQueryId, { maxPageSize: 50, nextLink }));
+  return r.ok ? { ...r, skipToken: r.nextLink } : r;
+}
+```
+
 ## 8. Where Learn and the packages differ
 
-| Topic | What differs | Follow |
+| Topic | What differs | Source of truth |
 |---|---|---|
 | List method name | Connect to data shows `getall()`; Connect to Dataverse, SharePoint operations and the CLI 1.3.0 template use `getAll` | The generated file |
 | Generated folders | Connect to data also mentions `src/Models` and `src/Services`; Add flows shows `src/services/` and `./services/`; the CLI 1.3.0 template writes `generated/models` and `generated/services` | The generated file's actual path |
-| Error handling in examples | Learn's Dataverse examples wrap calls in try/catch and check `result.data`; the result type also reports failure as `success: false` with `error` | Check `success` and catch, as `run()` does |
-| Dataverse action results | The WhoAmI example comments "result.value contains BusinessUnitId, UserId, and OrganizationId"; the declared return type is `IOperationResult<Record<string, unknown>>` | Read `result.data` and check the generated type |
+| Error handling in examples | Learn's Dataverse examples wrap calls in try/catch and check `result.data`; the result type also reports failure as `success: false` with `error` | Both: `success: false` and thrown errors, as `run()` handles them |
+| Dataverse action results | The WhoAmI example comments "result.value contains BusinessUnitId, UserId, and OrganizationId"; the declared return type is `IOperationResult<Record<string, unknown>>` | `result.data`, typed as the generated service declares |
 | Get options | Learn's `IGetAllOptions` has no `count` or `partitionId`; CLI 1.3.0 generates both | The generated `CommonModels.ts` |
-| CLI name | The CLI reference and most pages say Power Apps CLI; System configuration and Content Security Policy say Power Platform CLI for the same `pa` commands | Power Apps CLI (`pa`) |
+| Saved queries, `expand`, `apply`, `nextLink` | In `@microsoft/power-apps` 1.6.0 and CLI 1.4.1. Not documented on the code apps pages as of 5 November 2026; Connect to Dataverse (14 Aug 2026) lists `IGetAllOptions` without them and has no saved-query method | The generated file; Learn doesn't document them yet |
+| Excel Online (Business) | Connect to data lists it under "Connectors that aren't yet supported"; the code apps preview plugin (`microsoft/power-platform-skills`, `plugins/code-apps/skills`) has an `add-excel` skill that adds the Excel Online (Business) connector | Learn: not yet supported (section 6) |
+| CLI name | The CLI reference and most pages say Power Apps CLI; System configuration says "Power Platform CLI" for `pa app set-setting` | Power Apps CLI (`pa`) |
 
 ## 9. Open questions
 
 | # | Question | What's known |
 |---|---|---|
-| Q1 | Does every failure come back as `success: false`, or can some throw? | The type allows both, and the code apps examples use try/catch. Handle both. |
-| Q2 | Lookups beyond `@odata.bind` | "A dedicated how-to guide is coming soon." (Connect to Dataverse) |
+| Q1 | Does every failure come back as `success: false`, or can some throw? | The type allows both, and the code apps examples use try/catch. `run()` handles both. |
+| Q2 | Lookups beyond `@odata.bind` | "A dedicated how-to guide is coming soon." (Connect to Dataverse). CLI 1.4.1 generates an `expand` option that the client library 1.6.0 sends as `$expand`, for reading related rows; not documented on the code apps pages as of 5 November 2026. |
+| Q3 | Does the client library or the Power Apps host retry a 429? | Not documented as of 5 November 2026. The 1.5.0 and 1.6.0 packages contain no 429 or `Retry-After` handling, and the error object has `status` but no headers, so `run()` can detect a 429 but not the wait. |
 
 ## 10. Sources
 
@@ -595,6 +647,7 @@ Microsoft Learn, with each page's `ms.date` when it was read on 31 October 2026:
 - [Power Apps client library for code apps v1.0 migration guide](https://learn.microsoft.com/en-us/power-apps/developer/code-apps/how-to/migrate-to-v1), 5 Mar 2026
 - [Power Apps CLI command reference](https://learn.microsoft.com/en-us/power-apps/developer/code-apps/reference/cli), 2 Oct 2026
 - [Troubleshoot adding a data source](https://learn.microsoft.com/en-us/power-apps/developer/code-apps/troubleshoot-add-datasource), 13 Aug 2026
+- [Connect your code app to Microsoft Copilot Studio agents](https://learn.microsoft.com/en-us/power-apps/developer/code-apps/how-to/connect-to-copilot-studio), 13 Aug 2026 (read on 5 November 2026)
 
 **Dataverse Web API**
 
@@ -602,8 +655,22 @@ Microsoft Learn, with each page's `ms.date` when it was read on 31 October 2026:
 - [Select columns using OData](https://learn.microsoft.com/en-us/power-apps/developer/data-platform/webapi/query/select-columns), 28 Oct 2026
 - [Create a table row using the Web API](https://learn.microsoft.com/en-us/power-apps/developer/data-platform/webapi/create-table-row), 9 Mar 2026
 - [Associate and disassociate table rows using the Web API](https://learn.microsoft.com/en-us/power-apps/developer/data-platform/webapi/associate-disassociate-table-rows), 29 Oct 2026
+- [Service protection API limits](https://learn.microsoft.com/en-us/power-apps/developer/data-platform/api-limits), 26 Oct 2026 (read on 5 November 2026): 429, `Retry-After`, interactive retry
+
+**Connectors** (read on 5 November 2026)
+
+- [Office 365 Users connector reference](https://learn.microsoft.com/en-us/connectors/office365users/), 1 Mar 2024: throttling limits per connection
+
+**Environment, licensing and plugin** (read on 5 November 2026)
+
+- [Manage feature settings](https://learn.microsoft.com/en-us/power-platform/admin/settings-features), 3 Nov 2026: **Enable code apps**, default Off
+- [Quickstart: Build a code app with GitHub Copilot](https://learn.microsoft.com/en-us/power-apps/developer/code-apps/how-to/quickstart-github-copilot), 24 Jun 2026: the code apps preview plugin, `code-apps-preview@power-platform-skills`
+- [microsoft/power-platform-skills](https://github.com/microsoft/power-platform-skills/tree/main/plugins/code-apps/skills) on GitHub, `plugins/code-apps/skills`, last changed 15 Oct 2026: the plugin's skill names
+- [Add knowledge sources to an agent in Agent Builder](https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/agent-builder-add-knowledge), 30 Sep 2026: embedded files, GCC and Information Barriers
+- [Add knowledge sources to your declarative agent](https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/knowledge-sources), 30 Sep 2026: licence or metered usage, SharePoint knowledge licence
 
 **Packages**
 
 - [@microsoft/power-apps](https://www.npmjs.com/package/@microsoft/power-apps) 1.5.0, published 29 Sep 2026: `IOperationResult`, `DataClient`, the error type, query-string encoding, the `Prefer` headers it sends
 - [@microsoft/power-apps-cli](https://www.npmjs.com/package/@microsoft/power-apps-cli) 1.3.0, published 13 Oct 2026: generated service and `CommonModels.ts` templates
+- `@microsoft/power-apps` 1.6.0 and `@microsoft/power-apps-cli` 1.4.1, both published 4 Nov 2026, read on 5 November 2026: `nextLink`, `IDataverseQueryOptions`, `getSavedQuery`, `expand` and `apply`, typed `get` and `getAll`, no 429 handling
