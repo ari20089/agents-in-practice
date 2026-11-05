@@ -210,7 +210,8 @@ function readItems() {
     if (!subHue.has(i.subcategory)) subHue.set(i.subcategory, SUB_HUES[subHue.size % SUB_HUES.length]);
   }
   for (const i of items) i.hue = subHue.get(i.subcategory);
-  return items.sort((a, b) => (b.updatedAt ?? "").localeCompare(a.updatedAt ?? "") || a.name.localeCompare(b.name));
+  // Newest first, matching the gallery's default sort.
+  return items.sort((a, b) => (b.createdAt ?? "").localeCompare(a.createdAt ?? "") || a.name.localeCompare(b.name));
 }
 
 // ---------- page shell ----------
@@ -325,7 +326,7 @@ function indexPage(items, catalog) {
       ${select("category", "Category", "All categories", categoryOrder, byCategory)}
       ${select("subcategory", "Sub-category", "All sub-categories", sortedKeys(bySub), bySub)}
       ${select("platform", "Platform", "All platforms", sortedKeys(byPlatform), byPlatform)}
-      <label class="control"><span class="visually-hidden">Sort</span><select id="sort"><option value="updated">Recently updated</option><option value="newest">Newest</option><option value="title">Title A–Z</option></select></label>
+      <label class="control"><span class="visually-hidden">Sort</span><select id="sort"><option value="newest">Newest</option><option value="updated">Recently updated</option><option value="title">Title A–Z</option></select></label>
     </form>
 
     <div class="results-bar">
