@@ -16,7 +16,8 @@ It only reads. It doesn't change files or run commands that change anything.
 
 | File | What it's for | Where it goes |
 |---|---|---|
-| [`PROMPT.md`](./PROMPT.md) | The prompt: what a code app is, ten checks, severities, the report format and the rules. 7,996 of the 8,000 characters allowed. | Pasted into chat, as is |
+| [`PROMPT.md`](./PROMPT.md) | The prompt: what a code app is, ten checks, severities, the report format and the rules. 7,997 of the 8,000 characters allowed. | Pasted into chat, as is |
+| [`assets/preview.png`](./assets/preview.png) | The gallery image: a sample report with the verdict, the ten checks, the top findings, the fix list and the connector map | For people only |
 
 ## Run it
 
@@ -53,7 +54,7 @@ Each check rests on documented behaviour, stated in the prompt itself so the age
 |---|---|---|---|
 | 1 | App shape | Server rendering, API routes or a server the UI depends on | Code apps "support single-page applications (SPAs)", and `pa app push` "takes a compiled app" (Architecture) |
 | 2 | Build output | Output folder other than `dist`, entry other than `index.html`, root-absolute asset URLs | `pa app init` records the build folder and entry in `power.config.json`: `--build-path` defaults to `./dist` and `--file-entry-point` to `index.html` (CLI environment variables). Microsoft's Vite plugin sets `base: './'`, "Needed for publishing static assets correctly" (`@microsoft/power-apps-vite` 1.0.13 source). Under that plugin `import.meta.env.BASE_URL` is the literal `'./'`, which the browser resolves against the current route, so URLs built in code should use `new URL('./file.png', import.meta.url)`, which Vite rewrites at build time (Vite: Static Asset Handling). With webpack, `output.publicPath: 'auto'` works out the path at run time and is the default for web targets (webpack: Public Path) |
-| 3 | Routing | History routers with no base; navigation that bypasses the router | Microsoft's starter template sets `basename: new URL(".", location.href).pathname`, "IMPORTANT: Set basename for proper routing when hosted in Power Apps" (`templates/starter/src/router.tsx`). For Vue, Vue Router says that when you deploy to a subfolder you should use "the `base` property of the router", and that hash mode "doesn't require any special treatment on the server level" (Vue Router: Different history modes) |
+| 3 | Routing | History routers with no base; navigation that bypasses the router | Microsoft's starter template sets `basename: new URL(".", location.href).pathname`, "IMPORTANT: Set basename for proper routing when hosted in Power Apps" (`templates/starter/src/router.tsx`). The prompt's "under a nested path" is inferred from this template: no code apps page on Learn says so as of 5 November 2026, and the only app origin Embed in an iframe shows, in its sample CSP error, is `https://<environment>.powerplatformusercontent.com/`. For Vue, Vue Router says that when you deploy to a subfolder you should use "the `base` property of the router", and that hash mode "doesn't require any special treatment on the server level" (Vue Router: Different history modes) |
 | 4 | Authentication | MSAL, OIDC and third-party sign-in, stored tokens, bearer headers | "The Power Apps host manages end-user authentication" (Architecture); key feature "Microsoft Entra authentication and authorization" (Overview); the user's identity comes from `getContext()` (Get context data). Default `connect-src 'none'` and `frame-src 'self'` block a library's token calls and sign-in iframes (Configure CSP) |
 | 5 | Direct calls | `fetch`, `axios`, Graph and Web API clients, sockets | Default CSP `connect-src 'none'` (Configure CSP); data goes through "Power Platform data sources and 1,500+ connectors" (Overview); Excel Online connectors "aren't yet supported" (Connect to data); flows must be "solution-aware instant flows that use the Power Apps trigger" (Add flows); Dataverse actions via `pa app add dataverse-api` (CLI reference); the Copilot Studio connector for calls to an agent (Connect to Copilot Studio); custom connector over your own API, which the how-to leaves anonymous and tells you to "Secure your API if you move beyond development/testing" (Azure Functions how-to). One exception: a telemetry SDK such as Application Insights is Review, not Blocker, because Microsoft's documented fix is to "add the App Insights endpoints to your environment's CSP settings" (Set up Azure App Insights) |
 | 6 | Offline and background work | Service workers, PWA manifest, Web Workers, cached records | Default `worker-src 'none'` and `manifest-src 'none'` (Configure CSP). Offline use isn't documented |
@@ -76,9 +77,10 @@ After the fixes, the [Connector Call Wrapper Generator](../../agent-instructions
 
 ## Limitations
 
-- Written against 18 Microsoft Learn pages dated 5 March 2026 to 14 October 2026, read on 31 October and 1 November 2026, and against Microsoft's code apps templates (last changed 1 July 2026) and `@microsoft/power-apps-vite` 1.0.13. Code apps change often; check the Sources before relying on a finding.
-- Repositories created before the Power Apps CLI (`pa`) may still reference the earlier `pac code init`, `pac code run` and `pac code push` commands (the `@microsoft/power-apps-vite` README and Microsoft's templates README still show them). The prompt names only `pa`; the rename isn't documented on Learn as of 31 October 2026.
-- It assumes the default CSP. If your environment's admin has changed it, some Must fix findings may already be allowed. Ask for the environment's CSP settings and compare.
+- Written against 21 Microsoft Learn pages dated 5 March 2026 to 25 October 2026, read on 31 October, 1 November and 5 November 2026, and against Microsoft's code apps templates (last changed 1 July 2026) and `@microsoft/power-apps-vite` 1.0.13. Code apps change often; check the Sources before relying on a finding.
+- Repositories created before the Power Apps CLI (`pa`) may still reference the earlier `pac code init`, `pac code run` and `pac code push` commands (the `@microsoft/power-apps-vite` README and Microsoft's templates README still show them). The prompt names only `pa`. Learn's `pac code` reference (25 October 2026) marks the commands as preview, says to "use the npm-based Power Apps CLI instead", and says the new CLI "will replace these commands, which will be deprecated in a future release".
+- It assumes the default CSP. If your environment's admin has changed it, some Must fix findings may already be allowed. Ask for the environment's CSP settings and compare. The prompt states only the defaults its checks use: Configure CSP also sets `default-src 'self'`, `child-src 'none'`, `object-src 'self' data:` and `base-uri 'self'`, so an app that relies on `<object>`, `<embed>` or a `<base href>` to another origin isn't flagged.
+- The Before you push list doesn't cover solutions, pipelines or sovereign clouds. `pa app push --solution-id` adds the app to a solution, and "In environments without Dataverse, the app publishes without a solution" (ALM); a pipeline that publishes as a service principal needs "edit access to the code app" (Publish with a service principal); and the CLI's `--cloud` accepts `usgov`, `usgovhigh`, `usgovdod` and `china` as well as `public` (CLI environment variables).
 - Some things aren't documented as of 31 October 2026, so the prompt says so instead of guessing: whether reloading a nested route works once hosted, and whether code apps work offline. Both go in the test plan. On the first, Vue Router's own page explains the risk: with history mode, "without a proper server configuration, the users will get a 404 error if they access `https://example.com/user/id` directly", and no code apps page says whether the host serves `index.html` for unknown paths. Hash mode avoids the question.
 - Microsoft's routing and build fixes are for React and Vite. The Vue fix follows Vue Router's own subfolder guidance, and the webpack fix follows webpack's; neither comes from a Microsoft page.
 - Two Learn pages disagree on environment variables. Set up Azure App Insights (5 March 2026) says "Environment variables aren't yet supported for code apps"; Use environment variables (13 August 2026) documents `@envvar:` references in `pa app add data-source`. The prompt uses `@envvar:` for data sources only.
@@ -105,8 +107,11 @@ Microsoft Learn, with each page's `ms.date` when it was read on 31 October 2026:
 - [Power Apps client library for code apps v1.0 migration guide](https://learn.microsoft.com/en-us/power-apps/developer/code-apps/how-to/migrate-to-v1), 5 Mar 2026
 - [Power Apps CLI environment variables](https://learn.microsoft.com/en-us/power-apps/developer/code-apps/reference/environment-variables), 2 Oct 2026
 - [Power Apps CLI command reference](https://learn.microsoft.com/en-us/power-apps/developer/code-apps/reference/cli), 2 Oct 2026
+- [Application lifecycle management (ALM) for code apps](https://learn.microsoft.com/en-us/power-apps/developer/code-apps/how-to/alm), 27 Aug 2026, read on 5 November 2026
+- [Publish Power Apps code apps with a service principal](https://learn.microsoft.com/en-us/power-apps/developer/code-apps/how-to/use-service-principal), 26 Aug 2026, read on 5 November 2026
 - [Connect to Copilot Studio](https://learn.microsoft.com/en-us/power-apps/developer/code-apps/how-to/connect-to-copilot-studio), 13 Aug 2026
 - [Data policies](https://learn.microsoft.com/en-us/power-platform/admin/wp-data-loss-prevention), 14 Oct 2026, read on 1 November 2026
+- [pac code (Power Platform CLI reference)](https://learn.microsoft.com/en-us/power-platform/developer/cli/reference/code), 25 Oct 2026, read on 5 November 2026
 
 Other sources, read on 31 October 2026:
 
@@ -115,7 +120,7 @@ Other sources, read on 31 October 2026:
 - [Vite: Static Asset Handling, `new URL(url, import.meta.url)`](https://vite.dev/guide/assets#new-url-url-import-meta-url)
 - [Vue Router: Different history modes](https://router.vuejs.org/guide/essentials/history-mode.html), last changed 14 Oct 2026
 - [webpack: Public Path](https://webpack.js.org/guides/public-path/), last changed 8 Sep 2026
-- [Use prompt files in VS Code](https://code.visualstudio.com/docs/copilot/customization/prompt-files), updated 28 Oct 2026
+- [Use prompt files in VS Code](https://code.visualstudio.com/docs/agent-customization/prompt-files), updated 4 Nov 2026, read on 5 November 2026
 
 ## Contributors
 
@@ -129,6 +134,7 @@ Other sources, read on 31 October 2026:
 | --- | --- | --- |
 | 1.0 | October 2026 | Initial release |
 | 1.1 | November 2026 | Uses "data policy", Power Platform's current term, instead of DLP |
+| 1.2 | November 2026 | Cites Learn's `pac code` deprecation note instead of saying the rename isn't documented. Limitations now name the CSP defaults the prompt doesn't use, the source of "under a nested path", and what the Before you push list leaves out (solutions, pipelines, sovereign clouds). |
 
 ## Help
 
