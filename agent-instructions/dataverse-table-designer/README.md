@@ -28,7 +28,7 @@ It designs only. It doesn't create tables or call Power Platform, so the person 
 
 | File | What it's for | Where it goes |
 |---|---|---|
-| [`INSTRUCTIONS.md`](./INSTRUCTIONS.md) | The designer's behaviour: inputs, design steps, naming, output format and rules. 7,772 of the 8,000 characters allowed. | The agent's **Instructions** field, pasted as is |
+| [`INSTRUCTIONS.md`](./INSTRUCTIONS.md) | The designer's behaviour: inputs, design steps, naming, output format and rules. 7,856 of the 8,000 characters allowed. | The agent's **Instructions** field, pasted as is |
 | [`knowledge/dataverse-design-reference.txt`](./knowledge/dataverse-design-reference.txt) | Reference data: table types and their limits, ownership options, privileges, column types, date and time behaviour, computed columns, choices, relationship behaviours, column security, solution, layering and retention rules, the choice or lookup rubric, the decisions that can't be undone, and sources | Uploaded as the agent's only knowledge source |
 
 All behaviour is in the instructions. The knowledge file only holds facts the designer looks up and quotes.
@@ -59,6 +59,8 @@ All behaviour is in the instructions. The knowledge file only holds facts the de
 2. On the **Configure** tab, upload `dataverse-design-reference.txt` as knowledge, turn off **Search all websites**, and turn on **Only use specified sources**.
 3. Add the conversation starters and test with a process you know well.
 
+A file uploaded in Agent Builder becomes embedded file content. Users need a Microsoft 365 Copilot licence, or the tenant needs metered usage, to use an agent that has it. Embedded file content "isn't supported in Microsoft 365 Government Community Cloud (GCC) environments", and Microsoft Purview Information Barriers don't apply to it: anyone who can use the agent gets answers from the file. In GCC, save the file to a SharePoint document library and add it on the **Configure** tab with **Browse** or **Enter URL** instead. SharePoint knowledge needs each user to have a Microsoft 365 Copilot licence; whether it's available in GCC is not documented as of 5 November 2026.
+
 **Copilot Studio**
 
 1. Create an agent. On its **Overview** page, in the **Instructions** section, select **Edit** and paste `INSTRUCTIONS.md`.
@@ -68,8 +70,9 @@ All behaviour is in the instructions. The knowledge file only holds facts the de
 **Microsoft 365 Agents Toolkit**
 
 1. Put the contents of `INSTRUCTIONS.md` in the manifest's `instructions` property. It must be 8,000 characters or less.
-2. Add `dataverse-design-reference.txt` to an `EmbeddedKnowledge` capability. Embedded files must be 1 MB or smaller; this one is about 33 KB.
+2. Add `dataverse-design-reference.txt` to an `EmbeddedKnowledge` capability. Embedded files must be 1 MB or smaller; this one is about 36 KB.
 3. Don't add the `WebSearch` capability.
+4. Test that the agent answers from the file. Microsoft's pages conflict here: *Declarative agent schema 1.9* defines the `EmbeddedKnowledge` capability, but *Add knowledge sources to your declarative agent* marks embedded file content as not available in Agents Toolkit. If the agent doesn't use the file, upload it to a SharePoint document library instead, and replace `EmbeddedKnowledge` with a `OneDriveAndSharePoint` capability whose `items_by_url` lists the file's URL. Leave out both `items_by_url` and `items_by_sharepoint_ids` and the agent can search all of SharePoint and OneDrive. SharePoint knowledge needs each user to have a Microsoft 365 Copilot licence.
 
 ## How to use it
 
@@ -86,12 +89,13 @@ A row from the choice or lookup review, for an equipment loan process (made-up e
 ## Prerequisites
 
 - Microsoft 365 Copilot with Agent Builder, Copilot Studio, or the Microsoft 365 Agents Toolkit, to host the agent.
+- For Agent Builder or the Agents Toolkit: users need a Microsoft 365 Copilot licence, or the tenant needs metered usage, to use an agent with an uploaded or embedded file. Agent Builder doesn't support uploaded files in GCC (see the setup steps).
 - To build the design: a Dataverse environment and a security role that can create solutions and tables.
 - Ideally, your organization's solution publisher and prefix already exist. If not, the checklist starts with creating them.
 
 ## Limitations
 
-- Written against 33 Microsoft Learn pages dated 25 May 2018 to 27 October 2026, all read on 1 November 2026. Dataverse changes often; check the dates in Sources.
+- Written against 34 Microsoft Learn pages on Dataverse dated 25 May 2018 to 2 November 2026, read on 1 November 2026 and checked again on 5 November 2026 (Column definitions added that day), and three pages on hosting the agent read on 5 November 2026. Dataverse changes often; check the dates in Sources.
 - Filtered record ownership is in preview. The designer marks it as preview and gives a production alternative.
 - The choice or lookup rubric (CL1 to CL12), the ownership rubric (OW1 to OW6), the list of decisions that can't be undone (IR1 to IR13) and the thresholds of about 30 options are this item's design, built on Microsoft's guidance but not Microsoft guidance.
 - **Plans** in Power Apps (generally available) and **Start with Copilot** in the table designer also generate Dataverse tables from a description, and they build them. This agent doesn't build anything. It gives a reviewable design with the reasons, the choice or lookup review, the security checks, the decisions that can't be undone and a build checklist, and it can review a model that Plans or Copilot generated.
@@ -127,6 +131,7 @@ Microsoft Learn, with each page's `ms.date` when it was read on 1 November 2026:
 - [Define status reason transitions for the Case or custom tables](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/define-status-reason-transitions), 25 May 2018
 - [Define alternate keys using Power Apps](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/define-alternate-keys-portal), 14 May 2025
 - [Work with alternate keys](https://learn.microsoft.com/en-us/power-apps/developer/data-platform/define-alternate-keys-entity), 30 Mar 2026
+- [Column definitions](https://learn.microsoft.com/en-us/power-apps/developer/data-platform/entity-attribute-metadata), 23 Jun 2026 (read on 5 November 2026)
 
 **Relationships**
 
@@ -138,7 +143,7 @@ Microsoft Learn, with each page's `ms.date` when it was read on 1 November 2026:
 
 **Security**
 
-- [Ownership-based security in Microsoft Dataverse](https://learn.microsoft.com/en-us/power-platform/admin/wp-security-cds), 5 Oct 2026
+- [Ownership-based security in Microsoft Dataverse](https://learn.microsoft.com/en-us/power-platform/admin/wp-security-cds), 2 Nov 2026 (re-read on 5 November 2026)
 - [Security roles and privileges for Dataverse](https://learn.microsoft.com/en-us/power-platform/admin/security-roles-privileges), 9 Dec 2025
 - [Column-level security to control access](https://learn.microsoft.com/en-us/power-platform/admin/field-level-security), 21 Sep 2026
 - [Microsoft Dataverse teams management](https://learn.microsoft.com/en-us/power-platform/admin/manage-teams), 15 Jul 2025
@@ -149,6 +154,12 @@ Microsoft Learn, with each page's `ms.date` when it was read on 1 November 2026:
 - [Solution concepts](https://learn.microsoft.com/en-us/power-platform/alm/solution-concepts-alm), 29 Jan 2025
 - [Solution layers](https://learn.microsoft.com/en-us/power-platform/alm/solution-layers-alm), 30 Jan 2025
 - [Dataverse long term data retention overview](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/data-retention-overview), 10 Apr 2026
+
+**Hosting the agent** (read on 5 November 2026)
+
+- [Add knowledge sources to an agent in Agent Builder](https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/agent-builder-add-knowledge), 30 Sep 2026: embedded files, GCC and Information Barriers
+- [Add knowledge sources to your declarative agent](https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/knowledge-sources), 30 Sep 2026: licence or metered usage, embedded file content not available in Agents Toolkit, SharePoint knowledge licence
+- [Declarative agent schema 1.9 for Microsoft 365 Copilot](https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/declarative-agent-manifest-1.9), 30 Sep 2026: `EmbeddedKnowledge` and `OneDriveAndSharePoint`
 
 The agent reads the same list at the end of [`knowledge/dataverse-design-reference.txt`](./knowledge/dataverse-design-reference.txt).
 
@@ -163,6 +174,7 @@ The agent reads the same list at the end of [`knowledge/dataverse-design-referen
 | Version | Date | Comments |
 | --- | --- | --- |
 | 1.0 | November 2026 | Initial release |
+| 1.1 | November 2026 | Added the Agent Builder licence and GCC limits for uploaded files, and a SharePoint fallback for the Agents Toolkit, where Microsoft's pages conflict on embedded files. Added Dataverse facts (matrix ownership, column-level security, the Managed Environment requirement for retention, logical and schema names, elastic table, image and file column limits, environment auditing) and reworded the knowledge file as facts only. |
 
 ## Help
 
