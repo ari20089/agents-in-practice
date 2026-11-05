@@ -25,14 +25,14 @@
         const v = p.get(k);
         if (v !== null) els[k].value = v;
       }
-      if (!els.sort.value) els.sort.value = "updated";
+      if (!els.sort.value) els.sort.value = "newest";
     }
 
     function writeState() {
       const p = new URLSearchParams();
       for (const k of Object.keys(els)) {
         const v = els[k].value.trim();
-        if (v && !(k === "sort" && v === "updated")) p.set(k, v);
+        if (v && !(k === "sort" && v === "newest")) p.set(k, v);
       }
       const qs = p.toString();
       history.replaceState(null, "", qs ? `?${qs}#gallery` : location.pathname + (location.hash || ""));
@@ -83,7 +83,7 @@
     }
 
     function isFiltered() {
-      return Object.keys(els).some((k) => (k === "sort" ? els.sort.value !== "updated" : els[k].value.trim() !== ""));
+      return Object.keys(els).some((k) => (k === "sort" ? els.sort.value !== "newest" : els[k].value.trim() !== ""));
     }
 
     // Cards in a row share the tallest card's height, so a card with a short title has
@@ -110,7 +110,7 @@
     }
 
     function clear() {
-      for (const k of Object.keys(els)) els[k].value = k === "sort" ? "updated" : "";
+      for (const k of Object.keys(els)) els[k].value = k === "sort" ? "newest" : "";
       render();
       els.q.focus();
     }
